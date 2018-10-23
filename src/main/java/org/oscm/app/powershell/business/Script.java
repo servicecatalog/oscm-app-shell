@@ -22,8 +22,8 @@ import java.util.HashMap;
 import java.util.TreeSet;
 
 import org.apache.commons.io.IOUtils;
-import org.oscm.app.v2_0.data.ProvisioningSettings;
-import org.oscm.app.v2_0.data.Setting;
+import org.oscm.app.data.ProvisioningSettings;
+import org.oscm.app.data.Setting;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

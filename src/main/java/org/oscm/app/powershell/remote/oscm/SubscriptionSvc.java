@@ -12,7 +12,7 @@ public class SubscriptionSvc {
     }
 
     public VOSubscriptionDetails getSubscription(String orgId, String subId) throws Exception {
-	SubscriptionService service = getFactory().getWebServiceAsControllerOwner(SubscriptionService.class);
+	SubscriptionService service = getFactory().getWebServiceAsAppOwner(SubscriptionService.class);
 	return service.getSubscriptionForCustomer(orgId, subId);
     }
 

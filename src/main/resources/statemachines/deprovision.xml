@@ -1,4 +1,4 @@
-<states class="com.fujitsu.bss.app.powershell.business.actions.ProvisioningActions">
+<states class="org.oscm.app.powershell.business.actions.ProvisioningActions">
 
   <state id="BEGIN" action="executeScript">
     <event id="executing" state="EXECUTING" />

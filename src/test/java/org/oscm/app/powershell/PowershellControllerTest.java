@@ -25,10 +25,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.oscm.app.powershell.PowershellController;
 import org.oscm.app.powershell.business.Configuration;
-import org.oscm.app.v2_0.data.InstanceDescription;
-import org.oscm.app.v2_0.data.ProvisioningSettings;
-import org.oscm.app.v2_0.data.ServiceUser;
-import org.oscm.app.v2_0.data.Setting;
+import org.oscm.app.data.InstanceDescription;
+import org.oscm.app.data.ProvisioningSettings;
+import org.oscm.app.data.ServiceUser;
+import org.oscm.app.data.Setting;
 
 public class PowershellControllerTest {
 

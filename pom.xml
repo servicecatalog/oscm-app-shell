@@ -113,9 +113,9 @@
       <version>1.2.17</version>
     </dependency>
     <dependency>
-      <groupId>com.fujitsu.bss.app</groupId>
-      <artifactId>app-statemachine</artifactId>
-      <version>0.1.4</version>
+      <groupId>com.github.goebell</groupId>
+      <artifactId>oscm-app-statemachine</artifactId>
+      <version>0.5</version>
     </dependency>
     <dependency>
       <groupId>com.fujitsu.bss</groupId>

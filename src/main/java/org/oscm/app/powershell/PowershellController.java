@@ -59,24 +59,24 @@ import org.oscm.app.powershell.business.api.Powershell;
 import org.oscm.app.powershell.business.api.PowershellCommand;
 import org.oscm.app.powershell.business.api.PowershellPool;
 import org.oscm.app.powershell.business.api.PowershellStatus;
-import org.oscm.app.v2_0.data.ControllerSettings;
-import org.oscm.app.v2_0.data.InstanceDescription;
-import org.oscm.app.v2_0.data.InstanceStatus;
-import org.oscm.app.v2_0.data.InstanceStatusUsers;
-import org.oscm.app.v2_0.data.LocalizedText;
-import org.oscm.app.v2_0.data.OperationParameter;
-import org.oscm.app.v2_0.data.ProvisioningSettings;
-import org.oscm.app.v2_0.data.ServiceUser;
-import org.oscm.app.v2_0.data.Setting;
-import org.oscm.app.v2_0.exceptions.APPlatformException;
-import org.oscm.app.v2_0.exceptions.SuspendException;
-import org.oscm.app.v2_0.intf.APPlatformController;
-import org.oscm.app.v2_0.intf.ControllerAccess;
+import org.oscm.app.data.ControllerSettings;
+import org.oscm.app.data.InstanceDescription;
+import org.oscm.app.data.InstanceStatus;
+import org.oscm.app.data.InstanceStatusUsers;
+import org.oscm.app.data.LocalizedText;
+import org.oscm.app.data.OperationParameter;
+import org.oscm.app.data.ProvisioningSettings;
+import org.oscm.app.data.ServiceUser;
+import org.oscm.app.data.Setting;
+import org.oscm.app.exceptions.APPlatformException;
+import org.oscm.app.exceptions.SuspendException;
+import org.oscm.app.intf.APPlatformController;
+import org.oscm.app.intf.ControllerAccess;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fujitsu.bss.app.statemachine.StateMachine;
-import com.fujitsu.bss.app.statemachine.api.StateMachineException;
+import org.oscm.app.statemachine.StateMachine;
+import org.oscm.app.statemachine.api.StateMachineException;
 
 @Remote(APPlatformController.class)
 @Stateless(mappedName = "bss/app/controller/" + CONTROLLER_ID)

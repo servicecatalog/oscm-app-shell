@@ -28,9 +28,9 @@ import org.oscm.app.powershell.business.Script;
 import org.oscm.app.powershell.business.api.Powershell;
 import org.oscm.app.powershell.business.api.PowershellCommand;
 import org.oscm.app.powershell.business.api.PowershellStatus;
-import org.oscm.app.v2_0.APPlatformServiceFactory;
-import org.oscm.app.v2_0.data.ProvisioningSettings;
-import org.oscm.app.v2_0.intf.APPlatformService;
+import org.oscm.app.APPlatformServiceFactory;
+import org.oscm.app.data.ProvisioningSettings;
+import org.oscm.app.intf.APPlatformService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

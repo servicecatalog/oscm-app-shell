@@ -6,12 +6,12 @@ import static org.oscm.app.powershell.business.actions.StatemachineEvents.FAILED
 
 import org.oscm.app.powershell.business.Configuration;
 import org.oscm.app.powershell.business.Script;
-import org.oscm.app.v2_0.data.InstanceStatus;
-import org.oscm.app.v2_0.data.ProvisioningSettings;
+import org.oscm.app.data.InstanceStatus;
+import org.oscm.app.data.ProvisioningSettings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fujitsu.bss.app.statemachine.api.StateMachineAction;
+import org.oscm.app.statemachine.api.StateMachineAction;
 
 public class OperationActions {
 
