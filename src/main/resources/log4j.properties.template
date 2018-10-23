@@ -1,0 +1,20 @@
+# Ignore standard logger
+log4j.rootLogger=OFF
+
+org.apache.commons.logging.Log=org.apache.commons.logging.impl.NoOpLog
+log4j.logger.org.apache=OFF
+log4j.logger.httpclient=OFF
+log4j.logger.com.fujitsu.bss.app.powershell=INFO, FILE
+log4j.logger.com.fujitsu.bss.app.statemachine=INFO, FILE
+
+# Rolling File Appender system
+log4j.appender.FILE=org.apache.log4j.RollingFileAppender
+log4j.appender.FILE.File=../logs/app-powershell.log
+log4j.appender.FILE.MaxFileSize=3MB
+log4j.appender.FILE.MaxBackupIndex=5
+log4j.appender.FILE.layout=org.apache.log4j.PatternLayout
+log4j.appender.FILE.layout.ConversionPattern=[%d{yyyy-MM-dd HH:mm:ss}] [%t] %-5p %C{1} %M %m%n
+
+log4j.appender.CONSOLE=org.apache.log4j.ConsoleAppender
+log4j.appender.CONSOLE.layout=org.apache.log4j.PatternLayout
+log4j.appender.CONSOLE.layout.ConversionPattern=[%d{yyyy-MM-dd HH:mm:ss}] [%t] %-5p %C{1} %M %m%n

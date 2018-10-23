@@ -1,0 +1,24 @@
+<states class="com.fujitsu.bss.app.powershell.business.actions.ProvisioningActions">
+
+  <state id="BEGIN" action="executeScript">
+    <event id="executing" state="EXECUTING" />
+    <event id="failed" state="ERROR" />
+  </state>
+
+  <state id="EXECUTING" timeoutSec="${SCRIPT_TIMEOUT_SECONDS}" action="consumeScriptOutput">
+    <event id="success" state="END" />
+    <event id="run" state="EXECUTING" />
+    <event id="error" state="ERROR" />
+  </state>
+
+  <state id="END" action="finalizeProvisioning">
+    <event id="success" state="SUCCESS" />
+    <event id="waiting" state="END" />
+    <event id="failed" state="ERROR" />
+  </state>
+
+  <state id="SUCCESS" />
+  <state id="ERROR" />
+  <state id="REPEAT_FAILED_STATE" />
+
+</states>

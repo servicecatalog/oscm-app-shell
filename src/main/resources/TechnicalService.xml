@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<tns:TechnicalServices 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="oscm.serviceprovisioning/1.9/TechnicalService.xsd ../../oscm-serviceprovisioning/javares/TechnicalServices.xsd"
+  xmlns:tns="oscm.serviceprovisioning/1.9/TechnicalService.xsd">
+  
+  <tns:TechnicalService 
+    id="Powershell" 
+    build="2016-07-19" 
+    accessType="USER" 
+    allowingOnBehalfActing="false" 
+    billingIdentifier="NATIVE_BILLING" 
+    onlyOneSubscriptionPerUser="false"
+    baseUrl=""
+    loginPath="" 
+    provisioningType="ASYNCHRONOUS"
+    provisioningUsername=""
+    provisioningPassword="" 
+    provisioningUrl="https://estesspptest3.intern.est.fujitsu.com:8881/ProvisioningService/AsynchronousProvisioningProxy?wsdl"
+    provisioningVersion="1">
+    
+    <AccessInfo locale="en">Powershell</AccessInfo>
+    <LocalizedDescription locale="en">Service to exeute a Powershell script</LocalizedDescription>
+    <LocalizedLicense locale="en">License Agreement</LocalizedLicense>
+    
+    <ParameterDefinition id="APP_CONTROLLER_ID" valueType="STRING" configurable="false" mandatory="true" default="ess.powershell">
+      <LocalizedDescription locale="en">The ID of config controller</LocalizedDescription>
+    </ParameterDefinition>
+    
+    <ParameterDefinition id="CONSOLE_FILE" valueType="STRING" default="" configurable="true" mandatory="false" >
+      <LocalizedDescription locale="en">Absolute filesystem path to Powershell configuration file</LocalizedDescription>
+    </ParameterDefinition>
+
+    <ParameterDefinition id="PROVISIONING_SCRIPT" valueType="STRING" default="" configurable="true" mandatory="true" >
+      <LocalizedDescription locale="en">Provisioning Script. Absolute filesystem path or URL to script file</LocalizedDescription>
+    </ParameterDefinition>
+
+    <ParameterDefinition id="DEPROVISIONING_SCRIPT" valueType="STRING" default="" configurable="true" mandatory="true" >
+      <LocalizedDescription locale="en">Deprovisioning Script. Absolute filesystem path or URL to script file</LocalizedDescription>
+    </ParameterDefinition>
+
+    <ParameterDefinition id="UPDATE_SCRIPT" valueType="STRING" default="" configurable="true" mandatory="true" >
+      <LocalizedDescription locale="en">Update Script. Absolute filesystem path or URL to script file</LocalizedDescription>
+    </ParameterDefinition>
+
+    <ParameterDefinition id="ASSIGN_USER_SCRIPT" valueType="STRING" default="" configurable="true" mandatory="true" >
+      <LocalizedDescription locale="en">Assign User Script. Absolute filesystem path or URL to script file</LocalizedDescription>
+    </ParameterDefinition>
+
+    <ParameterDefinition id="DEASSIGN_USER_SCRIPT" valueType="STRING" default="" configurable="true" mandatory="true" >
+      <LocalizedDescription locale="en">Deassign User Script. Absolute filesystem path or URL to script file</LocalizedDescription>
+    </ParameterDefinition>
+
+    <ParameterDefinition id="CHECK_STATUS_SCRIPT" valueType="STRING" default="" configurable="true" mandatory="true" >
+      <LocalizedDescription locale="en">Retrieve status of provisioned instance. Absolute filesystem path or URL to script file</LocalizedDescription>
+    </ParameterDefinition>
+
+    <ParameterDefinition id="SCRIPT_TIMEOUT_SECONDS" valueType="INTEGER" default="600" configurable="true" mandatory="true" >
+      <LocalizedDescription locale="en">Number of seconds until a running script is canceled</LocalizedDescription>
+    </ParameterDefinition>
+	
+    <ParameterDefinition id="MY_SCRIPT_PARAM_1" valueType="STRING" default="" configurable="true" mandatory="false" >
+      <LocalizedDescription locale="en">My parameter that is patched into the script</LocalizedDescription>
+    </ParameterDefinition>
+
+    <ParameterDefinition id="MY_SCRIPT_PARAM_X" valueType="STRING" default="" configurable="true" mandatory="false" >
+      <LocalizedDescription locale="en">The parameter X that is patched into the script</LocalizedDescription>
+    </ParameterDefinition>
+    
+    <ParameterDefinition id="OPERATIONS_SCRIPT" valueType="STRING" default="" configurable="true" mandatory="false" >
+      <LocalizedDescription locale="en">Operations Script. Absolute filesystem path or URL to script file</LocalizedDescription>
+    </ParameterDefinition>
+    
+    <ParameterDefinition id="UPDATE_USER_SCRIPT" valueType="STRING" default="" configurable="true" mandatory="false" >
+      <LocalizedDescription locale="en">Update User Script. Absolute filesystem path or URL to script file</LocalizedDescription>
+    </ParameterDefinition>    
+    
+    <ParameterDefinition id="VERFICATION_SCRIPT" valueType="STRING" default="" configurable="true" mandatory="false" >
+      <LocalizedDescription locale="en">Verification Script. Absolute filesystem path or URL to script file</LocalizedDescription>
+    </ParameterDefinition>    
+    
+    <Operation id="OPERATION" actionURL="https://estesspptest3.intern.est.fujitsu.com:8881/OperationService/AsynchronousOperationProxy?wsdl">
+       <LocalizedName locale="en">Executes the OPERATION</LocalizedName>
+       <LocalizedDescription locale="en">Executes the OPERATION</LocalizedDescription>
+    </Operation>    
+
+  </tns:TechnicalService>
+  
+</tns:TechnicalServices>
