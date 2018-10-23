@@ -8,14 +8,15 @@
 
 package com.fujitsu.bss.app.powershell.business;
 
-import static com.fujitsu.bss.app.powershell.business.ConfigurationKey.INSTANCE_ID;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.spy;
+import static org.oscm.app.powershell.business.ConfigurationKey.INSTANCE_ID;
 
 import java.util.HashMap;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.oscm.app.powershell.business.Script;
 import org.oscm.app.v2_0.data.ProvisioningSettings;
 import org.oscm.app.v2_0.data.Setting;
 

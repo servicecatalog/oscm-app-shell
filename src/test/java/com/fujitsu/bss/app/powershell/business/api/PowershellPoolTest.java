@@ -8,15 +8,18 @@
 
 package com.fujitsu.bss.app.powershell.business.api;
 
-import static com.fujitsu.bss.app.powershell.business.api.PowershellStatus.PSSHELL_ERROR;
-import static com.fujitsu.bss.app.powershell.business.api.PowershellStatus.RUNNING;
-import static com.fujitsu.bss.app.powershell.business.api.PowershellStatus.SUCCESS;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.oscm.app.powershell.business.api.PowershellStatus.PSSHELL_ERROR;
+import static org.oscm.app.powershell.business.api.PowershellStatus.RUNNING;
+import static org.oscm.app.powershell.business.api.PowershellStatus.SUCCESS;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.oscm.app.powershell.business.api.PowershellCommand;
+import org.oscm.app.powershell.business.api.PowershellPool;
+import org.oscm.app.powershell.business.api.PowershellStatus;
 
 public class PowershellPoolTest {
 

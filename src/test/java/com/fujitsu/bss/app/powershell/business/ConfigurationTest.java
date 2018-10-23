@@ -12,6 +12,7 @@ import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.oscm.app.powershell.business.Configuration;
 import org.oscm.app.v2_0.data.ProvisioningSettings;
 import org.oscm.app.v2_0.data.ServiceUser;
 import org.oscm.app.v2_0.data.Setting;

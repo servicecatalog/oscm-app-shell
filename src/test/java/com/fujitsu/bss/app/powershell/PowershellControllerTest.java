@@ -1,20 +1,20 @@
 package com.fujitsu.bss.app.powershell;
 
-import static com.fujitsu.bss.app.powershell.business.ConfigurationKey.ASSIGN_USER_SCRIPT;
-import static com.fujitsu.bss.app.powershell.business.ConfigurationKey.CHECK_STATUS_SCRIPT;
-import static com.fujitsu.bss.app.powershell.business.ConfigurationKey.CONSOLE_FILE;
-import static com.fujitsu.bss.app.powershell.business.ConfigurationKey.DEASSIGN_USER_SCRIPT;
-import static com.fujitsu.bss.app.powershell.business.ConfigurationKey.DEPROVISIONING_SCRIPT;
-import static com.fujitsu.bss.app.powershell.business.ConfigurationKey.INSTANCE_ID;
-import static com.fujitsu.bss.app.powershell.business.ConfigurationKey.PROVISIONING_SCRIPT;
-import static com.fujitsu.bss.app.powershell.business.ConfigurationKey.SCRIPT_FILE;
-import static com.fujitsu.bss.app.powershell.business.ConfigurationKey.UPDATE_SCRIPT;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
+import static org.oscm.app.powershell.business.ConfigurationKey.ASSIGN_USER_SCRIPT;
+import static org.oscm.app.powershell.business.ConfigurationKey.CHECK_STATUS_SCRIPT;
+import static org.oscm.app.powershell.business.ConfigurationKey.CONSOLE_FILE;
+import static org.oscm.app.powershell.business.ConfigurationKey.DEASSIGN_USER_SCRIPT;
+import static org.oscm.app.powershell.business.ConfigurationKey.DEPROVISIONING_SCRIPT;
+import static org.oscm.app.powershell.business.ConfigurationKey.INSTANCE_ID;
+import static org.oscm.app.powershell.business.ConfigurationKey.PROVISIONING_SCRIPT;
+import static org.oscm.app.powershell.business.ConfigurationKey.SCRIPT_FILE;
+import static org.oscm.app.powershell.business.ConfigurationKey.UPDATE_SCRIPT;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -23,12 +23,12 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.oscm.app.powershell.PowershellController;
+import org.oscm.app.powershell.business.Configuration;
 import org.oscm.app.v2_0.data.InstanceDescription;
 import org.oscm.app.v2_0.data.ProvisioningSettings;
 import org.oscm.app.v2_0.data.ServiceUser;
 import org.oscm.app.v2_0.data.Setting;
-
-import com.fujitsu.bss.app.powershell.business.Configuration;
 
 public class PowershellControllerTest {
 
