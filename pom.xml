@@ -118,11 +118,6 @@
       <version>0.5</version>
     </dependency>
     <dependency>
-      <groupId>com.fujitsu.bss</groupId>
-      <artifactId>fujitsu-bss-client</artifactId>
-      <version>17.1.0</version>
-    </dependency>
-    <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
       <version>2.5</version>
@@ -158,11 +153,6 @@
       <url>https://jitpack.io</url>
     </repository>
 
-    <repository>
-      <id>artifactory</id>
-      <name>artifactory-releases</name>
-      <url>http://artifactory.intern.est.fujitsu.com/artifactory/libs-release-local</url>
-    </repository>
   </repositories>
 
 </project>
