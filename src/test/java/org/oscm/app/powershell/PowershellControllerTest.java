@@ -1,4 +1,4 @@
-package com.fujitsu.bss.app.powershell;
+package org.oscm.app.powershell;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyObject;

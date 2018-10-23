@@ -6,7 +6,7 @@
  *
  *******************************************************************************/
 
-package com.fujitsu.bss.app.powershell.business.api;
+package org.oscm.app.powershell.business.api;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
