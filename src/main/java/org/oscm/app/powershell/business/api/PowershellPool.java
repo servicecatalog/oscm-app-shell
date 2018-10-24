@@ -23,7 +23,7 @@ import javax.ejb.ConcurrencyManagement;
 import javax.ejb.Lock;
 import javax.ejb.Singleton;
 
-import org.oscm.app.exceptions.APPlatformException;
+import org.oscm.app.v2_0.exceptions.APPlatformException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

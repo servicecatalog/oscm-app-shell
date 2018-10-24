@@ -17,8 +17,8 @@ import java.util.HashMap;
 import org.junit.Before;
 import org.junit.Test;
 import org.oscm.app.powershell.business.Script;
-import org.oscm.app.data.ProvisioningSettings;
-import org.oscm.app.data.Setting;
+import org.oscm.app.v2_0.data.ProvisioningSettings;
+import org.oscm.app.v2_0.data.Setting;
 
 public class ScriptTest {
 

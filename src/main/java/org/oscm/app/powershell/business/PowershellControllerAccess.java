@@ -11,11 +11,11 @@ package org.oscm.app.powershell.business;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.oscm.app.APPlatformServiceFactory;
-import org.oscm.app.data.ControllerSettings;
-import org.oscm.app.exceptions.APPlatformException;
-import org.oscm.app.i18n.Messages;
-import org.oscm.app.intf.ControllerAccess;
+import org.oscm.app.v2_0.APPlatformServiceFactory;
+import org.oscm.app.v2_0.data.ControllerSettings;
+import org.oscm.app.v2_0.exceptions.APPlatformException;
+import org.oscm.app.v2_0.i18n.Messages;
+import org.oscm.app.v2_0.intf.ControllerAccess;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

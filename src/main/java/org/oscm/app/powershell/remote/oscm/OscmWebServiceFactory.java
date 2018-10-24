@@ -5,8 +5,8 @@ import java.util.HashMap;
 
 import javax.inject.Inject;
 
-import org.oscm.app.BSSWebServiceFactory;
-import org.oscm.app.data.PasswordAuthentication;
+import org.oscm.app.v2_0.BSSWebServiceFactory;
+import org.oscm.app.v2_0.data.PasswordAuthentication;
 import org.oscm.app.powershell.remote.app.AesEncrypterWithKeyFile;
 import org.oscm.app.powershell.remote.app.AppDatabaseClient;
 

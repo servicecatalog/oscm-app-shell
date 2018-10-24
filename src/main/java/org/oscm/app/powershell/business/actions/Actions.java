@@ -17,8 +17,8 @@ import org.oscm.app.powershell.business.api.PowershellCommand;
 import org.oscm.app.powershell.business.api.PowershellPool;
 import org.oscm.app.powershell.business.api.PowershellPoolException;
 import org.oscm.app.powershell.business.api.PowershellStatus;
-import org.oscm.app.data.InstanceStatus;
-import org.oscm.app.data.ProvisioningSettings;
+import org.oscm.app.v2_0.data.InstanceStatus;
+import org.oscm.app.v2_0.data.ProvisioningSettings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

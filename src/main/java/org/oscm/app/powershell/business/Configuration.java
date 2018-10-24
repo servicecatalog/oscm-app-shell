@@ -13,9 +13,9 @@ import static org.oscm.app.powershell.business.ConfigurationKey.REQUESTING_USER_
 import java.util.ArrayList;
 import java.util.List;
 
-import org.oscm.app.data.ProvisioningSettings;
-import org.oscm.app.data.ServiceUser;
-import org.oscm.app.data.Setting;
+import org.oscm.app.v2_0.data.ProvisioningSettings;
+import org.oscm.app.v2_0.data.ServiceUser;
+import org.oscm.app.v2_0.data.Setting;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
