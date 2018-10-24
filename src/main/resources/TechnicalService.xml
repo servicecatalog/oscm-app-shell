@@ -16,7 +16,7 @@
     provisioningType="ASYNCHRONOUS"
     provisioningUsername=""
     provisioningPassword="" 
-    provisioningUrl="https://estesspptest3.intern.est.fujitsu.com:8881/ProvisioningService/AsynchronousProvisioningProxy?wsdl"
+    provisioningUrl="http://oscm-app:8880/ProvisioningService/AsynchronousProvisioningProxy?wsdl"
     provisioningVersion="1">
     
     <AccessInfo locale="en">Powershell</AccessInfo>
