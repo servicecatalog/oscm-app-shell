@@ -1,9 +1,9 @@
 /*******************************************************************************
- *
- *  COPYRIGHT (C) 2017 FUJITSU Limited - ALL RIGHTS RESERVED.
- *
- *  Creation Date: 02.02.2017
- *
+ *                                                                              
+ *  Copyright FUJITSU LIMITED 2018                                           
+ *                                                                                                                                 
+ *  Creation Date: Aug 2, 2017                                                      
+ *                                                                              
  *******************************************************************************/
 
 package org.oscm.app.powershell.business.actions;

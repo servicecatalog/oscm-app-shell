@@ -1,10 +1,11 @@
 /*******************************************************************************
- *
- *  COPYRIGHT (C) 2013 FUJITSU Limited - ALL RIGHTS RESERVED. 
- *
- *  Creation Date: 01.02.2013
+ *                                                                              
+ *  Copyright FUJITSU LIMITED 2018                                           
+ *                                                                                                                                 
+ *  Creation Date: Aug 2, 2017                                                      
  *                                                                              
  *******************************************************************************/
+
 package org.oscm.app.powershell.business.api;
 
 import static javax.ejb.ConcurrencyManagementType.CONTAINER;

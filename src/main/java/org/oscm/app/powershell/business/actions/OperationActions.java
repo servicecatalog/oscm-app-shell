@@ -1,3 +1,11 @@
+/*******************************************************************************
+ *                                                                              
+ *  Copyright FUJITSU LIMITED 2018                                           
+ *                                                                                                                                 
+ *  Creation Date: Aug 2, 2017                                                      
+ *                                                                              
+ *******************************************************************************/
+
 package org.oscm.app.powershell.business.actions;
 
 import static org.oscm.app.powershell.business.ConfigurationKey.SCRIPT_FILE;
