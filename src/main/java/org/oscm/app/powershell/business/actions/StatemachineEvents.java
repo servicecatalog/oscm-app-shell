@@ -5,12 +5,6 @@
  *  Creation Date: Aug 2, 2017                                                      
  *                                                                              
  *******************************************************************************/
-
- *
- *  Creation Date: 20.03.2017
- *
- *******************************************************************************/
-
 package org.oscm.app.powershell.business.actions;
 
 public interface StatemachineEvents {
