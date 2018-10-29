@@ -29,7 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Manages a number of PowerShell sessions. The pool can grow up to 100 shells.
+ * Manages a number of Shell sessions. The pool can grow up to 100 shells.
  */
 @Singleton
 @ConcurrencyManagement(CONTAINER)
@@ -60,7 +60,7 @@ public class ShellPool {
     }
 
     /**
-     * Starts a PowerShell script in the first available PowerShell from a shell
+     * Starts a Shell script in the first available Shell from a shell
      * pool. If all shells are busy a new shell is created and added to the pool.
      * 
      * @param command
@@ -68,7 +68,7 @@ public class ShellPool {
      * @param lockId
      *            identifies a shell in the pool
      * @param shellConsoleFile
-     *            absolute filesystem path to PowerShell configuration file
+     *            absolute filesystem path to Shell configuration file
      */
     @Lock(WRITE)
     public ShellStatus runCommand(ShellCommand command, String lockId, String shellConsoleFile)
@@ -76,7 +76,7 @@ public class ShellPool {
 
 	for (Shell shell : shellPool) {
 
-	    if (shell.lockPowerShell(lockId)) {
+	    if (shell.lockShell(lockId)) {
 		ShellStatus result = shell.runCommand(lockId, command);
 
 		if (result == STDIN_CLOSED) {
@@ -93,7 +93,7 @@ public class ShellPool {
 
 	if (shellctrl.tryAcquire()) {
 	    Shell newshell = new Shell(shellConsoleFile);
-	    newshell.lockPowerShell(lockId);
+	    newshell.lockShell(lockId);
 	    shellPool.add(newshell);
 	    LOG.debug("new shell created and locked for " + newshell.isLockedFor());
 

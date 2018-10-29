@@ -191,7 +191,7 @@ public class ShellController implements APPlatformController {
             ShellCommand command = new ShellCommand(script.get());
 
             try (Shell shell = new Shell();) {
-                shell.lockPowerShell(config.getSetting(INSTANCE_ID));
+                shell.lockShell(config.getSetting(INSTANCE_ID));
                 shell.runCommand(config.getSetting(INSTANCE_ID), command);
                 long ref = currentTimeMillis();
                 ShellStatus rc;

@@ -91,7 +91,7 @@ public class ShellBean implements Serializable {
 	    LOGGER.debug("script: " + script.get());
 
 	    command.init(script.get());
-	    shell.lockPowerShell(instanceId);
+	    shell.lockShell(instanceId);
 	    shell.runCommand(instanceId, command);
 
 	    ShellStatus rc;

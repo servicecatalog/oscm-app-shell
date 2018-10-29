@@ -32,7 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * PowerShell runtime used to execute PowerShell scripts
+ * Shell runtime used to execute Shell scripts
  */
 public class Shell implements AutoCloseable {
 
@@ -50,17 +50,17 @@ public class Shell implements AutoCloseable {
     private volatile String lockId;
 
     /**
-     * Input stream of PowerShell console
+     * Input stream of Shell console
      */
     private final BufferedWriter stdIn;
 
     /**
-     * Output of the PowerShell console
+     * Output of the Shell console
      */
     private final StreamGobbler stdOut;
 
     /**
-     * Error stream of PowerShell console
+     * Error stream of Shell console
      */
     private final StreamGobbler stdErr;
 
@@ -72,9 +72,9 @@ public class Shell implements AutoCloseable {
 
     public Shell(String psconsole) throws IOException, APPlatformException {
 	if (psconsole == null || psconsole.isEmpty()) {
-	    psconsole = "shell -ExecutionPolicy Bypass -NoExit -";
+	    psconsole = "powershell -ExecutionPolicy Bypass -NoExit -";
 	} else {
-	    psconsole = "shell -PSConsoleFile \"" + psconsole + "\" -ExecutionPolicy Bypass -NoExit -";
+	    psconsole = "powershell -PSConsoleFile \"" + psconsole + "\" -ExecutionPolicy Bypass -NoExit -";
 	}
 
 	shell = Runtime.getRuntime().exec(psconsole);
@@ -155,7 +155,7 @@ public class Shell implements AutoCloseable {
     }
 
     /**
-     * returns lock status of PowerShell runtime
+     * returns lock status of Shell runtime
      * 
      * @return lock status: true, if shell is locked / false, if shell is free
      */
@@ -164,7 +164,7 @@ public class Shell implements AutoCloseable {
     }
 
     /**
-     * returns lock status of PowerShell runtime utilizing id of calling command
+     * returns lock status of Shell runtime utilizing id of calling command
      * from API class
      * 
      * @return caller id, if shell is locked / empty string, if shell is free
@@ -174,12 +174,12 @@ public class Shell implements AutoCloseable {
     }
 
     /**
-     * locks PowerShell runtime, if unlocked
+     * locks Shell runtime, if unlocked
      * 
      * @return lock status: true, if shell has been free and is now locked / false,
      *         if shell was already locked and could not be locked
      */
-    public boolean lockPowerShell(String lockId) {
+    public boolean lockShell(String lockId) {
 	if (this.lockId == null) {
 	    this.lockId = lockId;
 	    return true;
@@ -190,7 +190,7 @@ public class Shell implements AutoCloseable {
 
     /**
      * Flushes all pipes (StdIn, StdOut, StdErr), interrupts gobbler threads and
-     * terminates PowerShell runtime
+     * terminates Shell runtime
      */
     @Override
     public void close() {
@@ -217,7 +217,7 @@ public class Shell implements AutoCloseable {
     }
 
     /**
-     * Capture PowerShell script output.
+     * Capture Shell script output.
      * 
      * @param command
      *            the shell to consume the output from

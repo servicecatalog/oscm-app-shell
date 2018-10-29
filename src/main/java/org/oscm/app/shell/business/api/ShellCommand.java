@@ -11,7 +11,7 @@ package org.oscm.app.shell.business.api;
 import java.util.ArrayList;
 
 /**
- * PowerShell command output validation
+ * Shell command output validation
  */
 public class ShellCommand {
 

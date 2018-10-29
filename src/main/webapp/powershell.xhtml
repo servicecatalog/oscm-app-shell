@@ -17,14 +17,14 @@
 </h:head>
 
 <f:metadata>
-    <f:viewParam name="subId" value="#{powershellBean.subscriptionId}" maxlength="100"/>
-    <f:viewParam name="orgId" value="#{powershellBean.organizationId}" maxlength="100"/>
-    <f:viewParam name="instId" value="#{powershellBean.instanceId}" maxlength="100"/>
+    <f:viewParam name="subId" value="#{shellBean.subscriptionId}" maxlength="100"/>
+    <f:viewParam name="orgId" value="#{shellBean.organizationId}" maxlength="100"/>
+    <f:viewParam name="instId" value="#{shellBean.instanceId}" maxlength="100"/>
 </f:metadata>
 
 <h:body>
   <h:form>
-      <rich:dataTable id="statusTable" value="#{powershellBean.status}" var="status">
+      <rich:dataTable id="statusTable" value="#{shellBean.status}" var="status">
           <rich:column>
               <h:outputText value="#{status}" />
           </rich:column>
