@@ -1,34 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
-
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" version="3.0">
   <welcome-file-list>
-    <welcome-file>powershell.xhtml</welcome-file>
+    <welcome-file>shell.xhtml</welcome-file>
   </welcome-file-list>
-
   <context-param>
     <param-name>org.richfaces.skin</param-name>
     <param-value>plain</param-value>
   </context-param>
-
   <context-param>
     <param-name>org.richfaces.push.jms.enabled</param-name>
     <param-value>false</param-value>
   </context-param>
-
   <servlet>
     <servlet-name>FacesServlet</servlet-name>
     <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
   </servlet>
-
   <servlet-mapping>
     <servlet-name>FacesServlet</servlet-name>
     <url-pattern>*.xhtml</url-pattern>
   </servlet-mapping>
-
   <error-page>
     <exception-type>javax.faces.application.ViewExpiredException</exception-type>
-    <location>/powershell.xhtml</location>
+    <location>/shell.xhtml</location>
   </error-page>
-
 </web-app>

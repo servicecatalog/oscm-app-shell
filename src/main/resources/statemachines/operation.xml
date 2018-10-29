@@ -1,4 +1,4 @@
-<states class="org.oscm.app.powershell.business.actions.OperationActions">
+<states class="org.oscm.app.shell.business.actions.OperationActions">
 
   <state id="BEGIN" action="executeScript">
     <event id="executing" state="EXECUTING" />

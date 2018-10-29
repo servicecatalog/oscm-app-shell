@@ -5,7 +5,7 @@
   xmlns:tns="oscm.serviceprovisioning/1.9/TechnicalService.xsd">
   
   <tns:TechnicalService 
-    id="Powershell" 
+    id="Shell" 
     build="2016-07-19" 
     accessType="USER" 
     allowingOnBehalfActing="false" 
@@ -19,16 +19,16 @@
     provisioningUrl="http://oscm-app:8880/ProvisioningService/AsynchronousProvisioningProxy?wsdl"
     provisioningVersion="1">
     
-    <AccessInfo locale="en">Powershell</AccessInfo>
-    <LocalizedDescription locale="en">Service to exeute a Powershell script</LocalizedDescription>
+    <AccessInfo locale="en">Shell</AccessInfo>
+    <LocalizedDescription locale="en">Service to exeute a Shell script</LocalizedDescription>
     <LocalizedLicense locale="en">License Agreement</LocalizedLicense>
     
-    <ParameterDefinition id="APP_CONTROLLER_ID" valueType="STRING" configurable="false" mandatory="true" default="ess.powershell">
+    <ParameterDefinition id="APP_CONTROLLER_ID" valueType="STRING" configurable="false" mandatory="true" default="ess.shell">
       <LocalizedDescription locale="en">The ID of config controller</LocalizedDescription>
     </ParameterDefinition>
     
     <ParameterDefinition id="CONSOLE_FILE" valueType="STRING" default="" configurable="true" mandatory="false" >
-      <LocalizedDescription locale="en">Absolute filesystem path to Powershell configuration file</LocalizedDescription>
+      <LocalizedDescription locale="en">Absolute filesystem path to Shell configuration file</LocalizedDescription>
     </ParameterDefinition>
 
     <ParameterDefinition id="PROVISIONING_SCRIPT" valueType="STRING" default="" configurable="true" mandatory="true" >

@@ -3,7 +3,7 @@
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.oscm</groupId>
-  <artifactId>powershell-controller</artifactId>
+  <artifactId>shell-controller</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <packaging>war</packaging>
 
@@ -67,7 +67,7 @@
           <version>3.2.0</version>
           <configuration>
             <failOnMissingWebXml>false</failOnMissingWebXml>
-            <packagingExcludes>**/PowershellIntegration.docx,**/TechnicalService.xml</packagingExcludes>
+            <packagingExcludes>**/ShellIntegration.docx,**/TechnicalService.xml</packagingExcludes>
           </configuration>
         </plugin>
       </plugins>
