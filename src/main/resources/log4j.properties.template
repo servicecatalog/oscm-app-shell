@@ -4,8 +4,8 @@ log4j.rootLogger=OFF
 org.apache.commons.logging.Log=org.apache.commons.logging.impl.NoOpLog
 log4j.logger.org.apache=OFF
 log4j.logger.httpclient=OFF
-log4j.logger.com.fujitsu.bss.app.shell=INFO, FILE
-log4j.logger.com.fujitsu.bss.app.statemachine=INFO, FILE
+log4j.logger.org.oscm.app.shell=INFO, FILE
+log4j.logger.org.oscm.app.statemachine=INFO, FILE
 
 # Rolling File Appender system
 log4j.appender.FILE=org.apache.log4j.RollingFileAppender
