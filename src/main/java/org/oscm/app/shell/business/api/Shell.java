@@ -72,9 +72,9 @@ public class Shell implements AutoCloseable {
 
     public Shell(String psconsole) throws IOException, APPlatformException {
 	if (psconsole == null || psconsole.isEmpty()) {
-	    psconsole = "powershell -ExecutionPolicy Bypass -NoExit -";
+	    psconsole = "pwsh -ExecutionPolicy Bypass -NoExit -";
 	} else {
-	    psconsole = "powershell -PSConsoleFile \"" + psconsole + "\" -ExecutionPolicy Bypass -NoExit -";
+	    psconsole = "pwsh -PSConsoleFile \"" + psconsole + "\" -ExecutionPolicy Bypass -NoExit -";
 	}
 
 	shell = Runtime.getRuntime().exec(psconsole);

@@ -42,78 +42,78 @@ public class Initializer {
     private ControllerAccess controllerAccess;
 
     public void setControllerAccess(final ControllerAccess controllerAccess) {
-	this.controllerAccess = controllerAccess;
+        this.controllerAccess = controllerAccess;
     }
 
     @PostConstruct
     private void postConstruct() {
-	try {
-	    String instanceRoot = System.getProperty("com.sun.aas.instanceRoot");
-	    if (instanceRoot != null) {
-		File root = new File(instanceRoot);
-		if (root.isDirectory()) {
-		    String filePath = "/config/log4j." + controllerAccess.getControllerId() + ".properties";
-		    logFile = new File(root, filePath);
-		    if (!logFile.exists()) {
-			publishTemplateFile();
-		    }
-		    handleOnChange(logFile);
-		    LOG.debug("Enable timer service for monitoring modification of " + logFile.getPath());
-		    initialzeTimerService();
-		} else {
-		    LOG.error("Failed to initialize log file: invalid instanceRoot " + instanceRoot);
-		    logFile = null;
-		}
-	    } else {
-		LOG.error("Failed to initialize log file: missing system property 'com.sun.aas.instanceRoot'");
-	    }
-	} catch (Exception e) {
-	    LOG.error("Failed to initialize log file", e);
-	    logFile = null;
-	}
+        try {
+            String instanceRoot = System.getProperty("catalina.home");
+            if (instanceRoot != null) {
+                File root = new File(instanceRoot);
+                if (root.isDirectory()) {
+                    String filePath = "/conf/log4j." + controllerAccess.getControllerId() + ".properties";
+                    logFile = new File(root, filePath);
+                    if (!logFile.exists()) {
+                        publishTemplateFile();
+                    }
+                    handleOnChange(logFile);
+                    LOG.debug("Enable timer service for monitoring modification of " + logFile.getPath());
+                    initializeTimerService();
+                } else {
+                    LOG.error("Failed to initialize log file: invalid instanceRoot " + instanceRoot);
+                    logFile = null;
+                }
+            } else {
+                LOG.error("Failed to initialize log file: missing system property 'com.sun.aas.instanceRoot'");
+            }
+        } catch (Exception e) {
+            LOG.error("Failed to initialize log file", e);
+            logFile = null;
+        }
     }
 
-    private void initialzeTimerService() {
-	Collection<?> timers = timerService.getTimers();
-	if (timers.isEmpty()) {
-	    timerService.createTimer(0, TIMER_DELAY_VALUE, null);
-	}
+    private void initializeTimerService() {
+        Collection<?> timers = timerService.getTimers();
+        if (timers.isEmpty()) {
+            timerService.createTimer(0, TIMER_DELAY_VALUE, null);
+        }
     }
 
     private void publishTemplateFile() throws Exception {
-	try (InputStream is = controllerAccess.getClass().getClassLoader().getResourceAsStream(LOG4J_TEMPLATE);) {
-	    if (is == null) {
-		LOG.warn("Template file not found: " + LOG4J_TEMPLATE);
-	    } else if (logFile.getParentFile().exists()) {
-		FileUtils.writeByteArrayToFile(logFile, IOUtils.toByteArray(is));
-	    }
-	} catch (Exception e) {
-	    // ignore
-	    LOG.error("Failed to publish template file from " + LOG4J_TEMPLATE + " to " + logFile.getAbsolutePath(), e);
-	}
+        try (InputStream is = controllerAccess.getClass().getClassLoader().getResourceAsStream(LOG4J_TEMPLATE);) {
+            if (is == null) {
+                LOG.warn("Template file not found: " + LOG4J_TEMPLATE);
+            } else if (logFile.getParentFile().exists()) {
+                FileUtils.writeByteArrayToFile(logFile, IOUtils.toByteArray(is));
+            }
+        } catch (Exception e) {
+            // ignore
+            LOG.error("Failed to publish template file from " + LOG4J_TEMPLATE + " to " + logFile.getAbsolutePath(), e);
+        }
     }
 
     @Timeout
     public void handleTimer(@SuppressWarnings("unused") Timer timer) {
-	if (logFile != null) {
-	    handleOnChange(logFile);
-	}
+        if (logFile != null) {
+            handleOnChange(logFile);
+        }
     }
 
     void handleOnChange(File logFile) {
-	try {
-	    long lastModif = logFile.lastModified();
-	    if (lastModif > logFileLastModified) {
-		logFileLastModified = lastModif;
-		LOG.debug("Reload log4j configuration from " + logFile.getAbsolutePath());
-		new PropertyConfigurator().doConfigure(logFile.getAbsolutePath(), LogManager.getLoggerRepository());
-		logFileWarning = false;
-	    }
-	} catch (Exception e) {
-	    if (!logFileWarning) {
-		logFileWarning = true;
-		LOG.error(logFile.getAbsolutePath(), e);
-	    }
-	}
+        try {
+            long lastModif = logFile.lastModified();
+            if (lastModif > logFileLastModified) {
+                logFileLastModified = lastModif;
+                LOG.debug("Reload log4j configuration from " + logFile.getAbsolutePath());
+                new PropertyConfigurator().doConfigure(logFile.getAbsolutePath(), LogManager.getLoggerRepository());
+                logFileWarning = false;
+            }
+        } catch (Exception e) {
+            if (!logFileWarning) {
+                logFileWarning = true;
+                LOG.error(logFile.getAbsolutePath(), e);
+            }
+        }
     }
 }

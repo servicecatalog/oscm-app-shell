@@ -16,7 +16,7 @@
     provisioningType="ASYNCHRONOUS"
     provisioningUsername=""
     provisioningPassword="" 
-    provisioningUrl="http://oscm-app:8880/ProvisioningService/AsynchronousProvisioningProxy?wsdl"
+    provisioningUrl="http://oscm-app:8880/oscm-app/webservices/oscm-app/oscm-app/org.oscm.app.v2_0.service.AsynchronousProvisioningProxy?wsdl"
     provisioningVersion="1">
     
     <AccessInfo locale="en">Shell</AccessInfo>
@@ -79,7 +79,7 @@
       <LocalizedDescription locale="en">Verification Script. Absolute filesystem path or URL to script file</LocalizedDescription>
     </ParameterDefinition>    
     
-    <Operation id="OPERATION" actionURL="https://estesspptest3.intern.est.fujitsu.com:8881/OperationService/AsynchronousOperationProxy?wsdl">
+    <Operation id="OPERATION" actionURL="http://oscm-app:8880/oscm-app/webservices/oscm-app/oscm-app/org.oscm.app.v2_0.service.AsynchronousOperationProxy?wsdl">
        <LocalizedName locale="en">Executes the OPERATION</LocalizedName>
        <LocalizedDescription locale="en">Executes the OPERATION</LocalizedDescription>
     </Operation>    
