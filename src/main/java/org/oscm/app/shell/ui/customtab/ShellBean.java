@@ -1,11 +1,8 @@
 /*******************************************************************************
  *                                                                              
- *  Copyright FUJITSU LIMITED 2017
+ *  Copyright FUJITSU LIMITED 2018
  *       
- *  AWS controller implementation for the 
- *  Asynchronous Provisioning Platform (APP)
- *       
- *  Creation Date: 2013-10-17                                                      
+ *  Creation Date: 2017-10-17                                                      
  *                                                                              
  *******************************************************************************/
 package org.oscm.app.shell.ui.customtab;
