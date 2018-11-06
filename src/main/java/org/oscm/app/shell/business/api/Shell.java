@@ -1,9 +1,9 @@
 /*******************************************************************************
- *                                                                              
+ *
  *  Copyright FUJITSU LIMITED 2018                                           
- *                                                                                                                                 
+ *
  *  Creation Date: Aug 2, 2017                                                      
- *                                                                              
+ *
  *******************************************************************************/
 package org.oscm.app.shell.business.api;
 
@@ -67,125 +67,128 @@ public class Shell implements AutoCloseable {
     private ShellCommand command;
 
     public Shell() throws IOException, APPlatformException {
-	this(null);
+        this(null);
     }
 
     public Shell(String psconsole) throws IOException, APPlatformException {
-	if (psconsole == null || psconsole.isEmpty()) {
-	    psconsole = "pwsh -ExecutionPolicy Bypass -NoExit -";
-	} else {
-	    psconsole = "pwsh -PSConsoleFile \"" + psconsole + "\" -ExecutionPolicy Bypass -NoExit -";
-	}
 
-	shell = Runtime.getRuntime().exec(psconsole);
+        //TODO: psconsole was powershell configuration file, is it still needed for shell scripts
 
-	stdIn = new BufferedWriter(new OutputStreamWriter(shell.getOutputStream()));
-	stdOut = new StreamGobbler(shell.getInputStream());
-	stdErr = new StreamGobbler(shell.getErrorStream());
+        if (psconsole == null || psconsole.isEmpty()) {
+            psconsole = "sh";
+        } else {
+            //psconsole = "sh -PSConsoleFile \"" + psconsole + "\" -ExecutionPolicy Bypass -NoExit -";
+        }
 
-	if (!stdErr.buffer.isEmpty()) {
-	    throw new APPlatformException(
-		    "Shell initialization problem, error stream not empty: " + join("", stdErr.buffer));
-	}
+        shell = Runtime.getRuntime().exec(psconsole);
 
-	if (!stdOut.buffer.isEmpty()) {
-	    stdOut.buffer.clear();
-	}
+        stdIn = new BufferedWriter(new OutputStreamWriter(shell.getOutputStream()));
+        stdOut = new StreamGobbler(shell.getInputStream());
+        stdErr = new StreamGobbler(shell.getErrorStream());
 
-	lockId = null;
+        if (!stdErr.buffer.isEmpty()) {
+            throw new APPlatformException(
+                    "Shell initialization problem, error stream not empty: " + join("", stdErr.buffer));
+        }
+
+        if (!stdOut.buffer.isEmpty()) {
+            stdOut.buffer.clear();
+        }
+
+        lockId = null;
     }
 
     public ShellStatus runCommand(final String lockId, final ShellCommand command) {
-	if (!lockId.equals(this.lockId)) {
-	    LOG.error("shell called by " + lockId + ", but locked for " + this.lockId);
-	    return CALLERID_DOES_NOT_MATCH;
-	}
+        if (!lockId.equals(this.lockId)) {
+            LOG.error("shell called by " + lockId + ", but locked for " + this.lockId);
+            return CALLERID_DOES_NOT_MATCH;
+        }
 
-	this.command = command;
-	try {
-	    LOG.debug(String.format("lockId: %s, command:\n%s", lockId, command.getCommand()));
-	    stdIn.write(command.getCommand());
-	    stdIn.newLine();
-	    stdIn.flush();
-	} catch (IOException e) {
-	    LOG.error("lockId: " + lockId + " failed to write command to shell stdin", e);
-	    return STDIN_CLOSED;
-	}
+        this.command = command;
+        try {
+            LOG.debug(String.format("lockId: %s, command:\n%s", lockId, command.getCommand()));
+            stdIn.write(command.getCommand());
+            stdIn.newLine();
+            stdIn.flush();
+        } catch (IOException e) {
+            LOG.error("lockId: " + lockId + " failed to write command to shell stdin", e);
+            return STDIN_CLOSED;
+        }
 
-	return RUNNING;
+        return RUNNING;
     }
 
     public String getOutput(String lockId) {
-	StringBuffer sb = new StringBuffer();
-	for (String line : command.getOutput()) {
-	    sb.append(line);
-	    sb.append("\n\t");
-	}
-	String output = sb.toString();
-	LOG.trace("lockId: " + lockId + " found shell with output: " + output);
-	return output;
+        StringBuffer sb = new StringBuffer();
+        for (String line : command.getOutput()) {
+            sb.append(line);
+            sb.append("\n\t");
+        }
+        String output = sb.toString();
+        LOG.trace("lockId: " + lockId + " found shell with output: " + output);
+        return output;
     }
 
     public String getErrorOutput(String lockId) {
-	StringBuffer sb = new StringBuffer();
-	for (String line : command.getError()) {
-	    sb.append(line);
-	    sb.append("\n\t");
-	}
-	String output = sb.toString();
-	LOG.trace("lockId: " + lockId + " found shell with error output: " + output);
-	return output;
+        StringBuffer sb = new StringBuffer();
+        for (String line : command.getError()) {
+            sb.append(line);
+            sb.append("\n\t");
+        }
+        String output = sb.toString();
+        LOG.trace("lockId: " + lockId + " found shell with error output: " + output);
+        return output;
     }
 
     public ShellStatus consumeOutput(String lockId) {
-	if (!lockId.equals(this.lockId)) {
-	    LOG.error("shell called by " + lockId + ", but locked for " + this.lockId);
-	    return CALLERID_DOES_NOT_MATCH;
-	}
-	if (command.getReturnCode() == SUCCESS) {
-	    return SUCCESS;
-	}
+        if (!lockId.equals(this.lockId)) {
+            LOG.error("shell called by " + lockId + ", but locked for " + this.lockId);
+            return CALLERID_DOES_NOT_MATCH;
+        }
+        if (command.getReturnCode() == SUCCESS) {
+            return SUCCESS;
+        }
 
-	return getCmdOutput();
+        return getCmdOutput();
     }
 
     public void unlock() {
-	LOG.trace("callerid: " + lockId + " shell has been unlocked");
-	lockId = null;
+        LOG.trace("callerid: " + lockId + " shell has been unlocked");
+        lockId = null;
     }
 
     /**
      * returns lock status of Shell runtime
-     * 
+     *
      * @return lock status: true, if shell is locked / false, if shell is free
      */
     public boolean isLocked() {
-	return (lockId == null ? false : true);
+        return (lockId == null ? false : true);
     }
 
     /**
      * returns lock status of Shell runtime utilizing id of calling command
      * from API class
-     * 
+     *
      * @return caller id, if shell is locked / empty string, if shell is free
      */
     public String isLockedFor() {
-	return (lockId == null ? "" : lockId);
+        return (lockId == null ? "" : lockId);
     }
 
     /**
      * locks Shell runtime, if unlocked
-     * 
+     *
      * @return lock status: true, if shell has been free and is now locked / false,
-     *         if shell was already locked and could not be locked
+     * if shell was already locked and could not be locked
      */
     public boolean lockShell(String lockId) {
-	if (this.lockId == null) {
-	    this.lockId = lockId;
-	    return true;
-	}
+        if (this.lockId == null) {
+            this.lockId = lockId;
+            return true;
+        }
 
-	return false;
+        return false;
     }
 
     /**
@@ -194,88 +197,85 @@ public class Shell implements AutoCloseable {
      */
     @Override
     public void close() {
-	try {
-	    stdIn.write("exit;");
-	    stdIn.flush();
-	} catch (IOException ioe) {
-	    // ignore
-	} finally {
-	    silentlyCloseStdIn();
-	}
+        try {
+            stdIn.write("exit;");
+            stdIn.flush();
+        } catch (IOException ioe) {
+            // ignore
+        } finally {
+            silentlyCloseStdIn();
+        }
 
-	stdOut.interrupt();
-	stdErr.interrupt();
-	shell.destroy();
+        stdOut.interrupt();
+        stdErr.interrupt();
+        shell.destroy();
     }
 
     private void silentlyCloseStdIn() {
-	try {
-	    stdIn.close();
-	} catch (IOException e) {
-	    // ignore
-	}
+        try {
+            stdIn.close();
+        } catch (IOException e) {
+            // ignore
+        }
     }
 
     /**
      * Capture Shell script output.
-     * 
-     * @param command
-     *            the shell to consume the output from
      */
     private ShellStatus getCmdOutput() {
-	ShellStatus status = RUNNING;
+        ShellStatus status = RUNNING;
 
-	while (!stdOut.buffer.isEmpty()) {
-	    String line = stdOut.buffer.remove(0);
-	    LOG.trace(String.format("lockId=%s, shell line: ", lockId, line));
+        while (!stdOut.buffer.isEmpty()) {
+            String line = stdOut.buffer.remove(0);
+            LOG.trace(String.format("lockId=%s, shell line: ", lockId, line));
 
-	    if ("END_OF_SCRIPT".equals(line)) {
-		if (!hasErrors()) {
-		    status = SUCCESS;
-		} else {
-		    status = PSSHELL_ERROR;
-		}
-	    } else {
-		command.addOutputLine(line);
-	    }
-	}
+            if ("END_OF_SCRIPT".equals(line)) {
+                if (!hasErrors()) {
+                    status = SUCCESS;
+                } else {
+                    status = PSSHELL_ERROR;
+                }
+            } else {
+                command.addOutputLine(line);
+            }
+        }
 
-	if (!stdErr.buffer.isEmpty()) {
-	    while (!stdErr.buffer.isEmpty()) {
-		String errorLine = stdErr.buffer.remove(0);
-		LOG.trace("callerid: " + lockId + " error line: " + errorLine);
-		command.addErrorLine(errorLine);
-	    }
-	    status = PSSHELL_ERROR;
-	}
+        if (!stdErr.buffer.isEmpty()) {
+            while (!stdErr.buffer.isEmpty()) {
+                String errorLine = stdErr.buffer.remove(0);
+                LOG.trace("callerid: " + lockId + " error line: " + errorLine);
+                command.addErrorLine(errorLine);
+            }
+            status = PSSHELL_ERROR;
+        }
 
-	command.setReturnCode(status);
-	return status;
+        command.setReturnCode(status);
+        return status;
     }
 
     private boolean hasErrors() {
-	ExecutorService executor = Executors.newFixedThreadPool(1);
-	Callable<Integer> readTask = new Callable<Integer>() {
-	    @Override
-	    public Integer call() throws Exception {
-		return shell.getErrorStream().read();
-	    }
-	};
+        ExecutorService executor = Executors.newFixedThreadPool(1);
+        Callable<Integer> readTask = new Callable<Integer>() {
+            @Override
+            public Integer call() throws Exception {
+                return shell.getErrorStream().read();
+            }
+        };
 
-	List<Integer> bytes = new ArrayList<Integer>();
-	int readByte = 1;
-	try {
-	    while (readByte >= 0) {
-		Future<Integer> future = executor.submit(readTask);
-		readByte = future.get(500, MILLISECONDS);
-		bytes.add(readByte);
-	    }
-	} catch (TimeoutException e) {
-	    // ignore
-	} catch (InterruptedException | ExecutionException e) {
-	    return false;
-	}
-	return bytes.size() > 0;
+        List<Integer> bytes = new ArrayList<Integer>();
+        int readByte = 1;
+        try {
+            while (readByte >= 0) {
+                Future<Integer> future = executor.submit(readTask);
+                readByte = future.get(500, MILLISECONDS);
+                bytes.add(readByte);
+            }
+        } catch (TimeoutException e) {
+            // ignore
+        } catch (InterruptedException | ExecutionException e) {
+            return false;
+        }
+        return bytes.size() > 0;
     }
 
 }

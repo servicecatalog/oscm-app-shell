@@ -35,7 +35,7 @@ public class OperationActions {
 	try {
 	    Script script = new Script(config.getSetting(SCRIPT_FILE));
 	    script.insertOperationId(config);
-	    script.insertServiceParameter(settings);
+	    script.insertServiceParameters(settings);
 	    return getActions().executeScript(instanceId, settings, result, script);
 	} catch (Exception e) {
 	    LOG.error("Couldn't execute shell script", e);
