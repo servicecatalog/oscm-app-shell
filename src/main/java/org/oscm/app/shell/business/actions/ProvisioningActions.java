@@ -1,9 +1,9 @@
 /*******************************************************************************
- *                                                                              
+ *
  *  Copyright FUJITSU LIMITED 2018                                           
- *                                                                                                                                 
+ *
  *  Creation Date: Aug 2, 2017                                                      
- *                                                                              
+ *
  *******************************************************************************/
 
 package org.oscm.app.shell.business.actions;
@@ -26,43 +26,43 @@ public class ProvisioningActions {
     private static final Logger LOG = LoggerFactory.getLogger(ProvisioningActions.class);
 
     Actions getActions() {
-	return new Actions();
+        return new Actions();
     }
 
     @StateMachineAction
     public String executeScript(String instanceId, ProvisioningSettings settings, InstanceStatus result) {
-	Configuration config = new Configuration(settings);
-	try {
-	    Script script = new Script(config.getSetting(SCRIPT_FILE));
-	    script.insertServiceParameter(settings);
-	    return getActions().executeScript(instanceId, settings, result, script);
-	} catch (Exception e) {
-	    LOG.error("Couldn't execute shell script", e);
-	    config.setSetting(SM_ERROR_MESSAGE, e.getMessage());
-	    return FAILED;
-	}
+        Configuration config = new Configuration(settings);
+        try {
+            Script script = new Script(config.getSetting(SCRIPT_FILE));
+            script.insertServiceParameters(settings);
+            return getActions().executeScript(instanceId, settings, result, script);
+        } catch (Exception e) {
+            LOG.error("Couldn't execute shell script", e);
+            config.setSetting(SM_ERROR_MESSAGE, e.getMessage());
+            return FAILED;
+        }
     }
 
     @StateMachineAction
     public String consumeScriptOutput(String instanceId, ProvisioningSettings settings, InstanceStatus result)
-	    throws Exception {
+            throws Exception {
 
-	return getActions().consumeScriptOutput(instanceId, settings, result);
+        return getActions().consumeScriptOutput(instanceId, settings, result);
     }
 
     @StateMachineAction
     public String finish(String instanceId, ProvisioningSettings settings, InstanceStatus result) {
-	result.setIsReady(true);
-	return StatemachineEvents.SUCCESS;
+        result.setIsReady(true);
+        return StatemachineEvents.SUCCESS;
     }
 
     @StateMachineAction
     public String finalizeProvisioning(@SuppressWarnings("unused") String instanceId, ProvisioningSettings settings,
-	    InstanceStatus result) {
+                                       InstanceStatus result) {
 
-	LOG.debug("Successfully finished.");
-	result.setIsReady(true);
-	return StatemachineEvents.SUCCESS;
+        LOG.debug("Successfully finished.");
+        result.setIsReady(true);
+        return StatemachineEvents.SUCCESS;
     }
 
 }
