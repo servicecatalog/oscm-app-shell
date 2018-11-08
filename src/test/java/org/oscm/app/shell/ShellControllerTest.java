@@ -45,6 +45,7 @@ public class ShellControllerTest {
     private HashMap<String, Setting> config;
     private ProvisioningSettings settings;
 
+    @SuppressWarnings("boxing")
     @Before
     public void before() throws Exception {
 	String batchFile = new File(ShellControllerTest.class.getResource("/batch.ps1").getFile())
