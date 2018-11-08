@@ -1,9 +1,9 @@
 /*******************************************************************************
- *                                                                              
+ *
  *  Copyright FUJITSU LIMITED 2018                                           
- *                                                                                                                                 
+ *
  *  Creation Date: Aug 2, 2017                                                      
- *                                                                              
+ *
  *******************************************************************************/
 
 package org.oscm.app.shell.business.api;
@@ -25,48 +25,48 @@ public class ShellCommand {
     private String command;
 
     public ShellCommand() {
-	output = new ArrayList<>();
-	errorOutput = new ArrayList<>();
-	init(EMPTY_CMD);
+        output = new ArrayList<>();
+        errorOutput = new ArrayList<>();
+        init(EMPTY_CMD);
     }
 
     public ShellCommand(String cmnd) {
-	output = new ArrayList<>();
-	errorOutput = new ArrayList<>();
-	init(cmnd);
+        output = new ArrayList<>();
+        errorOutput = new ArrayList<>();
+        init(cmnd);
     }
 
     public void init(String cmnd) {
-	command = cmnd;
-	output.clear();
-	errorOutput.clear();
+        command = cmnd;
+        output.clear();
+        errorOutput.clear();
     }
 
     public String getCommand() {
-	return command;
+        return command;
     }
 
     public ArrayList<String> getOutput() {
-	return output;
+        return output;
     }
 
     public ArrayList<String> getError() {
-	return errorOutput;
+        return errorOutput;
     }
 
     public ShellStatus getReturnCode() {
-	return status;
+        return status;
     }
 
     protected void addOutputLine(String line) {
-	output.add(line);
+        output.add(line);
     }
 
     protected void addErrorLine(String line) {
-	errorOutput.add(line);
+        errorOutput.add(line);
     }
 
     protected void setReturnCode(ShellStatus code) {
-	status = code;
+        status = code;
     }
 }
