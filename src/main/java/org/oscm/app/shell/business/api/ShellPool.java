@@ -1,9 +1,9 @@
 /*******************************************************************************
- *                                                                              
+ *
  *  Copyright FUJITSU LIMITED 2018                                           
- *                                                                                                                                 
+ *
  *  Creation Date: Aug 2, 2017                                                      
- *                                                                              
+ *
  *******************************************************************************/
 
 package org.oscm.app.shell.business.api;
@@ -45,63 +45,60 @@ public class ShellPool {
 
     @PostConstruct
     void initializeResources() {
-	shellctrl = new Semaphore(MAX_NUM_SHELLS);
-	shellPool = new ArrayList<>();
+        shellctrl = new Semaphore(MAX_NUM_SHELLS);
+        shellPool = new ArrayList<>();
     }
 
     @PreDestroy
     void releaseResources() {
-	for (Shell shell : shellPool) {
-	    shell.close();
-	    shellctrl.release();
-	}
+        for (Shell shell : shellPool) {
+            shell.close();
+            shellctrl.release();
+        }
 
-	shellPool.clear();
+        shellPool.clear();
     }
 
     /**
      * Starts a Shell script in the first available Shell from a shell
      * pool. If all shells are busy a new shell is created and added to the pool.
-     * 
-     * @param command
-     *            contains the script to be executed
-     * @param lockId
-     *            identifies a shell in the pool
-     * @param shellConsoleFile
-     *            absolute filesystem path to Shell configuration file
+     *
+     * @param command          contains the script to be executed
+     * @param lockId           identifies a shell in the pool
+     * @param shellConsoleFile absolute filesystem path to Shell configuration file
      */
     @Lock(WRITE)
     public ShellStatus runCommand(ShellCommand command, String lockId, String shellConsoleFile)
-	    throws ShellPoolException, IOException, APPlatformException {
+            throws ShellPoolException, IOException, APPlatformException {
 
-	for (Shell shell : shellPool) {
+        for (Shell shell : shellPool) {
 
-	    if (shell.lockShell(lockId)) {
-		ShellStatus result = shell.runCommand(lockId, command);
+            if (shell.lockShell(lockId)) {
+                ShellStatus result = shell.runCommand(lockId, command);
 
-		if (result == STDIN_CLOSED) {
-		    LOG.info("lockId: " + lockId + " remove shell from pool because stdin was closed");
-		    shell.close();
-		    shellPool.remove(shell);
-		    shellctrl.release(1);
-		    continue;
-		}
+                if (result == STDIN_CLOSED) {
+                    LOG.info("lockId: " + lockId + " remove shell from pool because stdin was closed");
+                    shell.close();
+                    shellPool.remove(shell);
+                    shellctrl.release(1);
+                    continue;
+                }
 
-		return RUNNING;
-	    }
-	}
+                return RUNNING;
+            }
+        }
 
-	if (shellctrl.tryAcquire()) {
-	    Shell newshell = new Shell(shellConsoleFile);
-	    newshell.lockShell(lockId);
-	    shellPool.add(newshell);
-	    LOG.debug("new shell created and locked for " + newshell.isLockedFor());
+        if (shellctrl.tryAcquire()) {
+            Shell newshell = new Shell(shellConsoleFile);
+            newshell.lockShell(lockId);
+            shellPool.add(newshell);
+            LOG.debug("new shell created and locked for " + newshell.isLockedFor());
 
-	    return newshell.runCommand(lockId, command);
-	}
+            return newshell.runCommand(lockId, command);
+        }
 
-	LOG.info("Couldn't acquire a Shell, maximum number of shells reached");
-	throw new ShellPoolException(CODE_NO_FREE_SHELL_IN_POOL);
+        LOG.info("Couldn't acquire a Shell, maximum number of shells reached");
+        throw new ShellPoolException(CODE_NO_FREE_SHELL_IN_POOL);
     }
 
     /**
@@ -109,14 +106,14 @@ public class ShellPool {
      */
     @Lock(READ)
     public String getShellOutput(String lockId) {
-	for (Shell shell : shellPool) {
-	    if (lockId.equals(shell.isLockedFor())) {
-		return shell.getOutput(lockId);
-	    }
-	}
+        for (Shell shell : shellPool) {
+            if (lockId.equals(shell.isLockedFor())) {
+                return shell.getOutput(lockId);
+            }
+        }
 
-	LOG.warn(String.format("No shell found for lockId %s to read output", lockId));
-	return "";
+        LOG.warn(String.format("No shell found for lockId %s to read output", lockId));
+        return "";
     }
 
     /**
@@ -124,58 +121,57 @@ public class ShellPool {
      */
     @Lock(WRITE)
     public ShellStatus consumeShellOutput(String lockId) throws ShellPoolException {
-	for (Shell shell : shellPool) {
-	    if (lockId.equals(shell.isLockedFor())) {
-		return shell.consumeOutput(lockId);
-	    }
-	}
+        for (Shell shell : shellPool) {
+            if (lockId.equals(shell.isLockedFor())) {
+                return shell.consumeOutput(lockId);
+            }
+        }
 
-	LOG.warn("lockId: " + lockId + ", no shell found to consume output from.");
-	throw new ShellPoolException(CODE_NO_SHELL_FOR_LOCK);
+        LOG.warn("lockId: " + lockId + ", no shell found to consume output from.");
+        throw new ShellPoolException(CODE_NO_SHELL_FOR_LOCK);
     }
 
     /**
      * Make the shell available for a new script execution.
-     * 
-     * @param lockId
-     *            identifies a shell in the pool
+     *
+     * @param lockId identifies a shell in the pool
      */
     @Lock(WRITE)
     public void unlockShell(String lockId) {
-	for (Shell shell : shellPool) {
-	    if (lockId.equals(shell.isLockedFor())) {
-		shell.unlock();
-		return;
-	    }
-	}
+        for (Shell shell : shellPool) {
+            if (lockId.equals(shell.isLockedFor())) {
+                shell.unlock();
+                return;
+            }
+        }
 
-	LOG.debug("No shell locked with lockId: " + lockId);
+        LOG.debug("No shell locked with lockId: " + lockId);
     }
 
     @Lock(WRITE)
     public void terminateShell(String lockId) {
-	// TODO check: iterating and deleting?
-	for (Shell shell : shellPool) {
-	    if (lockId.equals(shell.isLockedFor())) {
-		shell.close();
-		shellPool.remove(shell);
-		shellctrl.release();
+        // TODO check: iterating and deleting?
+        for (Shell shell : shellPool) {
+            if (lockId.equals(shell.isLockedFor())) {
+                shell.close();
+                shellPool.remove(shell);
+                shellctrl.release();
 
-		LOG.debug(String.format("Closing shell with lockId %s and removing from pool", lockId));
-		return;
-	    }
-	}
+                LOG.debug(String.format("Closing shell with lockId %s and removing from pool", lockId));
+                return;
+            }
+        }
     }
 
     @Lock(READ)
     public String getShellErrorOutput(String lockId) {
-	for (Shell shell : shellPool) {
-	    if (lockId.equals(shell.isLockedFor())) {
-		return shell.getErrorOutput(lockId);
-	    }
-	}
+        for (Shell shell : shellPool) {
+            if (lockId.equals(shell.isLockedFor())) {
+                return shell.getErrorOutput(lockId);
+            }
+        }
 
-	LOG.warn(String.format("No shell found for lockId %s to read error output", lockId));
-	return "";
+        LOG.warn(String.format("No shell found for lockId %s to read error output", lockId));
+        return "";
     }
 }

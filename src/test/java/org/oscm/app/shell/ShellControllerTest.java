@@ -1,3 +1,10 @@
+/*******************************************************************************
+ *                                                                              
+ *  Copyright FUJITSU LIMITED 2018                                           
+ *                                                                                                                                 
+ *  Creation Date: Aug 2, 2017                                                      
+ *                                                                              
+ *******************************************************************************/
 package org.oscm.app.shell;
 
 import static org.mockito.Matchers.any;

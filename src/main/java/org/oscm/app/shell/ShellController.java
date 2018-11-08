@@ -1,9 +1,9 @@
 /*******************************************************************************
- *
- *  COPYRIGHT (C) 2017 FUJITSU Limited - ALL RIGHTS RESERVED.
- *
- *  Creation Date: 02.02.2017
- *
+ *                                                                              
+ *  Copyright FUJITSU LIMITED 2018                                           
+ *                                                                                                                                 
+ *  Creation Date: Aug 2, 2017                                                      
+ *                                                                              
  *******************************************************************************/
 
 package org.oscm.app.shell;
@@ -112,6 +112,7 @@ public class ShellController implements APPlatformController {
     @Override
     public InstanceDescription createInstance(ProvisioningSettings settings)
             throws APPlatformException {
+
         InstanceDescription id = new InstanceDescription();
         id.setInstanceId(UUID.randomUUID().toString());
         id.setChangedParameters(settings.getParameters());
@@ -141,12 +142,11 @@ public class ShellController implements APPlatformController {
 
     private void validateScript(Configuration config,
             ConfigurationKey scriptKey) throws APPlatformException {
-        String scriptFilename = "";
-        try {
-            scriptFilename = config.getSetting(scriptKey);
-        } catch (Exception e) {
-            throw new APPlatformException(
-                    "Failed to read service parameter " + scriptKey);
+
+        String scriptFilename = config.getSetting(scriptKey);
+
+        if(scriptFilename.isEmpty()) {
+            throw new APPlatformException("Failed to read service parameter " + scriptKey);
         }
 
         if (!doesFileExist(scriptFilename)) {
@@ -156,9 +156,10 @@ public class ShellController implements APPlatformController {
 
         String text;
         String interactiveCommand;
+
         try {
             Script script = new Script(scriptFilename);
-            script.insertServiceParameter(config.getProvisioningSettings());
+            script.insertServiceParameters(config.getProvisioningSettings());
             text = script.get();
             interactiveCommand = getInteractiveCommand(text);
         } catch (Exception e) {
@@ -182,7 +183,7 @@ public class ShellController implements APPlatformController {
         Script script;
         try {
             script = new Script(config.getSetting(VERIFICATION_SCRIPT));
-            script.insertServiceParameter(config.getProvisioningSettings());
+            script.insertServiceParameters(config.getProvisioningSettings());
         } catch (Exception e) {
             return;
         }
@@ -237,26 +238,8 @@ public class ShellController implements APPlatformController {
     }
 
     String getInteractiveCommand(String text) throws Exception {
-        if (text.indexOf("Out-GridView") >= 0) {
-            return "Out-GridView";
-        }
 
-        if (text.indexOf("Read-Host") >= 0) {
-            return "Read-Host";
-        }
-
-        if (text.indexOf("ShowDialog") >= 0) {
-            return "ShowDialog";
-        }
-
-        if (text.indexOf("PromptForChoice") >= 0) {
-            return "PromptForChoice";
-        }
-
-        if (text.indexOf("Prompt") >= 0) {
-            return "Prompt";
-        }
-
+        //TODO: validate script upon the interactive commands
         return null;
     }
 
