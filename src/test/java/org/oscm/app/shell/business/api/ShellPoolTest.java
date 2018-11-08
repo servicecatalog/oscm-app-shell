@@ -20,6 +20,7 @@ import static org.oscm.app.shell.business.api.ShellStatus.*;
  * FIXME
  *
  */
+
 @Ignore
 public class ShellPoolTest {
 

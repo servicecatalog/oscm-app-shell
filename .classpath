@@ -28,15 +28,15 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="var" path="M2_REPO/com/github/servicecatalog/oscm-interfaces/oscm-app-extsvc/1.3/oscm-app-extsvc-1.3.jar"/>
+	<classpathentry kind="var" path="M2_REPO/com/github/servicecatalog/oscm-interfaces/oscm-app-extsvc/1.4.1/oscm-app-extsvc-1.4.1.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/slf4j/slf4j-api/1.7.16/slf4j-api-1.7.16.jar"/>
-	<classpathentry kind="var" path="M2_REPO/com/github/servicecatalog/oscm-interfaces/oscm-extsvc/1.3/oscm-extsvc-1.3.jar"/>
+	<classpathentry kind="var" path="M2_REPO/com/github/servicecatalog/oscm-interfaces/oscm-extsvc/1.4.1/oscm-extsvc-1.4.1.jar"/>
 	<classpathentry kind="var" path="M2_REPO/javax/javaee-api/7.0/javaee-api-7.0.jar"/>
 	<classpathentry kind="var" path="M2_REPO/com/sun/mail/javax.mail/1.5.0/javax.mail-1.5.0.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/slf4j/slf4j-log4j12/1.7.16/slf4j-log4j12-1.7.16.jar"/>
 	<classpathentry kind="var" path="M2_REPO/log4j/log4j/1.2.17/log4j-1.2.17.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/slf4j/slf4j-simple/1.7.16/slf4j-simple-1.7.16.jar"/>
-	<classpathentry kind="var" path="M2_REPO/com/github/goebell/oscm-app-statemachine/0.6/oscm-app-statemachine-0.6.jar"/>
+	<classpathentry kind="var" path="M2_REPO/com/github/servicecatalog/oscm-app-statemachine/0.6/oscm-app-statemachine-0.6.jar"/>
 	<classpathentry kind="var" path="M2_REPO/commons-io/commons-io/2.5/commons-io-2.5.jar"/>
 	<classpathentry kind="var" path="M2_REPO/commons-codec/commons-codec/1.10/commons-codec-1.10.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/richfaces/richfaces/4.5.17.Final/richfaces-4.5.17.Final.jar"/>
@@ -54,6 +54,5 @@
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="src" path="/oscm-interfaces"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
