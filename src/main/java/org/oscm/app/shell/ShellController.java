@@ -1,9 +1,9 @@
 /*******************************************************************************
- *                                                                              
- *  Copyright FUJITSU LIMITED 2018                                           
- *                                                                                                                                 
- *  Creation Date: Aug 2, 2017                                                      
- *                                                                              
+ *
+ *  Copyright FUJITSU LIMITED 2018
+ *
+ *  Creation Date: Aug 2, 2017
+ *
  *******************************************************************************/
 
 package org.oscm.app.shell;
@@ -38,9 +38,14 @@ import static org.oscm.app.shell.business.ConfigurationKey.VERIFICATION_TIMEOUT;
 import static org.oscm.app.shell.business.api.Shell.VERIFICATION_MESSAGE;
 import static org.oscm.app.shell.business.api.ShellStatus.RUNNING;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Properties;
 import java.util.UUID;
@@ -50,6 +55,7 @@ import java.util.regex.Pattern;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.xml.bind.SchemaOutputResolver;
 
 import org.oscm.app.shell.business.Configuration;
 import org.oscm.app.shell.business.ConfigurationKey;
@@ -112,7 +118,7 @@ public class ShellController implements APPlatformController {
     @Override
     public InstanceDescription createInstance(ProvisioningSettings settings)
             throws APPlatformException {
-
+        LOG.debug("Jestem w Create Instance *****************************");
         InstanceDescription id = new InstanceDescription();
         id.setInstanceId(UUID.randomUUID().toString());
         id.setChangedParameters(settings.getParameters());
@@ -141,9 +147,14 @@ public class ShellController implements APPlatformController {
     }
 
     private void validateScript(Configuration config,
-            ConfigurationKey scriptKey) throws APPlatformException {
+                                ConfigurationKey scriptKey) throws APPlatformException {
+
+        LOG.warn("Jestem w VALIDATE SCRIPT");
+        LOG.warn("ScriptKEY = " + scriptKey);
 
         String scriptFilename = config.getSetting(scriptKey);
+
+        LOG.warn("scriptFileName = " +scriptFilename);
 
         if(scriptFilename.isEmpty()) {
             throw new APPlatformException("Failed to read service parameter " + scriptKey);
@@ -178,9 +189,46 @@ public class ShellController implements APPlatformController {
         }
     }
 
+    public void safeOutputToTheFile(Configuration config, String output) throws  APPlatformException{
+        String path = config.getSetting(VERIFICATION_SCRIPT);
+        Path logFile = Paths.get(System.getProperty("user.dir")); //pobierane akutalny katalog w ktorym sie znajduje
+
+        LOG.error("JESTEM W safeOutputToTheFile");
+        LOG.error("path = " +path);
+        LOG.error("LogFile = " +logFile.toString());
+
+//        try{
+//            final BufferedWriter writer = Files.newBufferedWriter(logFile, StandardCharsets.UTF_8, StandardOpenOption.CREATE);
+//            writer.write(output);
+//            writer.flush();
+//        }
+//        catch (Exception e){
+//            e.printStackTrace();
+//            LOG.error("BLAD !!! -> " + e.toString()) ;
+//        }
+        BufferedWriter bw = null;
+        try {
+            File file = new File("/home/LogFileEwa.txt");
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+
+            FileWriter fw = new FileWriter(file);
+            bw = new BufferedWriter(fw);
+            bw.write("FirstLogFile");
+            bw.write(output);
+            bw.close();
+
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        }
+
+    }
+
     void runVerificationScript(Configuration config)
             throws APPlatformException {
         Script script;
+        LOG.warn("jestem w runVerificationScript ***");
         try {
             script = new Script(config.getSetting(VERIFICATION_SCRIPT));
             script.insertServiceParameters(config.getProvisioningSettings());
@@ -352,10 +400,12 @@ public class ShellController implements APPlatformController {
     @Override
     public InstanceStatus getInstanceStatus(String instanceId,
             ProvisioningSettings settings) throws APPlatformException {
-
+        LOG.warn("*********Jestem w getInstanceStatus ****");
         Configuration config = new Configuration(settings);
         InstanceStatus status = new InstanceStatus();
         StateMachine stateMachine;
+        LOG.warn("zapisuje do pliku info");
+        safeOutputToTheFile(config,"w get instance status");
         try {
             stateMachine = new StateMachine(settings);
             stateMachine.executeAction(settings, instanceId, status);

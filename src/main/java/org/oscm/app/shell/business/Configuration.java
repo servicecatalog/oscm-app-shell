@@ -57,7 +57,7 @@ public class Configuration {
      * @return the value or null if the key does not exist
      */
     public String getSetting(ConfigurationKey key) {
-	if (key.isInternalSetting()) {
+		if (key.isInternalSetting()) {
 	    return getParameterValue(key);
 	}
 	return loadConfigurableSetting(key);
@@ -65,6 +65,7 @@ public class Configuration {
 
     private String getParameterValue(ConfigurationKey key) {
 	if (settings.getParameters().containsKey(key.name())) {
+		LOG.warn("Jestem w getParameterValue : key name = " + key.name() + " value " + settings.getParameters().get(key.name()).getValue()  );
 	    return settings.getParameters().get(key.name()).getValue();
 	}
 
