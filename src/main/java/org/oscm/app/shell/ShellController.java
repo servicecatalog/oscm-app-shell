@@ -12,6 +12,7 @@ import static java.lang.Long.valueOf;
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
 import static java.lang.System.currentTimeMillis;
+import static java.lang.System.setOut;
 import static java.lang.Thread.sleep;
 import static java.net.HttpURLConnection.HTTP_OK;
 import static java.util.regex.Pattern.MULTILINE;
@@ -44,8 +45,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.List;
 import java.util.Properties;
 import java.util.UUID;
@@ -118,7 +122,7 @@ public class ShellController implements APPlatformController {
     @Override
     public InstanceDescription createInstance(ProvisioningSettings settings)
             throws APPlatformException {
-        LOG.debug("Jestem w Create Instance *****************************");
+        LOG.warn("***createInstance***");
         InstanceDescription id = new InstanceDescription();
         id.setInstanceId(UUID.randomUUID().toString());
         id.setChangedParameters(settings.getParameters());
@@ -130,6 +134,8 @@ public class ShellController implements APPlatformController {
 
         validateAllScripts(config);
         runVerificationScript(config);
+        ShellControllerLogger shellControllerLogger = new ShellControllerLogger();
+        shellControllerLogger.safeLogsToFile(config,"PROVISIONING_SCRIPT", "" );
 
         initStateMachine(settings, PROVISIONING_SCRIPT, STATEMACHINE_PROVISION);
 
@@ -141,6 +147,7 @@ public class ShellController implements APPlatformController {
         ConfigurationKey[] scriptKeys = { PROVISIONING_SCRIPT,
                 DEPROVISIONING_SCRIPT, UPDATE_SCRIPT, ASSIGN_USER_SCRIPT,
                 DEASSIGN_USER_SCRIPT, CHECK_STATUS_SCRIPT };
+        LOG.warn("***validateAllScripts***");
         for (ConfigurationKey scriptKey : scriptKeys) {
             validateScript(config, scriptKey);
         }
@@ -189,46 +196,13 @@ public class ShellController implements APPlatformController {
         }
     }
 
-    public void safeOutputToTheFile(Configuration config, String output) throws  APPlatformException{
-        String path = config.getSetting(VERIFICATION_SCRIPT);
-        Path logFile = Paths.get(System.getProperty("user.dir")); //pobierane akutalny katalog w ktorym sie znajduje
 
-        LOG.error("JESTEM W safeOutputToTheFile");
-        LOG.error("path = " +path);
-        LOG.error("LogFile = " +logFile.toString());
-
-//        try{
-//            final BufferedWriter writer = Files.newBufferedWriter(logFile, StandardCharsets.UTF_8, StandardOpenOption.CREATE);
-//            writer.write(output);
-//            writer.flush();
-//        }
-//        catch (Exception e){
-//            e.printStackTrace();
-//            LOG.error("BLAD !!! -> " + e.toString()) ;
-//        }
-        BufferedWriter bw = null;
-        try {
-            File file = new File("/home/LogFileEwa.txt");
-            if (!file.exists()) {
-                file.createNewFile();
-            }
-
-            FileWriter fw = new FileWriter(file);
-            bw = new BufferedWriter(fw);
-            bw.write("FirstLogFile");
-            bw.write(output);
-            bw.close();
-
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
-        }
-
-    }
 
     void runVerificationScript(Configuration config)
             throws APPlatformException {
         Script script;
-        LOG.warn("jestem w runVerificationScript ***");
+        LOG.warn("***runVerificationScript***");
+        ShellControllerLogger shellControllerLogger = new ShellControllerLogger();
         try {
             script = new Script(config.getSetting(VERIFICATION_SCRIPT));
             script.insertServiceParameters(config.getProvisioningSettings());
@@ -237,9 +211,10 @@ public class ShellController implements APPlatformController {
         }
 
         try {
+
             ShellCommand command = new ShellCommand(script.get());
 
-            try (Shell shell = new Shell();) {
+            try (Shell shell = new Shell()) {
                 shell.lockShell(config.getSetting(INSTANCE_ID));
                 shell.runCommand(config.getSetting(INSTANCE_ID), command);
                 long ref = currentTimeMillis();
@@ -251,6 +226,7 @@ public class ShellController implements APPlatformController {
                         config.getSetting(VERIFICATION_TIMEOUT)));
                 String shellOutput = shell
                         .getOutput(config.getSetting(INSTANCE_ID));
+                shellControllerLogger.safeLogsToFile(config, "VERIFICATION_SCRIPT", shellOutput);
                 Pattern p = compile(format(".*%s=(.*?)$", VERIFICATION_MESSAGE),
                         MULTILINE);
                 Matcher matcher = p.matcher(shellOutput);
@@ -271,6 +247,7 @@ public class ShellController implements APPlatformController {
             ConfigurationKey serviceParamKey, String statemachineFilename)
             throws APPlatformException {
 
+        LOG.warn("***initStateMachine****");
         try {
             Configuration config = new Configuration(settings);
             Setting setting = new Setting(SCRIPT_FILE.name(),
@@ -318,8 +295,10 @@ public class ShellController implements APPlatformController {
             ProvisioningSettings settings, List<ServiceUser> users)
             throws APPlatformException {
 
+        LOG.warn("***createUsers***");
         Configuration config = new Configuration(settings);
         config.setRequestingUser();
+        LOG.warn("ASSIGNE_USER_SCRIPT = " +ASSIGN_USER_SCRIPT);
         validateScript(config, ASSIGN_USER_SCRIPT);
         initStateMachine(settings, ASSIGN_USER_SCRIPT,
                 STATEMACHINE_ASSIGN_USER);
@@ -379,7 +358,7 @@ public class ShellController implements APPlatformController {
             String instanceId, String transactionId, String operationId,
             List<OperationParameter> parameters, ProvisioningSettings settings)
             throws APPlatformException {
-
+        LOG.warn("***executeServiceOperation***");
         Configuration config = new Configuration(settings);
         config.setSetting(REQUESTING_USER_ID, userId);
         validateScript(config, OPERATIONS_SCRIPT);
@@ -405,7 +384,7 @@ public class ShellController implements APPlatformController {
         InstanceStatus status = new InstanceStatus();
         StateMachine stateMachine;
         LOG.warn("zapisuje do pliku info");
-        safeOutputToTheFile(config,"w get instance status");
+        //safeOutputToTheFile(config,"w get instance status");
         try {
             stateMachine = new StateMachine(settings);
             stateMachine.executeAction(settings, instanceId, status);
@@ -458,7 +437,7 @@ public class ShellController implements APPlatformController {
     public InstanceStatus modifyInstance(String instanceId,
             ProvisioningSettings settings, ProvisioningSettings newSettings)
             throws APPlatformException {
-
+        LOG.warn("***modifyInstance***");
         LOG.debug("instanceId: {}", instanceId);
         Configuration config = new Configuration(newSettings);
         validateScript(config, UPDATE_SCRIPT);

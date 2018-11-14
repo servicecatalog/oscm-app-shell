@@ -1,11 +1,21 @@
 # Ignore standard logger
 log4j.rootLogger=OFF
+log4j.category.ExternalAppLogger=INFO, extAppLogFile
 
 org.apache.commons.logging.Log=org.apache.commons.logging.impl.NoOpLog
 log4j.logger.org.apache=OFF
 log4j.logger.httpclient=OFF
 log4j.logger.org.oscm.app.shell=INFO, FILE
 log4j.logger.org.oscm.app.statemachine=INFO, FILE
+
+# Set the appender settings
+log4j.appender.extAppLogFile=org.apache.log4j.RollingFileAppender
+log4j.appender.extAppLogFile.File=/opt/apache-tomee/logs/app-shell/myNewLog.log
+log4j.appender.extAppLogFile.MaxFileSize=3MB
+log4j.appender.extAppLogFile.MaxBackupIndex=5
+log4j.appender.extAppLogFile.layout=org.apache.log4j.PatternLayout
+log4j.appender.extAppLogFile.layout.ConversionPattern=[%d{yyyy-MM-dd HH:mm:ss}] [%t] %-5p %C{1} %M %m%n
+
 
 # Rolling File Appender system
 log4j.appender.FILE=org.apache.log4j.RollingFileAppender
