@@ -34,6 +34,7 @@ public class ProvisioningActions {
         Configuration config = new Configuration(settings);
         try {
             Script script = new Script(config.getSetting(SCRIPT_FILE));
+            script.loadContent();
             script.insertServiceParameters(settings);
             return getActions().executeScript(instanceId, settings, result, script);
         } catch (Exception e) {

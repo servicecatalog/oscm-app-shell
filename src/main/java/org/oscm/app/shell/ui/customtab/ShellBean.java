@@ -84,10 +84,11 @@ public class ShellBean implements Serializable {
 	    ProvisioningSettings settings = getProvisioningSettings();
 
 	    Script script = new Script(getValue(settings, "CHECK_STATUS_SCRIPT"));
+	    script.loadContent();
 	    script.insertServiceParameters(settings);
-	    LOGGER.debug("script: " + script.get());
+	    LOGGER.debug("script: " + script.getContent());
 
-	    command.init(script.get());
+	    command.init(script.getContent());
 	    shell.lockShell(instanceId);
 	    shell.runCommand(instanceId, command);
 
@@ -104,7 +105,7 @@ public class ShellBean implements Serializable {
 	    return command.getError();
 	} catch (Exception e) {
 	    LOGGER.error(String.format(
-		    "Failed to get status of shell provisioning. orgId: %s, instanceId: %s, subscId: %s",
+		    "Failed to getContent status of shell provisioning. orgId: %s, instanceId: %s, subscId: %s",
 		    organizationId, instanceId, subscriptionId), e);
 	    LOGGER.debug("Shell error output: " + command.getError());
 	    return command.getError();

@@ -49,7 +49,7 @@ public class Actions {
 
 	Configuration config = new Configuration(settings);
 	getPool();
-	ShellCommand command = new ShellCommand(script.get());
+	ShellCommand command = new ShellCommand(script.getContent());
 	String consoleFile = config.getSetting(CONSOLE_FILE);
 
 	try {
