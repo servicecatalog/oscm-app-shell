@@ -12,6 +12,7 @@
   </properties>
 
   <build>
+    <finalName>oscm-app-shell</finalName>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
