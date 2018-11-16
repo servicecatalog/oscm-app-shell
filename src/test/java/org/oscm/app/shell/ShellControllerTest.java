@@ -8,7 +8,6 @@
 package org.oscm.app.shell;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -17,20 +16,20 @@ import org.mockito.Spy;
 import org.oscm.app.shell.business.Configuration;
 import org.oscm.app.shell.business.ConfigurationKey;
 import org.oscm.app.shell.business.ScriptValidator;
+import org.oscm.app.shell.business.api.ShellPool;
+import org.oscm.app.statemachine.StateMachine;
 import org.oscm.app.v2_0.data.*;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.oscm.app.shell.business.ConfigurationKey.*;
 
 public class ShellControllerTest {
@@ -41,6 +40,9 @@ public class ShellControllerTest {
 
     @Mock
     private ScriptValidator validator;
+
+    @Mock
+    private ShellPool pool;
 
     @Before
     public void before() throws Exception {
@@ -127,10 +129,57 @@ public class ShellControllerTest {
         assertFalse(status.isReady());
     }
 
+    @Test
+    public void testUpdateUsers() throws Exception {
 
+        // given
+        ProvisioningSettings settings = getProvisioningSettings();
+        List<ServiceUser> users = getUsers();
 
+        // when
+        InstanceStatus status = controller.updateUsers("instance_432432423", settings, users);
 
-    private ProvisioningSettings getProvisioningSettings(){
+        //then
+        verify(validator, times(1)).validate(any(Configuration.class), any(ConfigurationKey.class));
+        assertEquals(settings.getParameters(), status.getChangedParameters());
+        assertFalse(status.isReady());
+    }
+
+    @Test
+    public void testExecuteServiceOperation() throws Exception {
+
+        // given
+        ProvisioningSettings settings = getProvisioningSettings();
+        List<OperationParameter> parameters = Collections.emptyList();
+
+        // when
+        InstanceStatus status = controller.executeServiceOperation("supplier", "instance123", "trans123", "op123", parameters, settings);
+
+        //then
+        verify(validator, times(1)).validate(any(Configuration.class), any(ConfigurationKey.class));
+        assertEquals(settings.getParameters(), status.getChangedParameters());
+        assertFalse(status.isReady());
+    }
+
+    @Test
+    public void testGetInstanceStatus() throws Exception {
+
+        // given
+        ProvisioningSettings settings = getProvisioningSettings();
+        settings.getParameters().put(SM_STATE_MACHINE.name(), new Setting(SM_STATE_MACHINE.name(), "provision.xml"));
+        settings.getParameters().put(SM_STATE.name(), new Setting(SM_STATE.name(), "END"));
+        settings.getParameters().put(SM_STATE_HISTORY.name(), new Setting(SM_STATE_HISTORY.name(), "BEGIN, EXECUTING"));
+
+        // when
+        InstanceStatus status = controller.getInstanceStatus("instance_4332312", settings);
+
+        //then
+        verify(controller, times(1)).updateProvisioningSettings(anyString(), any(Configuration.class), any(StateMachine.class));
+        assertEquals(settings.getParameters(), status.getChangedParameters());
+        assertTrue(status.isReady());
+    }
+
+    private ProvisioningSettings getProvisioningSettings() {
 
         String sampleScriptPath = "/some/path/script.sh";
 
@@ -154,7 +203,7 @@ public class ShellControllerTest {
         return settings;
     }
 
-    private List<ServiceUser> getUsers(){
+    private List<ServiceUser> getUsers() {
 
         List<ServiceUser> users = new ArrayList<>();
 
