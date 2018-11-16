@@ -13,6 +13,7 @@ import org.oscm.app.shell.business.api.Shell;
 import org.oscm.app.shell.business.api.ShellCommand;
 import org.oscm.app.shell.business.api.ShellPool;
 import org.oscm.app.shell.business.api.ShellStatus;
+import org.oscm.app.shell.business.interceptor.ProvisioningSettingsLogger;
 import org.oscm.app.statemachine.StateMachine;
 import org.oscm.app.statemachine.api.StateMachineException;
 import org.oscm.app.v2_0.data.*;
@@ -46,6 +47,7 @@ import static org.oscm.app.shell.business.api.ShellStatus.RUNNING;
 
 @Remote(APPlatformController.class)
 @Stateless(mappedName = "bss/app/controller/" + CONTROLLER_ID)
+@ProvisioningSettingsLogger
 public class ShellController implements APPlatformController {
 
     private static final Logger LOG = LoggerFactory
