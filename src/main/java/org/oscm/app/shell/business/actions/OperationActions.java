@@ -34,6 +34,7 @@ public class OperationActions {
 	Configuration config = new Configuration(settings);
 	try {
 	    Script script = new Script(config.getSetting(SCRIPT_FILE));
+	    script.loadContent();
 	    script.insertOperationId(config);
 	    script.insertServiceParameters(settings);
 	    return getActions().executeScript(instanceId, settings, result, script);
