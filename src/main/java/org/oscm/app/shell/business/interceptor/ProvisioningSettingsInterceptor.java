@@ -1,3 +1,11 @@
+/*******************************************************************************
+ *
+ *  Copyright FUJITSU LIMITED 2018
+ *
+ *  Creation Date: 16.11.2018
+ *
+ *******************************************************************************/
+
 package org.oscm.app.shell.business.interceptor;
 
 import org.oscm.app.v2_0.data.ProvisioningSettings;
