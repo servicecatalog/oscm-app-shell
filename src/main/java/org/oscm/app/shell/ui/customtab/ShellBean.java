@@ -105,7 +105,7 @@ public class ShellBean implements Serializable {
 	    return command.getError();
 	} catch (Exception e) {
 	    LOGGER.error(String.format(
-		    "Failed to getContent status of shell provisioning. orgId: %s, instanceId: %s, subscId: %s",
+		    "Failed to get status of shell provisioning. orgId: %s, instanceId: %s, subscId: %s",
 		    organizationId, instanceId, subscriptionId), e);
 	    LOGGER.debug("Shell error output: " + command.getError());
 	    return command.getError();
