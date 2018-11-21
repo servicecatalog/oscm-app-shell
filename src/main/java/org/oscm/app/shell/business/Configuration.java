@@ -65,7 +65,6 @@ public class Configuration {
 
     private String getParameterValue(ConfigurationKey key) {
 	if (settings.getParameters().containsKey(key.name())) {
-		LOG.warn("Jestem w getParameterValue : key name = " + key.name() + " value " + settings.getParameters().get(key.name()).getValue()  );
 	    return settings.getParameters().get(key.name()).getValue();
 	}
 

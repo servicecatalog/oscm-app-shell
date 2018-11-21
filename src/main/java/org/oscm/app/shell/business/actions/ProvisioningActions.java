@@ -12,7 +12,9 @@ import static org.oscm.app.shell.business.ConfigurationKey.SCRIPT_FILE;
 import static org.oscm.app.shell.business.ConfigurationKey.SM_ERROR_MESSAGE;
 import static org.oscm.app.shell.business.actions.StatemachineEvents.FAILED;
 
+import org.oscm.app.shell.ShellControllerLogger;
 import org.oscm.app.shell.business.Configuration;
+import org.oscm.app.shell.business.ConfigurationKey;
 import org.oscm.app.shell.business.Script;
 import org.oscm.app.v2_0.data.InstanceStatus;
 import org.oscm.app.v2_0.data.ProvisioningSettings;
@@ -25,16 +27,19 @@ public class ProvisioningActions {
 
     private static final Logger LOG = LoggerFactory.getLogger(ProvisioningActions.class);
 
+
     Actions getActions() {
         return new Actions();
     }
 
     @StateMachineAction
     public String executeScript(String instanceId, ProvisioningSettings settings, InstanceStatus result) {
+        ShellControllerLogger logger = new ShellControllerLogger();
         Configuration config = new Configuration(settings);
         try {
             Script script = new Script(config.getSetting(SCRIPT_FILE));
             script.insertServiceParameters(settings);
+            logger.safeScriptConfiguration(config ,ConfigurationKey.PROVISIONING_SCRIPT.name(), script.get());
             return getActions().executeScript(instanceId, settings, result, script);
         } catch (Exception e) {
             LOG.error("Couldn't execute shell script", e);

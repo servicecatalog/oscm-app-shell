@@ -1,54 +1,73 @@
 package org.oscm.app.shell;
 
 import org.oscm.app.shell.business.Configuration;
-import org.oscm.app.shell.business.ConfigurationKey;
-import org.oscm.app.v2_0.exceptions.APPlatformException;
+import org.oscm.app.shell.business.api.ShellCommand;
+import org.oscm.app.shell.business.api.ShellStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
+/*******************************************************************************
+ *
+ *  Copyright FUJITSU LIMITED 2018
+ *
+ *  Creation Date: Nov 21, 2018
+ *
+ *******************************************************************************/
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 
 public class ShellControllerLogger {
 
-    //private static final Logger LOG = LoggerFactory.getLogger(ShellController.class);
-    Logger extAppLogger = LoggerFactory.getLogger("ExternalAppLogger");
+    private static final Logger LOG = LoggerFactory.getLogger(ShellController.class);
 
+    public void safeOutputFromScript(Configuration config, String scriptKey, String output){
+        LOG.warn("Output from script " + scriptKey);
+        LOG.info(output);
 
+    }
 
-    private static String PATH_LOGS =   "/opt/apache-tomee/logs/app-shell/";
+    public void safeScriptConfiguration(Configuration configuration, String scriptName, String script){
+        LOG.info("***********************configuration information*****************************");
+        LOG.info("<scriptType>:" + "<"+ scriptName + ">");
+        LOG.info("<scriptPath>: " + getScriptPath(script, scriptName));
+        if(configuration.getRequestingUser()!=null){
+            LOG.info("<requestingUser>: " +"<"
+                    +configuration.getRequestingUser().getFirstName()+":"
+                    +configuration.getRequestingUser().getLastName()+">");
+        }
+        else
+            LOG.info("<requestingUser>: <>");
 
-    public void safeLogsToFile(Configuration config, String scriptKey, String output){
+        LOG.info("<organizationId>:" + "<" + configuration.getOrganizationId()+">");
+        LOG.info("<organizationName>:" + "<" + configuration.getOrganizationName()+">");
+        LOG.info("<subscriptionId>:" + "<" + configuration.getSubscriptionId()+">");
 
+    }
 
-        String fileName = scriptKey + "_LOGS";
-        extAppLogger.warn("Jestem w aextAPPLogger");
-        extAppLogger.info("***safeLogsToFile --> "+fileName +"***");
-        extAppLogger.warn("output = " + output);
-        BufferedWriter bw = null;
-        try {
-            File file = new File(PATH_LOGS + fileName);
-            if (!file.exists()) {
-                file.createNewFile();
+    private String getScriptPath(String script, String scriptName){
+
+        String fileName = "";
+        Map<String, String> map = new LinkedHashMap<>();
+        for(String keyValue : script.split("\n")) {
+            String[] pairs = keyValue.split("=", 2);
+            map.put(pairs[0], pairs.length == 1 ? "" : pairs[1]);
+        }
+        for(String key: map.keySet()) {
+            if (key.startsWith(scriptName)) {
+                fileName= map.get(key);
             }
 
-            FileWriter fw = new FileWriter(file);
-            bw = new BufferedWriter(fw);
-            bw.write(fileName);
-            bw.write("Date 14/11/2018 10:57");
-            bw.write("");
-            bw.write("First log to ");
-            bw.write(output);
-            bw.close();
-
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
         }
+        return fileName;
+    }
+
+    public void safeScriptCommand(ShellCommand command){
+        LOG.info("********************* script command *****************");
+        LOG.info(command.getCommand());
+    }
+
+    public void consumeShellOutput(ShellStatus status){
+        LOG.info("script status : " +status);
     }
 }

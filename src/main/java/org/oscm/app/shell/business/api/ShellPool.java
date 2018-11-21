@@ -70,10 +70,10 @@ public class ShellPool {
     @Lock(WRITE)
     public ShellStatus runCommand(ShellCommand command, String lockId, String shellConsoleFile)
             throws ShellPoolException, IOException, APPlatformException {
-
         for (Shell shell : shellPool) {
 
             if (shell.lockShell(lockId)) {
+                LOG.info("runCommand w shellPool");
                 ShellStatus result = shell.runCommand(lockId, command);
 
                 if (result == STDIN_CLOSED) {

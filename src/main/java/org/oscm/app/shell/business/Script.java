@@ -29,7 +29,6 @@ import static org.oscm.app.shell.business.ConfigurationKey.OPERATIONS_ID;
 public class Script {
 
     private static final Logger LOG = LoggerFactory.getLogger(Script.class);
-
     private static final String NEW_LINE = System.getProperty("line.separator");
 
     String script;

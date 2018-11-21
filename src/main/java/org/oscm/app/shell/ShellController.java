@@ -12,7 +12,6 @@ import static java.lang.Long.valueOf;
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
 import static java.lang.System.currentTimeMillis;
-import static java.lang.System.setOut;
 import static java.lang.Thread.sleep;
 import static java.net.HttpURLConnection.HTTP_OK;
 import static java.util.regex.Pattern.MULTILINE;
@@ -39,17 +38,9 @@ import static org.oscm.app.shell.business.ConfigurationKey.VERIFICATION_TIMEOUT;
 import static org.oscm.app.shell.business.api.Shell.VERIFICATION_MESSAGE;
 import static org.oscm.app.shell.business.api.ShellStatus.RUNNING;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.List;
 import java.util.Properties;
 import java.util.UUID;
@@ -59,7 +50,6 @@ import java.util.regex.Pattern;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.xml.bind.SchemaOutputResolver;
 
 import org.oscm.app.shell.business.Configuration;
 import org.oscm.app.shell.business.ConfigurationKey;
@@ -92,8 +82,7 @@ import org.oscm.app.statemachine.api.StateMachineException;
 @Stateless(mappedName = "bss/app/controller/" + CONTROLLER_ID)
 public class ShellController implements APPlatformController {
 
-    private static final Logger LOG = LoggerFactory
-            .getLogger(ShellController.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ShellController.class);
 
     private static final String ASYNC_ERROR = "ASYNC_ERROR";
     private static final String SYNC_ERROR = "ERROR";
@@ -113,6 +102,7 @@ public class ShellController implements APPlatformController {
     @Override
     public InstanceStatus activateInstance(String instanceId,
             ProvisioningSettings settings) throws APPlatformException {
+        LOG.info("********************activateInstance**********************");
 
         InstanceStatus result = new InstanceStatus();
         result.setChangedParameters(settings.getParameters());
@@ -122,7 +112,6 @@ public class ShellController implements APPlatformController {
     @Override
     public InstanceDescription createInstance(ProvisioningSettings settings)
             throws APPlatformException {
-        LOG.warn("***createInstance***");
         InstanceDescription id = new InstanceDescription();
         id.setInstanceId(UUID.randomUUID().toString());
         id.setChangedParameters(settings.getParameters());
@@ -133,10 +122,8 @@ public class ShellController implements APPlatformController {
         config.setSetting(INSTANCE_ID, id.getInstanceId());
 
         validateAllScripts(config);
+        LOG.info("All scripts are correct");
         runVerificationScript(config);
-        ShellControllerLogger shellControllerLogger = new ShellControllerLogger();
-        shellControllerLogger.safeLogsToFile(config,"PROVISIONING_SCRIPT", "" );
-
         initStateMachine(settings, PROVISIONING_SCRIPT, STATEMACHINE_PROVISION);
 
         return id;
@@ -147,7 +134,6 @@ public class ShellController implements APPlatformController {
         ConfigurationKey[] scriptKeys = { PROVISIONING_SCRIPT,
                 DEPROVISIONING_SCRIPT, UPDATE_SCRIPT, ASSIGN_USER_SCRIPT,
                 DEASSIGN_USER_SCRIPT, CHECK_STATUS_SCRIPT };
-        LOG.warn("***validateAllScripts***");
         for (ConfigurationKey scriptKey : scriptKeys) {
             validateScript(config, scriptKey);
         }
@@ -155,14 +141,7 @@ public class ShellController implements APPlatformController {
 
     private void validateScript(Configuration config,
                                 ConfigurationKey scriptKey) throws APPlatformException {
-
-        LOG.warn("Jestem w VALIDATE SCRIPT");
-        LOG.warn("ScriptKEY = " + scriptKey);
-
         String scriptFilename = config.getSetting(scriptKey);
-
-        LOG.warn("scriptFileName = " +scriptFilename);
-
         if(scriptFilename.isEmpty()) {
             throw new APPlatformException("Failed to read service parameter " + scriptKey);
         }
@@ -200,18 +179,18 @@ public class ShellController implements APPlatformController {
 
     void runVerificationScript(Configuration config)
             throws APPlatformException {
+
         Script script;
-        LOG.warn("***runVerificationScript***");
         ShellControllerLogger shellControllerLogger = new ShellControllerLogger();
         try {
             script = new Script(config.getSetting(VERIFICATION_SCRIPT));
             script.insertServiceParameters(config.getProvisioningSettings());
+            shellControllerLogger.safeScriptConfiguration(config, "VERIFICATION", script.get());
         } catch (Exception e) {
             return;
         }
 
         try {
-
             ShellCommand command = new ShellCommand(script.get());
 
             try (Shell shell = new Shell()) {
@@ -224,9 +203,8 @@ public class ShellController implements APPlatformController {
                     sleep(100);
                 } while (rc == RUNNING && currentTimeMillis() - ref < valueOf(
                         config.getSetting(VERIFICATION_TIMEOUT)));
-                String shellOutput = shell
-                        .getOutput(config.getSetting(INSTANCE_ID));
-                shellControllerLogger.safeLogsToFile(config, "VERIFICATION_SCRIPT", shellOutput);
+                String shellOutput = shell.getOutput(config.getSetting(INSTANCE_ID));
+                shellControllerLogger.safeOutputFromScript(config, "VERIFICATION_SCRIPT", shellOutput);
                 Pattern p = compile(format(".*%s=(.*?)$", VERIFICATION_MESSAGE),
                         MULTILINE);
                 Matcher matcher = p.matcher(shellOutput);
@@ -246,8 +224,6 @@ public class ShellController implements APPlatformController {
     private void initStateMachine(ProvisioningSettings settings,
             ConfigurationKey serviceParamKey, String statemachineFilename)
             throws APPlatformException {
-
-        LOG.warn("***initStateMachine****");
         try {
             Configuration config = new Configuration(settings);
             Setting setting = new Setting(SCRIPT_FILE.name(),
@@ -295,7 +271,6 @@ public class ShellController implements APPlatformController {
             ProvisioningSettings settings, List<ServiceUser> users)
             throws APPlatformException {
 
-        LOG.warn("***createUsers***");
         Configuration config = new Configuration(settings);
         config.setRequestingUser();
         LOG.warn("ASSIGNE_USER_SCRIPT = " +ASSIGN_USER_SCRIPT);
@@ -358,7 +333,6 @@ public class ShellController implements APPlatformController {
             String instanceId, String transactionId, String operationId,
             List<OperationParameter> parameters, ProvisioningSettings settings)
             throws APPlatformException {
-        LOG.warn("***executeServiceOperation***");
         Configuration config = new Configuration(settings);
         config.setSetting(REQUESTING_USER_ID, userId);
         validateScript(config, OPERATIONS_SCRIPT);
@@ -376,18 +350,19 @@ public class ShellController implements APPlatformController {
         throw new UnsupportedOperationException("Not implemented");
     }
 
+
+
     @Override
     public InstanceStatus getInstanceStatus(String instanceId,
             ProvisioningSettings settings) throws APPlatformException {
-        LOG.warn("*********Jestem w getInstanceStatus ****");
+
+        ShellControllerLogger logger = new ShellControllerLogger();
         Configuration config = new Configuration(settings);
         InstanceStatus status = new InstanceStatus();
         StateMachine stateMachine;
-        LOG.warn("zapisuje do pliku info");
-        //safeOutputToTheFile(config,"w get instance status");
         try {
             stateMachine = new StateMachine(settings);
-            stateMachine.executeAction(settings, instanceId, status);
+            String result = stateMachine.executeAction(settings, instanceId, status);
         } catch (StateMachineException e) {
             LOG.error("Failed to get instance status", e);
             pool.terminateShell(instanceId);
@@ -437,7 +412,6 @@ public class ShellController implements APPlatformController {
     public InstanceStatus modifyInstance(String instanceId,
             ProvisioningSettings settings, ProvisioningSettings newSettings)
             throws APPlatformException {
-        LOG.warn("***modifyInstance***");
         LOG.debug("instanceId: {}", instanceId);
         Configuration config = new Configuration(newSettings);
         validateScript(config, UPDATE_SCRIPT);

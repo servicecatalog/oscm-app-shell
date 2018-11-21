@@ -19,6 +19,7 @@ import static org.oscm.app.shell.business.api.ShellStatus.SUCCESS;
 
 import javax.enterprise.inject.spi.CDI;
 
+import org.oscm.app.shell.ShellControllerLogger;
 import org.oscm.app.shell.business.Configuration;
 import org.oscm.app.shell.business.Script;
 import org.oscm.app.shell.business.api.ShellCommand;
@@ -36,6 +37,7 @@ public class Actions {
 
     private static final Logger LOG = LoggerFactory.getLogger(Actions.class);
 
+    private ShellControllerLogger logger ;
     private ShellPool pool = null;
 
     private void getPool() throws Exception {
@@ -46,14 +48,14 @@ public class Actions {
 
     public String executeScript(String instanceId, ProvisioningSettings settings, InstanceStatus result, Script script)
 	    throws Exception {
-
+	logger = new ShellControllerLogger();
 	Configuration config = new Configuration(settings);
 	getPool();
 	ShellCommand command = new ShellCommand(script.get());
+	logger.safeScriptCommand(command);
 	String consoleFile = config.getSetting(CONSOLE_FILE);
-
 	try {
-	    pool.runCommand(command, instanceId, consoleFile);
+		pool.runCommand(command, instanceId, consoleFile);
 	    return EXECUTING;
 	} catch (ShellPoolException e) {
 	    config.setSetting(SM_ERROR_MESSAGE, "Shell pool capacity reached. No free shell available.");
@@ -64,14 +66,17 @@ public class Actions {
     @StateMachineAction
     public String consumeScriptOutput(String instanceId, ProvisioningSettings settings, InstanceStatus result)
 	    throws Exception {
-
 	getPool();
+	ShellControllerLogger logger = new ShellControllerLogger();
 	ShellStatus shellStatus = pool.consumeShellOutput(instanceId);
+
 	if (shellStatus == RUNNING) {
+	    LOG.info("script is still running....");
 	    return RUN;
 	}
 
 	if (shellStatus == SUCCESS) {
+	    LOG.info("Calling the script was successful");
 	    pool.terminateShell(instanceId);
 	    return StatemachineEvents.SUCCESS;
 	}
