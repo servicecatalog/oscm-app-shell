@@ -32,7 +32,7 @@ public class ScriptLogger {
                 LOG.info(
                         "***********************configuration information*****************************");
                 LOG.info("<scriptType>:" + "<" + scriptName + ">");
-                LOG.info("<scriptPath>: " + getScriptPath(script, scriptName));
+                LOG.info("<scriptName>: " + getScriptPath(script, scriptName));
                 if (configuration.getRequestingUser() != null) {
                         LOG.info("<requestingUser>: " + "<"
                                 + configuration.getRequestingUser()
