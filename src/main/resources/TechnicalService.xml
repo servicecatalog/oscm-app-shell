@@ -76,7 +76,7 @@
       <LocalizedDescription locale="en">Update User Script. Absolute filesystem path or URL to script file</LocalizedDescription>
     </ParameterDefinition>    
     
-    <ParameterDefinition id="VERFICATION_SCRIPT" valueType="STRING" default="" configurable="true" mandatory="false" >
+    <ParameterDefinition id="VERIFICATION_SCRIPT" valueType="STRING" default="" configurable="true" mandatory="false" >
       <LocalizedDescription locale="en">Verification Script. Absolute filesystem path or URL to script file</LocalizedDescription>
     </ParameterDefinition>    
     

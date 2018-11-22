@@ -35,15 +35,16 @@ public class ProvisioningActions {
         @StateMachineAction
         public String executeScript(String instanceId,
                 ProvisioningSettings settings, InstanceStatus result) {
-                ScriptLogger logger = new ScriptLogger();
                 Configuration config = new Configuration(settings);
+                ScriptLogger logger = new ScriptLogger();
                 try {
                         Script script = new Script(
                                 config.getSetting(SCRIPT_FILE));
+                        script.loadContent();
                         script.insertServiceParameters(settings);
                         logger.logScriptConfiguration(config,
                                 ConfigurationKey.PROVISIONING_SCRIPT.name(),
-                                script.get());
+                                script.getContent());
                         return getActions()
                                 .executeScript(instanceId, settings, result,
                                         script);

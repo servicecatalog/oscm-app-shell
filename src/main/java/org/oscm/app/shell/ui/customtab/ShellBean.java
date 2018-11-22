@@ -84,10 +84,11 @@ public class ShellBean implements Serializable {
 	    ProvisioningSettings settings = getProvisioningSettings();
 
 	    Script script = new Script(getValue(settings, "CHECK_STATUS_SCRIPT"));
+	    script.loadContent();
 	    script.insertServiceParameters(settings);
-	    LOGGER.debug("script: " + script.get());
+	    LOGGER.debug("script: " + script.getContent());
 
-	    command.init(script.get());
+	    command.init(script.getContent());
 	    shell.lockShell(instanceId);
 	    shell.runCommand(instanceId, command);
 

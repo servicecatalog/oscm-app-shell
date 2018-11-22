@@ -40,11 +40,12 @@ public class OperationActions {
                 try {
                         Script script = new Script(
                                 config.getSetting(SCRIPT_FILE));
+                        script.loadContent();
                         script.insertOperationId(config);
                         script.insertServiceParameters(settings);
                         logger.logScriptConfiguration(config,
                                 ConfigurationKey.PROVISIONING_SCRIPT.name(),
-                                script.get());
+                                script.getContent());
                         return getActions()
                                 .executeScript(instanceId, settings, result,
                                         script);

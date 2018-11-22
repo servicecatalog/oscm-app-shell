@@ -51,12 +51,14 @@ public class Actions {
                 ProvisioningSettings settings, InstanceStatus result,
                 Script script)
                 throws Exception {
-                logger = new ScriptLogger();
+
                 Configuration config = new Configuration(settings);
+                logger = new ScriptLogger();
                 getPool();
-                ShellCommand command = new ShellCommand(script.get());
+                ShellCommand command = new ShellCommand(script.getContent());
                 logger.logScriptCommand(command);
                 String consoleFile = config.getSetting(CONSOLE_FILE);
+
                 try {
                         pool.runCommand(command, instanceId, consoleFile);
                         return EXECUTING;
