@@ -63,7 +63,12 @@ public class ProvisioningSettingsInterceptor implements Serializable {
     private void logSettingsMap(HashMap<String, Setting> map) {
 
         map.forEach((key, value) -> {
-            LOGGER.debug(key + ":" + value.getKey() + "[" + value.getValue() + "]");
+            String settingKey = value.getKey();
+            String settingValue = value.getValue();
+            if(settingKey.contains("PWD")){
+                settingValue = "******";
+            }
+            LOGGER.debug(key + ":" + settingKey + "[" + settingValue + "]");
         });
     }
 }
