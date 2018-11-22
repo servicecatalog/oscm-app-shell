@@ -1,9 +1,9 @@
 /*******************************************************************************
- *                                                                              
+ *
  *  Copyright FUJITSU LIMITED 2018                                           
- *                                                                                                                                 
+ *
  *  Creation Date: Aug 2, 2017                                                      
- *                                                                              
+ *
  *******************************************************************************/
 
 package org.oscm.app.shell.business.actions;
@@ -19,7 +19,7 @@ import static org.oscm.app.shell.business.api.ShellStatus.SUCCESS;
 
 import javax.enterprise.inject.spi.CDI;
 
-import org.oscm.app.shell.ShellControllerLogger;
+import org.oscm.app.shell.ScriptLogger;
 import org.oscm.app.shell.business.Configuration;
 import org.oscm.app.shell.business.Script;
 import org.oscm.app.shell.business.api.ShellCommand;
@@ -35,57 +35,63 @@ import org.oscm.app.statemachine.api.StateMachineAction;
 
 public class Actions {
 
-    private static final Logger LOG = LoggerFactory.getLogger(Actions.class);
+        private static final Logger LOG = LoggerFactory
+                .getLogger(Actions.class);
 
-    private ShellControllerLogger logger ;
-    private ShellPool pool = null;
+        private ScriptLogger logger;
+        private ShellPool pool = null;
 
-    private void getPool() throws Exception {
-	if (pool == null) {
-	    pool = CDI.current().select(ShellPool.class).get();
-	}
-    }
+        private void getPool() throws Exception {
+                if (pool == null) {
+                        pool = CDI.current().select(ShellPool.class).get();
+                }
+        }
 
-    public String executeScript(String instanceId, ProvisioningSettings settings, InstanceStatus result, Script script)
-	    throws Exception {
-	logger = new ShellControllerLogger();
-	Configuration config = new Configuration(settings);
-	getPool();
-	ShellCommand command = new ShellCommand(script.get());
-	logger.safeScriptCommand(command);
-	String consoleFile = config.getSetting(CONSOLE_FILE);
-	try {
-		pool.runCommand(command, instanceId, consoleFile);
-	    return EXECUTING;
-	} catch (ShellPoolException e) {
-	    config.setSetting(SM_ERROR_MESSAGE, "Shell pool capacity reached. No free shell available.");
-	    return FAILED;
-	}
-    }
+        public String executeScript(String instanceId,
+                ProvisioningSettings settings, InstanceStatus result,
+                Script script)
+                throws Exception {
+                logger = new ScriptLogger();
+                Configuration config = new Configuration(settings);
+                getPool();
+                ShellCommand command = new ShellCommand(script.get());
+                logger.logScriptCommand(command);
+                String consoleFile = config.getSetting(CONSOLE_FILE);
+                try {
+                        pool.runCommand(command, instanceId, consoleFile);
+                        return EXECUTING;
+                } catch (ShellPoolException e) {
+                        config.setSetting(SM_ERROR_MESSAGE,
+                                "Shell pool capacity reached. No free shell available.");
+                        return FAILED;
+                }
+        }
 
-    @StateMachineAction
-    public String consumeScriptOutput(String instanceId, ProvisioningSettings settings, InstanceStatus result)
-	    throws Exception {
-	getPool();
-	ShellControllerLogger logger = new ShellControllerLogger();
-	ShellStatus shellStatus = pool.consumeShellOutput(instanceId);
+        @StateMachineAction
+        public String consumeScriptOutput(String instanceId,
+                ProvisioningSettings settings, InstanceStatus result)
+                throws Exception {
+                getPool();
+                ScriptLogger logger = new ScriptLogger();
+                ShellStatus shellStatus = pool.consumeShellOutput(instanceId);
 
-	if (shellStatus == RUNNING) {
-	    LOG.info("script is still running....");
-	    return RUN;
-	}
+                if (shellStatus == RUNNING) {
+                        LOG.info("script is still running....");
+                        return RUN;
+                }
 
-	if (shellStatus == SUCCESS) {
-	    LOG.info("Calling the script was successful");
-	    pool.terminateShell(instanceId);
-	    return StatemachineEvents.SUCCESS;
-	}
+                if (shellStatus == SUCCESS) {
+                        LOG.info("Calling the script was successful");
+                        pool.terminateShell(instanceId);
+                        return StatemachineEvents.SUCCESS;
+                }
 
-	String errorOutput = pool.getShellErrorOutput(instanceId);
-	LOG.error("Shell error output: " + errorOutput);
-	pool.terminateShell(instanceId);
-	new Configuration(settings).setSetting(SM_ERROR_MESSAGE, errorOutput);
-	return ERROR;
-    }
+                String errorOutput = pool.getShellErrorOutput(instanceId);
+                LOG.error("Shell error output: " + errorOutput);
+                pool.terminateShell(instanceId);
+                new Configuration(settings)
+                        .setSetting(SM_ERROR_MESSAGE, errorOutput);
+                return ERROR;
+        }
 
 }
