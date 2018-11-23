@@ -71,10 +71,8 @@ public class ShellPool {
     public ShellStatus runCommand(ShellCommand command, String lockId, String shellConsoleFile)
             throws ShellPoolException, IOException, APPlatformException {
         for (Shell shell : shellPool) {
-
             if (shell.lockShell(lockId)) {
                 ShellStatus result = shell.runCommand(lockId, command);
-
                 if (result == STDIN_CLOSED) {
                     LOG.info("lockId: " + lockId + " remove shell from pool because stdin was closed");
                     shell.close();
