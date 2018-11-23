@@ -73,7 +73,7 @@ public class ShellPool {
         for (Shell shell : shellPool) {
 
             if (shell.lockShell(lockId)) {
-                LOG.info("runCommand w shellPool");
+               
                 ShellStatus result = shell.runCommand(lockId, command);
 
                 if (result == STDIN_CLOSED) {
