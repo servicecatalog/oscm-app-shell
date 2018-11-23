@@ -79,7 +79,6 @@ public class ShellController implements APPlatformController {
         @Override
         public InstanceStatus activateInstance(String instanceId,
                 ProvisioningSettings settings) throws APPlatformException {
-
                 InstanceStatus result = new InstanceStatus();
                 result.setChangedParameters(settings.getParameters());
                 return result;
