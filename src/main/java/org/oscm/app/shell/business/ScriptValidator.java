@@ -57,7 +57,7 @@ public class ScriptValidator {
     }
 
     public void validateInteractiveCommands(Script script) throws APPlatformException, IOException {
-        String[] interactiveCommands = {"read", "ssh", "rm -i"};
+        String[] interactiveCommands = {"read"};
 
         String scriptContent = script.getContent();
         StringReader stringReader = new StringReader(scriptContent);
