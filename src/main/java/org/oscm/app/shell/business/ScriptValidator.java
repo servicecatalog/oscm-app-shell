@@ -21,7 +21,7 @@ public class ScriptValidator {
     private static final Logger LOGGER = LoggerFactory.getLogger(ScriptValidator.class);
 
     public void validate(Configuration configuration, ConfigurationKey scriptKey)
-            throws APPlatformException, IOException {
+            throws APPlatformException {
 
         LOGGER.debug("Validation of script [" + scriptKey + "] started");
 
@@ -56,22 +56,24 @@ public class ScriptValidator {
         }
     }
 
-    public void validateInteractiveCommands(Script script) throws APPlatformException, IOException {
-        String[] interactiveCommands = {"read", "ssh", "rm -i"};
-
-        String scriptContent = script.getContent();
-        StringReader stringReader = new StringReader(scriptContent);
+    public void validateInteractiveCommands(Script script) throws APPlatformException {
+        // TODO: Verify if an interactive flag is passed to a command.
+        String[] interactiveCommands = {"read"};
+        String content = script.getContent();
+        StringReader stringReader = new StringReader(content);
         BufferedReader bufferedReader = new BufferedReader(stringReader);
-        String line;
-        while ((line = bufferedReader.readLine()) != null) {
-            for (int i = 0; i < interactiveCommands.length; i++) {
-                if (line.matches("(^\\s*" + interactiveCommands[i] +
-                        "(\\s?\\w+)*)|(^[a-zA-Z0-9_-]+\\s?(\\w*\\s?)*)*(\\|" + interactiveCommands[i] +
-                        "|\\| " + interactiveCommands[i] + ")(\\s?\\w+)*")) {
-                    throw new APPlatformException("Script " + script.getPath() + " " +
-                            "contains an interactive command! Line that caused the exception: " + line);
+        try {
+            while ((content = bufferedReader.readLine()) != null) {
+                for (int i = 0; i < interactiveCommands.length; i++) {
+                    if (content.matches("^(\\s)*" + interactiveCommands[i] + "\\s(.*)")) {
+                        throw new APPlatformException("Script " + script.getPath() + " " +
+                                "contains an interactive command! Line that caused the exception: " + content);
+                    }
                 }
             }
+        } catch(IOException e) {
+            throw new APPlatformException("IOException caught while working with script: " + script.getPath() +
+                    ". Error message: " + e.toString());
         }
     }
 
