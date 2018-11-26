@@ -65,9 +65,7 @@ public class ScriptValidator {
         String line;
         while ((line = bufferedReader.readLine()) != null) {
             for (int i = 0; i < interactiveCommands.length; i++) {
-                if (line.matches("(^\\s*" + interactiveCommands[i] +
-                        "(\\s?\\w+)*)|(^[a-zA-Z0-9_-]+\\s?(\\w*\\s?)*)*(\\|" + interactiveCommands[i] +
-                        "|\\| " + interactiveCommands[i] + ")(\\s?\\w+)*")) {
+               if (line.matches("^(\\s)*" + interactiveCommands[i] + "\\s(.*)")) {
                     throw new APPlatformException("Script " + script.getPath() + " " +
                             "contains an interactive command! Line that caused the exception: " + line);
                 }
