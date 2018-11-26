@@ -57,7 +57,7 @@ public class ScriptValidator {
     }
 
     public void validateInteractiveCommands(Script script) throws APPlatformException {
-        // TODO: Verify if an interactive flag is passed to a command.
+        // TODO: Verify if an interactive flag is passed to a command (rm -i, cp -i, mv -i).
         String[] interactiveCommands = {"read"};
         String content = script.getContent();
         StringReader stringReader = new StringReader(content);
