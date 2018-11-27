@@ -27,6 +27,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeoutException;
 
+import org.oscm.app.shell.ScriptLogger;
 import org.oscm.app.v2_0.exceptions.APPlatformException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,6 +67,8 @@ public class Shell implements AutoCloseable {
 
     private ShellCommand command;
 
+    private ScriptLogger scriptLogger;
+
     public Shell() throws IOException, APPlatformException {
         this(null);
     }
@@ -73,7 +76,7 @@ public class Shell implements AutoCloseable {
     public Shell(String psconsole) throws IOException, APPlatformException {
 
         //TODO: psconsole was powershell configuration file, is it still needed for shell scripts
-
+        scriptLogger = new ScriptLogger();
         if (psconsole == null || psconsole.isEmpty()) {
             psconsole = "sh";
         } else {
@@ -85,6 +88,7 @@ public class Shell implements AutoCloseable {
         stdIn = new BufferedWriter(new OutputStreamWriter(shell.getOutputStream()));
         stdOut = new StreamGobbler(shell.getInputStream());
         stdErr = new StreamGobbler(shell.getErrorStream());
+
 
         if (!stdErr.buffer.isEmpty()) {
             throw new APPlatformException(
@@ -98,15 +102,16 @@ public class Shell implements AutoCloseable {
         lockId = null;
     }
 
+
     public ShellStatus runCommand(final String lockId, final ShellCommand command) {
         if (!lockId.equals(this.lockId)) {
             LOG.error("shell called by " + lockId + ", but locked for " + this.lockId);
             return CALLERID_DOES_NOT_MATCH;
         }
-
         this.command = command;
         try {
             LOG.debug(String.format("lockId: %s, command:\n%s", lockId, command.getCommand()));
+            scriptLogger.logScriptCommand(command);
             stdIn.write(command.getCommand());
             stdIn.newLine();
             stdIn.flush();

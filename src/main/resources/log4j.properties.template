@@ -1,4 +1,4 @@
-# Ignore standard logger
+ Ignore standard logger
 log4j.rootLogger=OFF
 
 org.apache.commons.logging.Log=org.apache.commons.logging.impl.NoOpLog
