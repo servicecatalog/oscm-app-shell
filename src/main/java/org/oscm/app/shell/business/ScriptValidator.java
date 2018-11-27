@@ -12,6 +12,10 @@ import org.oscm.app.v2_0.exceptions.APPlatformException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.StringReader;
+
 public class ScriptValidator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ScriptValidator.class);
@@ -52,8 +56,25 @@ public class ScriptValidator {
         }
     }
 
-    public void validateInteractiveCommands(Script script) {
-        //TODO: validate script upon the interactive commands
+    public void validateInteractiveCommands(Script script) throws APPlatformException {
+        // TODO: Verify if an interactive flag is passed to a command (rm -i, cp -i, mv -i).
+        String[] interactiveCommands = {"read"};
+        String content = script.getContent();
+        StringReader stringReader = new StringReader(content);
+        BufferedReader bufferedReader = new BufferedReader(stringReader);
+        try {
+            while ((content = bufferedReader.readLine()) != null) {
+                for (int i = 0; i < interactiveCommands.length; i++) {
+                    if (content.matches("^(\\s)*" + interactiveCommands[i] + "\\s(.*)")) {
+                        throw new APPlatformException("Script " + script.getPath() + " " +
+                                "contains an interactive command! Line that caused the exception: " + content);
+                    }
+                }
+            }
+        } catch(IOException e) {
+            throw new APPlatformException("IOException caught while working with script: " + script.getPath() +
+                    ". Error message: " + e.toString());
+        }
     }
 
     public void validateEndOfScript(Script script) throws APPlatformException {
