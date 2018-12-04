@@ -8,23 +8,21 @@
 
 package org.oscm.app.shell.business;
 
-import org.apache.commons.io.IOUtils;
 import org.oscm.app.v2_0.data.ProvisioningSettings;
 import org.oscm.app.v2_0.data.Setting;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.PostConstruct;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringWriter;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Optional;
-import java.util.TreeSet;
+import java.util.*;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.HttpClientBuilder;
 
 import static java.lang.String.join;
 import static org.oscm.app.shell.business.ConfigurationKey.OPERATIONS_ID;
@@ -71,44 +69,40 @@ public class Script {
         return external;
     }
 
-    public String loadLocalScript(String pathfile) throws Exception {
-        return new String(Files.readAllBytes(Paths.get(pathfile)));
+    public String loadLocalScript(String pathfile) throws FileNotFoundException {
+        try (Scanner scanner = new Scanner(new File(pathfile)).useDelimiter("\\A")) {
+            return scanner.hasNext() ? scanner.next() : "";
+        } catch (FileNotFoundException e) {
+            LOG.error("Failed to load local script from " + pathfile + " - file not found. " + e );
+            throw e;
+        }
     }
 
     public String loadExternalScript(String url) throws Exception {
-        //TODO: load script content from external url (check downloadFile method)
-        return null;
+        try (Scanner scanner = new Scanner(getConnectionStream(url),"UTF-8").useDelimiter("\\A")) {
+            return scanner.hasNext() ? scanner.next() : "";
+        } catch (Exception e) {
+            if (url.startsWith("https")) {
+                LOG.error("Failed to download content file " + url + " " + e);
+                throw new Exception("Failed to load script from URL. The server might be unreachable or " +
+                        "the SSL certificate is not trusted. Exception: " + e.getMessage());
+            } else {
+                LOG.error("Failed to download content file " + url + " " + e);
+                throw e;
+            }
+        }
     }
 
-    private String downloadFile(String url) throws Exception {
-
-        HttpURLConnection conn = null;
-        StringWriter writer = new StringWriter();
-
+    private InputStream getConnectionStream(String url) throws Exception {
         try {
-            URL urlSt = new URL(url);
-            conn = (HttpURLConnection) urlSt.openConnection();
-            conn.setDoInput(true);
-            conn.setDoOutput(true);
-            conn.setRequestProperty("Content-Type", "application/octet-stream");
-            conn.setRequestMethod("GET");
-            try (InputStream in = conn.getInputStream();) {
-                IOUtils.copy(in, writer, "UTF-8");
-            }
+            HttpClient httpClient = HttpClientBuilder.create().build();
+            HttpGet httpGet = new HttpGet(url);
+            HttpResponse httpResponse = httpClient.execute(httpGet);
+            return httpResponse.getEntity().getContent();
         } catch (Exception e) {
-            LOG.error("Failed to download content file " + url, e);
-            throw new Exception("Failed to download content file " + url);
-        } finally {
-            if (conn != null) {
-                conn.disconnect();
-            }
+            LOG.error("Failed to open connection stream to resource: " + url);
+            throw e;
         }
-
-        if (HttpURLConnection.HTTP_OK != conn.getResponseCode()) {
-            throw new Exception("Failed to download content file " + url);
-        }
-
-        return writer.toString();
     }
 
     public void insertServiceParameters(ProvisioningSettings settings) {

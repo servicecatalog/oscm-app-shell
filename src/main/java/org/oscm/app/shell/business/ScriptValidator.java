@@ -52,7 +52,7 @@ public class ScriptValidator {
             script.loadContent();
             return script;
         } catch (Exception e) {
-            throw new APPlatformException("Script: " + scriptPath + "cannot be loaded: " + e.getMessage());
+            throw new APPlatformException("Script: " + scriptPath + " cannot be loaded: " + e.getMessage());
         }
     }
 
@@ -73,7 +73,7 @@ public class ScriptValidator {
             }
         } catch(IOException e) {
             throw new APPlatformException("IOException caught while working with script: " + script.getPath() +
-                    ". Error message: " + e.toString());
+                    ". Error message: " + e.getMessage());
         }
     }
 
