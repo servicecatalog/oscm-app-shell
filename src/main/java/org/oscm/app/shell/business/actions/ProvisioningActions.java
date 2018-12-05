@@ -41,7 +41,7 @@ public class ProvisioningActions {
                         Script script = new Script(
                                 config.getSetting(SCRIPT_FILE));
                         script.loadContent();
-                        script.insertServiceParameters(settings);
+                        script.insertProvisioningSettings(settings);
                         logger.logScriptConfiguration(config,
                                 ConfigurationKey.PROVISIONING_SCRIPT.name(),
                                 script.getContent());
