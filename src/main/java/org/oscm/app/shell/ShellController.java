@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.json.JsonObject;
 import java.util.List;
 import java.util.Properties;
 import java.util.UUID;
@@ -159,6 +160,8 @@ public class ShellController implements APPlatformController {
                                                 VERIFICATION_TIMEOUT)));
                                 String shellOutput = shell.getOutput(
                                         config.getSetting(INSTANCE_ID));
+                                JsonObject jsonOutput = shell.getResult(command, rc);
+                                LOG.warn("Json output : " +jsonOutput);
                                 scriptLogger.logOutputFromScript(config,
                                         "VERIFICATION_SCRIPT", shellOutput);
                                 Pattern p = compile(format(".*%s=(.*?)$",
