@@ -105,22 +105,15 @@ public class Script {
         }
     }
 
-    public void insertServiceParameters(ProvisioningSettings settings) {
+    public void insertProvisioningSettings(ProvisioningSettings settings) {
 
         LOG.trace("Script before patching:\n" + content);
 
         TreeSet<String> parameters = new TreeSet<>();
 
-        HashMap<String, Setting> params = settings.getParameters();
-        for (String key : params.keySet()) {
-            parameters.add(buildParameterCommand(key, params.get(key).getValue()));
-        }
-        parameters.add(buildParameterCommand("SUBSCRIPTION_ID", settings.getSubscriptionId()));
-        if (settings.getRequestingUser() != null) {
-            parameters.add(buildParameterCommand("REQUESTING_USER", settings.getRequestingUser().getUserId()));
-        }
-        parameters.add(buildParameterCommand("REQUESTING_ORGANIZATION_ID", settings.getOrganizationId()));
-        parameters.add(buildParameterCommand("REFERENCE_ID", settings.getReferenceId()));
+        insertBasicParameters(parameters, settings);
+        insertServiceParameters(parameters,settings);
+        insertUDAs(parameters, settings);
 
         String firstLine = content.substring(0, content.indexOf(NEW_LINE));
         String rest = content.substring(content.indexOf(NEW_LINE) + 1, content.length());
@@ -128,6 +121,36 @@ public class Script {
 
         LOG.trace("Patched content:\n" + patchedScript);
         content = patchedScript;
+    }
+
+    private void insertBasicParameters(TreeSet<String> scriptParameters, ProvisioningSettings settings){
+
+        scriptParameters.add(buildParameterCommand("SUBSCRIPTION_ID", settings.getSubscriptionId()));
+        if (settings.getRequestingUser() != null) {
+            scriptParameters.add(buildParameterCommand("REQUESTING_USER", settings.getRequestingUser().getUserId()));
+        }
+        scriptParameters.add(buildParameterCommand("REQUESTING_ORGANIZATION_ID", settings.getOrganizationId()));
+        scriptParameters.add(buildParameterCommand("REFERENCE_ID", settings.getReferenceId()));
+    }
+
+    private void insertServiceParameters(TreeSet<String> scriptParameters, ProvisioningSettings settings){
+
+        HashMap<String, Setting> params = settings.getParameters();
+
+        for (String key : params.keySet()) {
+            String parameterCommand = buildParameterCommand(key, params.get(key).getValue());
+            scriptParameters.add(parameterCommand);
+        }
+    }
+
+    private void insertUDAs(TreeSet<String> scriptParameters, ProvisioningSettings settings){
+
+        HashMap<String, Setting> params = settings.getAttributes();
+
+        for (String key : params.keySet()) {
+            String parameterCommand = buildParameterCommand(key, params.get(key).getValue());
+            scriptParameters.add(parameterCommand);
+        }
     }
 
     public void insertOperationId(Configuration config) {

@@ -84,7 +84,7 @@ public class ScriptTest {
 
         // when
         script.loadContent();
-        script.insertServiceParameters(settings);
+        script.insertProvisioningSettings(settings);
 
         // then
         assertTrue(script.getContent().contains("key=\"value\""));

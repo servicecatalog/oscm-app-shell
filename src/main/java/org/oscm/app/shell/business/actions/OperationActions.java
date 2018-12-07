@@ -42,7 +42,7 @@ public class OperationActions {
                                 config.getSetting(SCRIPT_FILE));
                         script.loadContent();
                         script.insertOperationId(config);
-                        script.insertServiceParameters(settings);
+                        script.insertProvisioningSettings(settings);
                         logger.logScriptConfiguration(config,
                                 ConfigurationKey.PROVISIONING_SCRIPT.name(),
                                 script.getContent());

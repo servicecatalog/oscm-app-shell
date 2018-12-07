@@ -133,7 +133,7 @@ public class ShellController implements APPlatformController {
                 try {
                         script = new Script(verificationScript);
                         script.loadContent();
-                        script.insertServiceParameters(
+                        script.insertProvisioningSettings(
                                 config.getProvisioningSettings());
                 } catch (Exception e) {
                         throw new APPlatformException(e.getMessage());
