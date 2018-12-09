@@ -154,28 +154,13 @@ public class Shell implements AutoCloseable {
         return output;
     }
 
-    //status:failed
-    //status:success
-    //status : " "
-    // message : " "
-    //data : accessInfo : " "
-
-    //getStatusFromJson
-    //getDataFromJson
-    //getDataFromJson
 
     private static String STATUS = "status";
     private static String MESSAGE = "message";
     private static String DATA = "data";
 
     public JsonObject getResult(ShellCommand command, ShellStatus status) throws Exception{
-//        ArrayList<String> temp = command.getOutput();
-//        LOG.warn("getOutput arrayList : " + temp.size());
-//        for(int i=0; i<temp.size(); i++){
-//            LOG.warn(temp.get(i));
-//        }
         ArrayList<String> jsonOutput = command.getOutput();
-        ArrayList<String> errorOutput = command.getError();
 
         if (!command.getError().isEmpty()){
             return Json.createObjectBuilder()
@@ -196,44 +181,18 @@ public class Shell implements AutoCloseable {
 
     private static String getInfoFromOutput(ArrayList<String> output, String jsonKey) throws Exception{
 
-        String jsonOutput = String.join("\n", output);
-
-        LOG.warn("***********************************************************");
-        JSONObject jsonObject = new JSONObject(jsonOutput);
-        LOG.warn("jsonObject.get : " + jsonObject.get(STATUS));
-        LOG.warn("jsonObject.getString " + jsonObject.getString(STATUS));
-
-        LOG.warn("jsonObject.get : " + jsonObject.get(DATA));
-        LOG.warn("jsonObject.getString " + jsonObject.getString(DATA));
-
-        if(output!=null){
-            String json = output.get(0);
-            Map<String, String> map = new LinkedHashMap<>();
-            for(String keyValue : json.split(",")) {
-                String[] pairs = keyValue.split(":", 2);
-                map.put(pairs[0], pairs.length == 1 ? "" : pairs[1]);
-            }
-
-            for (String key: map.keySet()) {
-                if (key.contains(jsonKey)){
-                     return map.get(key);
-                }
-            }
+        try {
+            String jsonOutput = String.join("\n", output);
+            JSONObject jsonObject = new JSONObject(jsonOutput);
+            return jsonObject.getString(jsonKey);
+        }
+        catch (Exception e){
+            LOG.error("Exception : " , e);
         }
         return "";
 
     }
 
-    private static String getDataFromOutput(ShellCommand command){
-
-        return "";
-
-    }
-    private static String getMessageFromOutput(ShellCommand command){
-
-        return "";
-
-    }
 
     public ShellStatus consumeOutput(String lockId) {
         if (!lockId.equals(this.lockId)) {
