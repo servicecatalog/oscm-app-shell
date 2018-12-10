@@ -19,7 +19,9 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -27,10 +29,17 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeoutException;
 
+import jdk.nashorn.internal.parser.JSONParser;
+import jdk.nashorn.internal.scripts.JS;
 import org.oscm.app.shell.ScriptLogger;
 import org.oscm.app.v2_0.exceptions.APPlatformException;
+import org.richfaces.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.stream.JsonParser;
 
 /**
  * Shell runtime used to execute Shell scripts
@@ -145,6 +154,46 @@ public class Shell implements AutoCloseable {
         return output;
     }
 
+
+    private static String STATUS = "status";
+    private static String MESSAGE = "message";
+    private static String DATA = "data";
+
+    public JsonObject getResult(ShellCommand command, ShellStatus status) throws Exception{
+        ArrayList<String> jsonOutput = command.getOutput();
+
+        if (!command.getError().isEmpty()){
+            return Json.createObjectBuilder()
+                    .add(STATUS, "failed")
+                    .add(MESSAGE, command.getError().toString())
+                    .build();
+        }
+        else {
+            return Json.createObjectBuilder()
+                    .add(STATUS, getInfoFromOutput(jsonOutput, STATUS))
+                    .add(MESSAGE , getInfoFromOutput(jsonOutput, MESSAGE))
+                    .add(DATA, getInfoFromOutput(jsonOutput, DATA))
+                    .build();
+        }
+
+    }
+
+
+    private static String getInfoFromOutput(ArrayList<String> output, String jsonKey) throws Exception{
+
+        try {
+            String jsonOutput = String.join("\n", output);
+            JSONObject jsonObject = new JSONObject(jsonOutput);
+            return jsonObject.getString(jsonKey);
+        }
+        catch (Exception e){
+            LOG.error("Exception : " , e);
+        }
+        return "";
+
+    }
+
+
     public ShellStatus consumeOutput(String lockId) {
         if (!lockId.equals(this.lockId)) {
             LOG.error("shell called by " + lockId + ", but locked for " + this.lockId);
@@ -156,6 +205,9 @@ public class Shell implements AutoCloseable {
 
         return getCmdOutput();
     }
+
+
+
 
     public void unlock() {
         LOG.trace("callerid: " + lockId + " shell has been unlocked");
