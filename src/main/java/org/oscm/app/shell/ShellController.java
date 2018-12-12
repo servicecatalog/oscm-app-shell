@@ -154,7 +154,7 @@ public class ShellController implements APPlatformController {
                         config.getSetting(
                                 VERIFICATION_TIMEOUT)));
                 String shellOutput = shell.getOutput(
-                        config.getSetting(INSTANCE_ID));
+                );
                 JsonObject jsonOutput = shell.getResult();
                 LOG.warn("Json output : " + jsonOutput);
                 scriptLogger.logOutputFromScript(config,

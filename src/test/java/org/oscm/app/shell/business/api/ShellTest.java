@@ -18,26 +18,59 @@ import java.nio.file.Paths;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
+import static org.oscm.app.shell.business.api.Shell.*;
 import static org.oscm.app.shell.business.api.ShellStatus.RUNNING;
 
 public class ShellTest {
 
     @Test
-    public void testGetResult() throws Exception {
+    public void testGetResultReturnedSuccess() throws Exception {
 
         //given
         String instanceId = "Instance_1236678329433";
-        String scriptContent = getScriptContent("status.sh");
+        String scriptContent = getScriptContent("sample_scripts/status_success.sh");
         Shell shell = runScript(scriptContent, instanceId);
 
         //when
         JsonObject result = shell.getResult();
 
         //then
-        assertEquals("success", result.getString("status"));
+        assertEquals(STATUS_OK, result.getString(JSON_STATUS));
+    }
+
+    @Test
+    public void testGetResultReturnedError() throws Exception {
+
+        //given
+        String instanceId = "Instance_1236678329433";
+        String scriptContent = getScriptContent("sample_scripts/status_error.sh");
+        Shell shell = runScript(scriptContent, instanceId);
+
+        //when
+        JsonObject result = shell.getResult();
+
+        //then
+        assertEquals(STATUS_ERROR, result.getString(JSON_STATUS));
+    }
+
+    @Test
+    public void testGetResultReturnedExecutionError() throws Exception {
+
+        //given
+        String instanceId = "Instance_1236678329433";
+        String scriptContent = getScriptContent("sample_scripts/status_execution_error.sh");
+        Shell shell = runScript(scriptContent, instanceId);
+
+        //when
+        JsonObject result = shell.getResult();
+
+        //then
+        assertEquals(STATUS_ERROR, result.getString(JSON_STATUS));
+        assertEquals(shell.getErrorOutput(), result.getString(JSON_MESSAGE));
     }
 
     private Shell runScript(String scriptContent, String instanceId) throws Exception {
+
         Shell shell = new Shell();
         ShellCommand command = new ShellCommand(scriptContent);
 
