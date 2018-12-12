@@ -1,24 +1,11 @@
 /*******************************************************************************
- *                                                                              
+ *
  *  Copyright FUJITSU LIMITED 2018
- *       
+ *
  *  Creation Date: 2017-10-17                                                      
- *                                                                              
+ *
  *******************************************************************************/
 package org.oscm.app.shell.ui.customtab;
-
-import static org.oscm.app.shell.business.Configuration.CONTROLLER_ID;
-import static org.oscm.app.shell.business.api.ShellStatus.RUNNING;
-import static org.oscm.app.shell.business.api.ShellStatus.SUCCESS;
-
-import java.io.Serializable;
-import java.util.List;
-import java.util.Locale;
-
-import javax.annotation.PostConstruct;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
-import javax.faces.context.FacesContext;
 
 import org.apache.commons.codec.binary.Base64;
 import org.oscm.app.shell.business.Script;
@@ -30,6 +17,17 @@ import org.oscm.app.v2_0.data.ProvisioningSettings;
 import org.oscm.app.v2_0.intf.APPlatformService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.annotation.PostConstruct;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
+import javax.json.JsonObject;
+import java.io.Serializable;
+import java.util.Locale;
+
+import static org.oscm.app.shell.business.Configuration.CONTROLLER_ID;
+import static org.oscm.app.shell.business.api.ShellStatus.RUNNING;
 
 /**
  * Bean for showing server information.
@@ -48,80 +46,85 @@ public class ShellBean implements Serializable {
 
     @PostConstruct
     public void init() {
-	String lang = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("lang");
-	if (lang != null) {
-	    FacesContext.getCurrentInstance().getViewRoot().setLocale(Locale.forLanguageTag(lang));
-	}
+
+        String lang = FacesContext.getCurrentInstance().getExternalContext()
+                .getRequestParameterMap().get("lang");
+
+        if (lang != null) {
+            FacesContext.getCurrentInstance().getViewRoot().setLocale(Locale.forLanguageTag(lang));
+        }
     }
 
     public String getSubscriptionId() {
-	return subscriptionId;
+        return subscriptionId;
     }
 
     public void setSubscriptionId(String subscriptionId) {
-	this.subscriptionId = new String(Base64.decodeBase64(subscriptionId));
+        this.subscriptionId = new String(Base64.decodeBase64(subscriptionId));
     }
 
     public String getOrganizationId() {
-	return organizationId;
+        return organizationId;
     }
 
     public void setOrganizationId(String organizationId) {
-	this.organizationId = new String(Base64.decodeBase64(organizationId));
+        this.organizationId = new String(Base64.decodeBase64(organizationId));
     }
 
     public String getInstanceId() {
-	return instanceId;
+        return instanceId;
     }
 
     public void setInstanceId(String instanceId) {
-	this.instanceId = new String(Base64.decodeBase64(instanceId));
+        this.instanceId = new String(Base64.decodeBase64(instanceId));
     }
 
-    public List<? extends String> getStatus() {
-	ShellCommand command = new ShellCommand();
-	try (Shell shell = new Shell();) {
-	    ProvisioningSettings settings = getProvisioningSettings();
+    public String getStatus() {
 
-	    Script script = new Script(getValue(settings, "CHECK_STATUS_SCRIPT"));
-	    script.loadContent();
-	    script.insertProvisioningSettings(settings);
-	    LOGGER.debug("script: " + script.getContent());
+        try (Shell shell = new Shell()) {
 
-	    command.init(script.getContent());
-	    shell.lockShell(instanceId);
-	    shell.runCommand(instanceId, command);
+            ProvisioningSettings settings = getProvisioningSettings();
+            String statusScript = settings.getParameters().get("CHECK_STATUS_SCRIPT").getValue();
+            Script script = new Script(statusScript);
+            script.loadContent();
+            script.insertProvisioningSettings(settings);
 
-	    ShellStatus rc;
-	    do {
-		rc = shell.consumeOutput(instanceId);
-		Thread.sleep(1000);
-	    } while (rc == RUNNING);
+            LOGGER.debug("Status script details: " + script.getContent());
 
-	    if (rc == SUCCESS) {
-		return command.getOutput();
-	    }
+            ShellCommand command = new ShellCommand();
+            command.init(script.getContent());
 
-	    return command.getError();
-	} catch (Exception e) {
-	    LOGGER.error(String.format(
-		    "Failed to get status of shell provisioning. orgId: %s, instanceId: %s, subscId: %s",
-		    organizationId, instanceId, subscriptionId), e);
-	    LOGGER.debug("Shell error output: " + command.getError());
-	    return command.getError();
-	}
-    }
+            shell.lockShell(instanceId);
+            shell.runCommand(instanceId, command);
 
-    private String getValue(ProvisioningSettings settings, String paramId) {
-	if (settings.getParameters().containsKey(paramId)) {
-	    return settings.getParameters().get(paramId).getValue();
-	}
-	return "";
+            ShellStatus status;
+            do {
+                status = shell.consumeOutput(instanceId);
+                Thread.sleep(1000);
+            } while (status == RUNNING);
+
+            JsonObject result = shell.getResult();
+
+            LOGGER.debug("Status script result: " + result.getString(Shell.JSON_STATUS));
+            LOGGER.debug("Status script message: " + result.getString(Shell.JSON_MESSAGE));
+
+            if ("success".equals(result.getString(Shell.JSON_STATUS))) {
+                return result.getString(Shell.JSON_DATA);
+            } else {
+                return result.getString(Shell.JSON_MESSAGE) + result.getString(Shell.JSON_DATA);
+            }
+
+        } catch (Exception e) {
+            LOGGER.error(String.format(
+                    "Failed to get status of shell provisioning. orgId: %s, instanceId: %s, subId: %s",
+                    organizationId, instanceId, subscriptionId), e);
+            return "Failed to get status of shell provisioning" + e.getMessage();
+        }
     }
 
     private ProvisioningSettings getProvisioningSettings() throws Exception {
-	APPlatformService app = APPlatformServiceFactory.getInstance();
-	return app.getServiceInstanceDetails(CONTROLLER_ID, instanceId, subscriptionId, organizationId);
+        APPlatformService app = APPlatformServiceFactory.getInstance();
+        return app.getServiceInstanceDetails(CONTROLLER_ID, instanceId, subscriptionId, organizationId);
     }
 
 }
