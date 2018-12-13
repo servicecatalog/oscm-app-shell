@@ -156,7 +156,7 @@ public class Shell implements AutoCloseable {
     }
 
 
-    public JsonObject getResult(ShellCommand command, ShellStatus status) throws Exception{
+    public JsonObject getResult() throws JSONException{
         if (!command.getError().isEmpty()){
             return Json.createObjectBuilder()
                     .add(JSON_STATUS, "failed")
