@@ -8,13 +8,17 @@
 
 package org.oscm.app.shell.business;
 
+import org.oscm.app.shell.ShellController;
 import org.oscm.app.v2_0.exceptions.APPlatformException;
+import org.richfaces.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ScriptValidator {
 
@@ -33,6 +37,7 @@ public class ScriptValidator {
         Script script = validateIfScriptExists(scriptPath);
         validateInteractiveCommands(script);
         validateEndOfScript(script);
+        validateJSONinScript(script);
 
         LOGGER.debug("Validation of script [" + scriptKey + "] finished successfully");
     }
@@ -85,6 +90,27 @@ public class ScriptValidator {
             throw new APPlatformException(
                     "Missing output \"END_OF_SCRIPT\" in " + script.getPath());
         }
+    }
+
+    private static final Logger LOG = LoggerFactory
+            .getLogger(ScriptValidator.class);
+
+    public void validateJSONinScript(Script script) {
+        String content = script.getContent();
+
+        //search JSON in script content
+        final String regex = "(\\{)(\\ \"status\" *: *\"([a-zA-Z]*)\"\\ ,)(\\ \"message\" *: *\".*?\"\\ ,)(\\ \"data\" *: \\{(\\ *\".*?\"\\ ),)(.*\\})";
+
+        final Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
+        final Matcher matcher = pattern.matcher(content);
+
+        if (matcher.find()){
+           LOG.warn("Full match: " + matcher.group(0));
+        }
+        else{
+            LOG.error("JSON is not created correctly or the script doesn't return JSON.");
+        }
+
     }
 
 }

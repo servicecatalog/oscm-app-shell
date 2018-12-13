@@ -113,7 +113,7 @@ public class ShellController implements APPlatformController {
                         DEPROVISIONING_SCRIPT, UPDATE_SCRIPT,
                         ASSIGN_USER_SCRIPT, DEASSIGN_USER_SCRIPT,
                         CHECK_STATUS_SCRIPT };
-
+                LOG.info("In validate script - ShellController");
                 for (ConfigurationKey scriptKey : scriptKeys) {
                         validator.validate(config, scriptKey);
                 }
