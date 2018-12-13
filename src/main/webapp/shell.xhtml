@@ -23,12 +23,6 @@
 </f:metadata>
 
 <h:body>
-  <h:form>
-      <rich:dataTable id="statusTable" value="#{shellBean.status}" var="status">
-          <rich:column>
-              <h:outputText value="#{status}" />
-          </rich:column>
-      </rich:dataTable>
-  </h:form>
+    <h:outputText escape="false" value="#{shellBean.status}" />
 </h:body>
 </html>

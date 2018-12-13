@@ -26,9 +26,11 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeoutException;
+import java.util.stream.Collectors;
 
 import org.oscm.app.shell.ScriptLogger;
 import org.oscm.app.v2_0.exceptions.APPlatformException;
+import org.richfaces.json.JSONException;
 import org.richfaces.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,6 +46,10 @@ public class Shell implements AutoCloseable {
     public static final String VERIFICATION_MESSAGE = "VERIFICATION_MESSAGE";
 
     private static final Logger LOG = LoggerFactory.getLogger(Shell.class);
+
+    public static final String JSON_STATUS = "status";
+    public static final String JSON_MESSAGE = "message";
+    public static final String JSON_DATA = "data";
 
     private final Process shell;
 
@@ -72,10 +78,6 @@ public class Shell implements AutoCloseable {
     private ShellCommand command;
 
     private ScriptLogger scriptLogger;
-
-    private static String STATUS = "status";
-    private static String MESSAGE = "message";
-    private static String DATA = "data";
 
     public Shell() throws IOException, APPlatformException {
         this(null);
@@ -154,42 +156,27 @@ public class Shell implements AutoCloseable {
     }
 
 
-
-
     public JsonObject getResult(ShellCommand command, ShellStatus status) throws Exception{
-        ArrayList<String> jsonOutput = command.getOutput();
-
         if (!command.getError().isEmpty()){
             return Json.createObjectBuilder()
-                    .add(STATUS, "failed")
-                    .add(MESSAGE, command.getError().toString())
+                    .add(JSON_STATUS, "failed")
+                    .add(JSON_MESSAGE, command.getError().toString())
+                    .add(JSON_DATA, "")
                     .build();
         }
         else {
+            ArrayList<String> output = command.getOutput();
+            String jsonOutput = output.stream().collect(Collectors.joining());
+            JSONObject jsonObject = new JSONObject(jsonOutput);
+
             return Json.createObjectBuilder()
-                    .add(STATUS, getInfoFromOutput(jsonOutput, STATUS))
-                    .add(MESSAGE , getInfoFromOutput(jsonOutput, MESSAGE))
-                    .add(DATA, getInfoFromOutput(jsonOutput, DATA))
+                    .add(JSON_STATUS, jsonObject.getString(JSON_STATUS))
+                    .add(JSON_MESSAGE, jsonObject.getString(JSON_MESSAGE))
+                    .add(JSON_DATA, jsonObject.getString(JSON_DATA))
                     .build();
         }
 
     }
-
-
-    private static String getInfoFromOutput(ArrayList<String> output, String jsonKey) throws Exception{
-
-        try {
-            String jsonOutput = String.join("\n", output);
-            JSONObject jsonObject = new JSONObject(jsonOutput);
-            return jsonObject.getString(jsonKey);
-        }
-        catch (Exception e){
-            LOG.error("Exception : " , e);
-        }
-        return "";
-
-    }
-
 
     public ShellStatus consumeOutput(String lockId) {
         if (!lockId.equals(this.lockId)) {
