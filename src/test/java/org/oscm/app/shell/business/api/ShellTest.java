@@ -19,6 +19,7 @@ import java.nio.file.Paths;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.oscm.app.shell.business.api.Shell.*;
 import static org.oscm.app.shell.business.api.ShellStatus.RUNNING;
@@ -52,8 +53,11 @@ public class ShellTest {
         JsonObject result = shell.getResult();
 
         //then
-        assertEquals(STATUS_OK, result.getString(JSON_STATUS));
-        assertTrue(result.getString(JSON_DATA).contains("<table>"));
+        String status = result.getString(JSON_STATUS);
+        String data = result.getString(JSON_DATA);
+
+        assertEquals("Failed as resulting status is "+ status, STATUS_OK, status);
+        assertTrue("Failed as resulting data is "+ data, data.contains("<table>"));
     }
 
     @Test
@@ -118,6 +122,21 @@ public class ShellTest {
     }
 
     @Test
+    public void testGetOutput_isError_ifReturnedDataIsError() throws Exception {
+
+        //given
+        String instanceId = "Instance_1236678329433";
+        String scriptContent = getScriptContent("sample_scripts/sample_error.sh");
+        Shell shell = runScript(scriptContent, instanceId);
+
+        //when
+        String output = shell.getOutput();
+
+        //then
+        assertTrue(output.contains("\"status\":\"error\""));
+    }
+
+    @Test
     public void testGetErrorOutput_isEmpty_ifReturnedDataIsOk() throws Exception {
 
         //given
@@ -133,20 +152,21 @@ public class ShellTest {
     }
 
     @Test
-    public void testGetErrorOutput_isError_ifReturnedDataIsError() throws Exception {
+    public void testGetErrorOutput_isNotEmpty_ifErrorWhenExecution() throws Exception {
 
         //given
         String instanceId = "Instance_1236678329433";
-        String scriptContent = getScriptContent("sample_scripts/sample_error.sh");
+        String scriptContent = getScriptContent("sample_scripts/sample_error_execution.sh");
         Shell shell = runScript(scriptContent, instanceId);
 
         //when
         String output = shell.getErrorOutput();
-        System.out.println(output);
 
         //then
-        assertTrue(output.contains("\"status\":\"error\""));
+        assertFalse(output.isEmpty());
     }
+
+
 
     private Shell runScript(String scriptContent, String instanceId) throws Exception {
 
