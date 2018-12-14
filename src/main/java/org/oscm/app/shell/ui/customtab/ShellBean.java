@@ -27,6 +27,7 @@ import java.io.Serializable;
 import java.util.Locale;
 
 import static org.oscm.app.shell.business.Configuration.CONTROLLER_ID;
+import static org.oscm.app.shell.business.api.Shell.STATUS_OK;
 import static org.oscm.app.shell.business.api.ShellStatus.RUNNING;
 
 /**
@@ -108,7 +109,7 @@ public class ShellBean implements Serializable {
             LOGGER.debug("Status script result: " + result.getString(Shell.JSON_STATUS));
             LOGGER.debug("Status script message: " + result.getString(Shell.JSON_MESSAGE));
 
-            if ("success".equals(result.getString(Shell.JSON_STATUS))) {
+            if (STATUS_OK.equals(result.getString(Shell.JSON_STATUS))) {
                 return result.getString(Shell.JSON_DATA);
             } else {
                 return result.getString(Shell.JSON_MESSAGE) + result.getString(Shell.JSON_DATA);
