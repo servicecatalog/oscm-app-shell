@@ -57,7 +57,7 @@ public class ShellTest {
         String data = result.getString(JSON_DATA);
 
         assertEquals("Failed as resulting status is "+ status, STATUS_OK, status);
-        assertTrue("Failed as resulting data is "+ data, data.contains("<table>"));
+        assertTrue("Failed as resulting data is "+ data, data.contains("<table style="));
     }
 
     @Test
