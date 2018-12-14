@@ -114,7 +114,7 @@ public class ShellTest {
         String output = shell.getOutput();
 
         //then
-        assertTrue(output.contains("{\"status\":\"ok\"}"));
+        assertTrue(output.contains("\"status\":\"ok\""));
     }
 
     @Test
@@ -142,9 +142,10 @@ public class ShellTest {
 
         //when
         String output = shell.getErrorOutput();
+        System.out.println(output);
 
         //then
-        assertTrue(output.contains("{\"status\":\"error\"}"));
+        assertTrue(output.contains("\"status\":\"error\""));
     }
 
     private Shell runScript(String scriptContent, String instanceId) throws Exception {
