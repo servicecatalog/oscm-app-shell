@@ -9,9 +9,7 @@ package org.oscm.app.shell.ui.customtab;
 
 import org.apache.commons.codec.binary.Base64;
 import org.oscm.app.shell.business.Script;
-import org.oscm.app.shell.business.api.Shell;
-import org.oscm.app.shell.business.api.ShellCommand;
-import org.oscm.app.shell.business.api.ShellStatus;
+import org.oscm.app.shell.business.api.*;
 import org.oscm.app.v2_0.APPlatformServiceFactory;
 import org.oscm.app.v2_0.data.ProvisioningSettings;
 import org.oscm.app.v2_0.intf.APPlatformService;
@@ -22,9 +20,9 @@ import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
-import javax.json.JsonObject;
 import java.io.Serializable;
 import java.util.Locale;
+import java.util.Optional;
 
 import static org.oscm.app.shell.business.Configuration.CONTROLLER_ID;
 import static org.oscm.app.shell.business.api.Shell.STATUS_OK;
@@ -40,6 +38,7 @@ public class ShellBean implements Serializable {
     private static final long serialVersionUID = -5835894219559699861L;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ShellBean.class);
+    private static final String EMPTY_JSON_DATA = "Empty 'data' field in resulting json";
 
     private String subscriptionId;
     private String organizationId;
@@ -104,22 +103,31 @@ public class ShellBean implements Serializable {
                 Thread.sleep(1000);
             } while (status == RUNNING);
 
-            JsonObject result = shell.getResult();
+            ShellResult result = shell.getResult();
 
-            LOGGER.debug("Status script result: " + result.getString(Shell.JSON_STATUS));
-            LOGGER.debug("Status script message: " + result.getString(Shell.JSON_MESSAGE));
+            LOGGER.debug("Status script result: " + result.getStatus());
+            LOGGER.debug("Status script message: " + result.getMessage());
 
-            if (STATUS_OK.equals(result.getString(Shell.JSON_STATUS))) {
-                return result.getString(Shell.JSON_DATA);
+            if (STATUS_OK.equals(result.getStatus())) {
+
+                Optional<ShellResultData> data = result.getData();
+
+                if(data.isPresent()){
+                    return data.get().getOutput();
+                }
+
+                LOGGER.error(EMPTY_JSON_DATA);
+                return EMPTY_JSON_DATA;
+
             } else {
-                return result.getString(Shell.JSON_MESSAGE) + result.getString(Shell.JSON_DATA);
+                return result.getMessage();
             }
 
         } catch (Exception e) {
             LOGGER.error(String.format(
                     "Failed to get status of shell provisioning. orgId: %s, instanceId: %s, subId: %s",
                     organizationId, instanceId, subscriptionId), e);
-            return "Failed to get status of shell provisioning" + e.getMessage();
+            return "Failed to get status of shell provisioning: " + e.getMessage();
         }
     }
 

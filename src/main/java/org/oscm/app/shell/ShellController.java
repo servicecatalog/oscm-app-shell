@@ -155,8 +155,8 @@ public class ShellController implements APPlatformController {
                                 VERIFICATION_TIMEOUT)));
                 String shellOutput = shell.getOutput(
                 );
-                JsonObject jsonOutput = shell.getResult();
-                LOG.warn("Json output : " + jsonOutput);
+                //JsonObject jsonOutput = shell.getResult();
+                //LOG.warn("Json output : " + jsonOutput);
                 scriptLogger.logOutputFromScript(config,
                         "VERIFICATION_SCRIPT", shellOutput);
                 Pattern p = compile(format(".*%s=(.*?)$",
