@@ -193,9 +193,6 @@ public class Shell implements AutoCloseable {
         return getCmdOutput();
     }
 
-
-
-
     public void unlock() {
         LOG.trace("callerid: " + lockId + " shell has been unlocked");
         lockId = null;

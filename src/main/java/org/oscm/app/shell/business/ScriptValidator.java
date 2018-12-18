@@ -76,7 +76,7 @@ public class ScriptValidator {
                     }
                 }
             }
-        } catch(IOException e) {
+        } catch (IOException e) {
             throw new APPlatformException("IOException caught while working with script: " + script.getPath() +
                     ". Error message: " + e.getMessage());
         }
@@ -92,25 +92,59 @@ public class ScriptValidator {
         }
     }
 
-    private static final Logger LOG = LoggerFactory
-            .getLogger(ScriptValidator.class);
+    public void validateJSONinScript(Script script) throws APPlatformException {
 
-    public void validateJSONinScript(Script script) {
+        final String multiLineEcho = "echo\\s[\'\"][{]\\s+" +
+                "\"status\":\\s\"[$]?[a-zA-Z0-9]+\",\\s+" +
+                "\"message\":\\s\"[$]?[a-zA-Z0-9]+\",\\s+" +
+                "\"data\":\\s\"[$]?[a-zA-Z0-9]+\"\\s+" +
+                "[}]";
+
+        final String multiLineEcho2 = "echo\\s[\'\"][{]\\s+" +
+                "\\\\\"status\\\\\":\\s\\\\\"[$]?[a-zA-Z0-9]+\\\\\",\\s+" +
+                "\\\\\"message\\\\\":\\s\\\\\"[$]?[a-zA-Z0-9]+\\\\\",\\s+" +
+                "\\\\\"data\\\\\":\\s\\\\\"[$]?[a-zA-Z0-9]+\\\\\"\\s+" +
+                "[}]";
+
+        final String printfExample = "printf\\s[\'\"][{]\\\\n\\s" +
+                "\\\\\"status\\\\\":\\s\\\\\"%s\\\\\",\\\\n\\s" +
+                "\\\\\"message\\\\\":\\s\\\\\"%s\\\\\",\\\\n\\s" +
+                "\\\\\"data\\\\\":\\s\\\\\"%s\\\\\"\\\\n" +
+                "[}]";
+
+        final String echoExpression = "echo\\s[-]e\\s[\'\"][{]\\\\n\\s" +
+                "\"status\":\\s\"[$]?[a-zA-Z0-9]+\",\\\\n\\s" +
+                "\"message\":\\s\"[$]?[a-zA-Z0-9]+\",\\\\n\\s" +
+                "\"data\":\\s\"[$]?[a-zA-Z0-9]+\"\\\\n" +
+                "[}]";
+
+        final String echoExpression2 = "echo\\s[-]e\\s[\'\"][{]\\\\n\\s" +
+                "\\\\\"status\\\\\":\\s\\\\\"[$]?[a-zA-Z0-9]+\\\\\",\\\\n\\s" +
+                "\\\\\"message\\\\\":\\s\\\\\"[$]?[a-zA-Z0-9]+\\\\\",\\\\n\\s" +
+                "\\\\\"data\\\\\":\\s\\\\\"[$]?[a-zA-Z0-9]+\\\\\"\\\\n" +
+                "[}]";
+
         String content = script.getContent();
 
-        //search JSON in script content
-        final String regex = "(\\{)(\\ \"status\" *: *\"([a-zA-Z]*)\"\\ ,)(\\ \"message\" *: *\".*?\"\\ ,)(\\ \"data\" *: \\{(\\ *\".*?\"\\ ),)(.*\\})";
+        final String defaultErrorMessage = "Script " + script.getPath() +
+                "does not return JSON or the JSON is not created correctly";
+        final String[] patternList = {multiLineEcho, multiLineEcho2, printfExample, echoExpression, echoExpression2};
 
-        final Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
-        final Matcher matcher = pattern.matcher(content);
+        boolean found = false;
 
-        if (matcher.find()){
-           LOG.warn("Full match: " + matcher.group(0));
+        for (String stringPattern : patternList) {
+            Pattern pattern = Pattern.compile(stringPattern, Pattern.DOTALL);
+            Matcher matcher = pattern.matcher(content);
+            while (matcher.find()) {
+                found = true;
+                LOGGER.debug("Found match: " + matcher.group(0));
+            }
         }
-        else{
-            LOG.error("JSON is not created correctly or the script doesn't return JSON.");
+
+        if (!found) {
+            LOGGER.error(defaultErrorMessage);
+            throw new APPlatformException(defaultErrorMessage);
         }
 
     }
-
 }
