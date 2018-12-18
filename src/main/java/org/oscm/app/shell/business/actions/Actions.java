@@ -8,32 +8,28 @@
 
 package org.oscm.app.shell.business.actions;
 
-import static org.oscm.app.shell.business.ConfigurationKey.CONSOLE_FILE;
-import static org.oscm.app.shell.business.ConfigurationKey.SM_ERROR_MESSAGE;
-import static org.oscm.app.shell.business.actions.StatemachineEvents.ERROR;
-import static org.oscm.app.shell.business.actions.StatemachineEvents.EXECUTING;
-import static org.oscm.app.shell.business.actions.StatemachineEvents.FAILED;
-import static org.oscm.app.shell.business.actions.StatemachineEvents.RUN;
-import static org.oscm.app.shell.business.api.ShellStatus.RUNNING;
-import static org.oscm.app.shell.business.api.ShellStatus.SUCCESS;
-
-import javax.enterprise.inject.spi.CDI;
-import javax.inject.Inject;
-
 import org.oscm.app.shell.ScriptLogger;
 import org.oscm.app.shell.business.Configuration;
 import org.oscm.app.shell.business.Script;
 import org.oscm.app.shell.business.api.*;
+import org.oscm.app.statemachine.api.StateMachineAction;
 import org.oscm.app.v2_0.data.InstanceStatus;
 import org.oscm.app.v2_0.data.ProvisioningSettings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.oscm.app.statemachine.api.StateMachineAction;
+import javax.enterprise.inject.spi.CDI;
+
+import static org.oscm.app.shell.business.ConfigurationKey.CONSOLE_FILE;
+import static org.oscm.app.shell.business.ConfigurationKey.SM_ERROR_MESSAGE;
+import static org.oscm.app.shell.business.actions.StatemachineEvents.*;
+import static org.oscm.app.shell.business.api.ShellStatus.RUNNING;
+import static org.oscm.app.shell.business.api.ShellStatus.SUCCESS;
 
 public class Actions {
 
-    private static final Logger LOG = LoggerFactory.getLogger(Actions.class);
+    private static final Logger LOG = LoggerFactory
+            .getLogger(Actions.class);
 
     private ScriptLogger logger;
 
@@ -91,7 +87,7 @@ public class Actions {
                                           InstanceStatus result) throws ShellPoolException {
 
         ShellResult shellResult = pool.getShellResult(instanceId);
-        shellResult.getData().ifPresent(data->result.setAccessInfo(data.getAccessInfo()));
+        shellResult.getData().ifPresent(data -> result.setAccessInfo(data.getAccessInfo()));
 
         result.setIsReady(true);
         pool.terminateShell(instanceId);
