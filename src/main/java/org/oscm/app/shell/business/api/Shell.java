@@ -51,6 +51,9 @@ public class Shell implements AutoCloseable {
     public static final String JSON_MESSAGE = "message";
     public static final String JSON_DATA = "data";
 
+    public static final String STATUS_ERROR = "error";
+    public static final String STATUS_OK = "ok";
+
     private final Process shell;
 
     /**
@@ -133,7 +136,7 @@ public class Shell implements AutoCloseable {
         return RUNNING;
     }
 
-    public String getOutput(String lockId) {
+    public String getOutput() {
         StringBuffer sb = new StringBuffer();
         for (String line : command.getOutput()) {
             sb.append(line);
@@ -144,7 +147,7 @@ public class Shell implements AutoCloseable {
         return output;
     }
 
-    public String getErrorOutput(String lockId) {
+    public String getErrorOutput() {
         StringBuffer sb = new StringBuffer();
         for (String line : command.getError()) {
             sb.append(line);
@@ -159,8 +162,8 @@ public class Shell implements AutoCloseable {
     public JsonObject getResult() throws JSONException{
         if (!command.getError().isEmpty()){
             return Json.createObjectBuilder()
-                    .add(JSON_STATUS, "failed")
-                    .add(JSON_MESSAGE, command.getError().toString())
+                    .add(JSON_STATUS, STATUS_ERROR)
+                    .add(JSON_MESSAGE, getErrorOutput())
                     .add(JSON_DATA, "")
                     .build();
         }

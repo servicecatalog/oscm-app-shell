@@ -105,7 +105,7 @@ public class ShellPool {
     public String getShellOutput(String lockId) {
         for (Shell shell : shellPool) {
             if (lockId.equals(shell.isLockedFor())) {
-                return shell.getOutput(lockId);
+                return shell.getOutput();
             }
         }
 
@@ -164,7 +164,7 @@ public class ShellPool {
     public String getShellErrorOutput(String lockId) {
         for (Shell shell : shellPool) {
             if (lockId.equals(shell.isLockedFor())) {
-                return shell.getErrorOutput(lockId);
+                return shell.getErrorOutput();
             }
         }
 
