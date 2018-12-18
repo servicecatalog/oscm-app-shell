@@ -113,6 +113,18 @@ public class ShellPool {
         return "";
     }
 
+    @Lock(READ)
+    public ShellResult getShellResult(String lockId) throws ShellPoolException {
+        for (Shell shell : shellPool) {
+            if (lockId.equals(shell.isLockedFor())) {
+                return shell.getResult();
+            }
+        }
+
+        LOG.warn(String.format("No shell found for lockId %s to read output", lockId));
+        throw new ShellPoolException(CODE_NO_SHELL_FOR_LOCK);
+    }
+
     /**
      * Read the shell's output.
      */

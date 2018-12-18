@@ -11,17 +11,16 @@ package org.oscm.app.shell.business.api;
 import org.junit.Test;
 import org.richfaces.json.JSONException;
 
-import javax.json.JsonObject;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.oscm.app.shell.business.api.Shell.*;
+import static org.junit.Assert.*;
+import static org.oscm.app.shell.business.api.Shell.STATUS_ERROR;
+import static org.oscm.app.shell.business.api.Shell.STATUS_OK;
 import static org.oscm.app.shell.business.api.ShellStatus.RUNNING;
 
 public class ShellTest {
@@ -35,10 +34,10 @@ public class ShellTest {
         Shell shell = runScript(scriptContent, instanceId);
 
         //when
-        JsonObject result = shell.getResult();
+        ShellResult result = shell.getResult();
 
         //then
-        assertEquals(STATUS_OK, result.getString(JSON_STATUS));
+        assertEquals(STATUS_OK, result.getStatus());
     }
 
     @Test
@@ -50,14 +49,14 @@ public class ShellTest {
         Shell shell = runScript(scriptContent, instanceId);
 
         //when
-        JsonObject result = shell.getResult();
+        ShellResult result = shell.getResult();
 
         //then
-        String status = result.getString(JSON_STATUS);
-        String data = result.getString(JSON_DATA);
+        String status = result.getStatus();
+        Optional<ShellResultData> data = result.getData();
 
         assertEquals("Failed as resulting status is "+ status, STATUS_OK, status);
-        assertTrue("Failed as resulting data is "+ data, data.contains("<table style="));
+        assertTrue("Failed as resulting data is "+ data, data.get().getOutput().contains("<table style="));
     }
 
     @Test
@@ -69,10 +68,10 @@ public class ShellTest {
         Shell shell = runScript(scriptContent, instanceId);
 
         //when
-        JsonObject result = shell.getResult();
+        ShellResult result = shell.getResult();
 
         //then
-        assertEquals(STATUS_ERROR, result.getString(JSON_STATUS));
+        assertEquals(STATUS_ERROR, result.getStatus());
     }
 
     @Test
@@ -84,14 +83,14 @@ public class ShellTest {
         Shell shell = runScript(scriptContent, instanceId);
 
         //when
-        JsonObject result = shell.getResult();
+        ShellResult result = shell.getResult();
 
         //then
-        assertEquals(STATUS_ERROR, result.getString(JSON_STATUS));
-        assertEquals(shell.getErrorOutput(), result.getString(JSON_MESSAGE));
+        assertEquals(STATUS_ERROR, result.getStatus());
+        assertEquals(shell.getErrorOutput(), result.getMessage());
     }
 
-    @Test(expected = JSONException.class)
+    @Test(expected = RuntimeException.class)
     public void testGetResult_throwsException_ifReturnedDataIsInvalid() throws Exception {
 
         //given

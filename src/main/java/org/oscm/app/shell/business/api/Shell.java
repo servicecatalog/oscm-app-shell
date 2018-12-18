@@ -28,6 +28,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
+import com.google.gson.Gson;
 import org.oscm.app.shell.ScriptLogger;
 import org.oscm.app.v2_0.exceptions.APPlatformException;
 import org.richfaces.json.JSONException;
@@ -45,10 +46,6 @@ public class Shell implements AutoCloseable {
 
     public static final String VERIFICATION_MESSAGE = "VERIFICATION_MESSAGE";
     private static final Logger LOG = LoggerFactory.getLogger(Shell.class);
-
-    public static final String JSON_STATUS = "status";
-    public static final String JSON_MESSAGE = "message";
-    public static final String JSON_DATA = "data";
 
     public static final String STATUS_ERROR = "error";
     public static final String STATUS_OK = "ok";
@@ -157,27 +154,25 @@ public class Shell implements AutoCloseable {
         return output;
     }
 
-    public JsonObject getResult() throws JSONException {
+    public ShellResult getResult() {
 
-        if (!command.getError().isEmpty()){
-            return Json.createObjectBuilder()
-                    .add(JSON_STATUS, STATUS_ERROR)
-                    .add(JSON_MESSAGE, getErrorOutput())
-                    .add(JSON_DATA, "")
-                    .build();
-        }
-        else {
+        if (!command.getError().isEmpty()) {
+
+            ShellResult shellResult = new ShellResult();
+            shellResult.setStatus(STATUS_ERROR);
+            shellResult.setMessage(getErrorOutput());
+
+            return shellResult;
+        } else {
+
             ArrayList<String> output = command.getOutput();
             String jsonOutput = output.stream().collect(Collectors.joining());
-            JSONObject jsonObject = new JSONObject(jsonOutput);
 
-            return Json.createObjectBuilder()
-                    .add(JSON_STATUS, jsonObject.getString(JSON_STATUS))
-                    .add(JSON_MESSAGE, jsonObject.getString(JSON_MESSAGE))
-                    .add(JSON_DATA, jsonObject.getString(JSON_DATA))
-                    .build();
+            Gson json = new Gson();
+            ShellResult shellResult = json.fromJson(jsonOutput, ShellResult.class);
+
+            return shellResult;
         }
-
     }
 
     public ShellStatus consumeOutput(String lockId) {
