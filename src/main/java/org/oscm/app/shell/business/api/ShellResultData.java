@@ -19,14 +19,17 @@ public class ShellResultData {
     }
 
     public void setAccessInfo(String accessInfo) {
+
         this.accessInfo = accessInfo;
     }
 
     public String getOutput() {
+
         return output;
     }
 
     public void setOutput(String output) {
+
         this.output = output;
     }
 }
