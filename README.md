@@ -18,6 +18,6 @@ So that shell script used with app-shell related service is executed properly, i
 3. JSON result must consists of following fields:
    * status - **required**, must contain only "**ok**" or "**error**",
    * message - **required**, should contain information related to the script execution which is delivered to the user,
-   * data - **optional**, shoud contain any data which can be used after the script is executed e.g access info, HTML data for status script.
+   * data - **optional**, should contain any data which can be used after the script is executed e.g access info, HTML data for status script.
    
    Plese refer to scripts examples directory https://github.com/servicecatalog/oscm-app-shell/tree/master/src/test/resources/sample_scripts to get familiar with both valid and invalid script samples.
