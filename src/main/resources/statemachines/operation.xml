@@ -6,13 +6,13 @@
     <event id="failed" state="ERROR" />
   </state>
   
-  <state id="EXECUTING" action="consumeScriptOutput" timeoutSec="${SCRIPT_TIMEOUT_SECONDS}">
+  <state id="EXECUTING" timeoutSec="${SCRIPT_TIMEOUT_SECONDS}" action="consumeScriptOutput" >
     <event id="success" state="END" />
     <event id="run" state="EXECUTING" />
     <event id="error" state="ERROR" />
   </state>
   
-  <state id="END" action="finalizeOperation">
+  <state id="END" action="finalizeScriptExecution">
     <event id="success" state="SUCCESS" />
     <event id="waiting" state="END" />
     <event id="failed" state="ERROR" />

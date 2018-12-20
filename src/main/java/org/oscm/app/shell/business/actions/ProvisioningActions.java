@@ -26,29 +26,29 @@ import org.oscm.app.statemachine.api.StateMachineAction;
 
 public class ProvisioningActions {
 
-    private static final Logger LOG = LoggerFactory
-            .getLogger(ProvisioningActions.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ProvisioningActions.class);
 
     Actions getActions() {
         return new Actions();
     }
 
     @StateMachineAction
-    public String executeScript(String instanceId,
-                                ProvisioningSettings settings, InstanceStatus result) {
+    public String executeScript(String instanceId, ProvisioningSettings settings,
+                                InstanceStatus result) {
+
         Configuration config = new Configuration(settings);
         ScriptLogger logger = new ScriptLogger();
+
         try {
-            Script script = new Script(
-                    config.getSetting(SCRIPT_FILE));
+            Script script = new Script(config.getSetting(SCRIPT_FILE));
             script.loadContent();
             script.insertProvisioningSettings(settings);
-            logger.logScriptConfiguration(config,
-                    ConfigurationKey.PROVISIONING_SCRIPT.name(),
+
+            logger.logScriptConfiguration(config, ConfigurationKey.PROVISIONING_SCRIPT.name(),
                     script.getContent());
-            return getActions()
-                    .executeScript(instanceId, settings, result,
-                            script);
+
+            return getActions().executeScript(instanceId, settings, result, script);
+
         } catch (Exception e) {
             LOG.error("Couldn't execute shell script", e);
             config.setSetting(SM_ERROR_MESSAGE, e.getMessage());
@@ -57,26 +57,16 @@ public class ProvisioningActions {
     }
 
     @StateMachineAction
-    public String consumeScriptOutput(String instanceId,
-                                      ProvisioningSettings settings, InstanceStatus result)
-            throws Exception {
+    public String consumeScriptOutput(String instanceId, ProvisioningSettings settings,
+                                      InstanceStatus result) throws Exception {
 
-        return getActions()
-                .consumeScriptOutput(instanceId, settings, result);
+        return getActions().consumeScriptOutput(instanceId, settings, result);
     }
 
     @StateMachineAction
-    public String finish(String instanceId, ProvisioningSettings settings,
-                         InstanceStatus result) {
-        result.setIsReady(true);
-        return StatemachineEvents.SUCCESS;
-    }
+    public String finalizeScriptExecution(String instanceId, ProvisioningSettings settings,
+                                       InstanceStatus result) throws Exception {
 
-    @StateMachineAction
-    public String finalizeProvisioning(String instanceId, ProvisioningSettings settings,
-                                       InstanceStatus result) throws ShellPoolException {
-
-        LOG.debug("Successfully finished.");
         return getActions().finalizeScriptExecution(instanceId, settings, result);
     }
 

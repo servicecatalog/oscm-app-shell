@@ -36,7 +36,7 @@ public class ShellControllerTest {
 
     @Spy
     @InjectMocks
-    private ShellController controller = new ShellController();
+    private ShellController controller;
 
     @Mock
     private ScriptValidator validator;
@@ -45,7 +45,7 @@ public class ShellControllerTest {
     private ShellPool pool;
 
     @Before
-    public void before() throws Exception {
+    public void before(){
         MockitoAnnotations.initMocks(this);
     }
 

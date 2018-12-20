@@ -1,8 +1,8 @@
 /*******************************************************************************
  *
- *  Copyright FUJITSU LIMITED 2018                                           
+ *  Copyright FUJITSU LIMITED 2018
  *
- *  Creation Date: Aug 2, 2017                                                      
+ *  Creation Date: Aug 2, 2017
  *
  *******************************************************************************/
 
@@ -12,34 +12,38 @@ import org.oscm.app.shell.ScriptLogger;
 import org.oscm.app.shell.business.Configuration;
 import org.oscm.app.shell.business.Script;
 import org.oscm.app.shell.business.api.*;
-import org.oscm.app.statemachine.api.StateMachineAction;
 import org.oscm.app.v2_0.data.InstanceStatus;
 import org.oscm.app.v2_0.data.ProvisioningSettings;
+import org.oscm.app.v2_0.data.Setting;
+import org.oscm.app.v2_0.exceptions.APPlatformException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.enterprise.inject.spi.CDI;
+import java.io.IOException;
 
 import static org.oscm.app.shell.business.ConfigurationKey.CONSOLE_FILE;
 import static org.oscm.app.shell.business.ConfigurationKey.SM_ERROR_MESSAGE;
 import static org.oscm.app.shell.business.actions.StatemachineEvents.*;
-import static org.oscm.app.shell.business.api.ShellStatus.RUNNING;
-import static org.oscm.app.shell.business.api.ShellStatus.SUCCESS;
 
 public class Actions {
 
-    private static final Logger LOG = LoggerFactory
-            .getLogger(Actions.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Actions.class);
 
     private ScriptLogger logger;
 
-    private ShellPool pool = CDI.current().select(ShellPool.class).get();
+    private ShellPool pool;
 
-    public String executeScript(String instanceId,
-                                ProvisioningSettings settings, InstanceStatus result,
-                                Script script)
-            throws Exception {
+    private void initializeShellPool() {
+        if (pool == null) {
+            pool = CDI.current().select(ShellPool.class).get();
+        }
+    }
 
+    public String executeScript(String instanceId, ProvisioningSettings settings,
+                                InstanceStatus result, Script script) throws IOException, APPlatformException {
+
+        initializeShellPool();
         Configuration config = new Configuration(settings);
         logger = new ScriptLogger();
 
@@ -57,35 +61,47 @@ public class Actions {
         }
     }
 
-    @StateMachineAction
-    public String consumeScriptOutput(String instanceId,
-                                      ProvisioningSettings settings, InstanceStatus result)
-            throws Exception {
+    public String consumeScriptOutput(String instanceId, ProvisioningSettings settings,
+                                      InstanceStatus result) throws ShellPoolException {
 
-        ScriptLogger logger = new ScriptLogger();
+        initializeShellPool();
         ShellStatus shellStatus = pool.consumeShellOutput(instanceId);
+        String stateMachineEvent;
 
-        if (shellStatus == RUNNING) {
-            LOG.info("script is still running....");
-            return RUN;
+        switch (shellStatus) {
+
+            case RUNNING:
+                stateMachineEvent = RUN;
+                break;
+
+            case SUCCESS:
+                ShellResult shellResult = pool.getShellResult(instanceId);
+
+                if (Shell.STATUS_ERROR.equals(shellResult.getStatus())) {
+                    stateMachineEvent = ERROR;
+                } else {
+                    stateMachineEvent = SUCCESS;
+                    break;
+                }
+
+            default:
+                ShellResult errorShellResult = pool.getShellResult(instanceId);
+                String errorMessage = errorShellResult.getMessage();
+
+                String errorMsgKey = SM_ERROR_MESSAGE.name();
+                settings.getParameters().put(errorMsgKey, new Setting(errorMsgKey, errorMessage));
+                stateMachineEvent = ERROR;
+                break;
         }
 
-        if (shellStatus == SUCCESS) {
-            LOG.info("Calling the script was successful");
-            return StatemachineEvents.SUCCESS;
-        }
-
-        String errorOutput = pool.getShellErrorOutput(instanceId);
-        LOG.error("Shell error output: " + errorOutput);
-        pool.terminateShell(instanceId);
-        new Configuration(settings)
-                .setSetting(SM_ERROR_MESSAGE, errorOutput);
-        return ERROR;
+        LOG.info("Instance [" + instanceId + "] returned with StateMachineEvent [" + stateMachineEvent + "]");
+        return stateMachineEvent;
     }
 
     public String finalizeScriptExecution(String instanceId, ProvisioningSettings settings,
                                           InstanceStatus result) throws ShellPoolException {
 
+        initializeShellPool();
         ShellResult shellResult = pool.getShellResult(instanceId);
         shellResult.getData().ifPresent(data -> result.setAccessInfo(data.getAccessInfo()));
 

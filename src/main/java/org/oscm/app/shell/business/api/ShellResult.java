@@ -12,6 +12,14 @@ import java.util.Optional;
 
 public class ShellResult {
 
+    public ShellResult() {
+    }
+
+    public ShellResult(String status, String message) {
+        this.status = status;
+        this.message = message;
+    }
+
     private String status;
 
     private String message;
