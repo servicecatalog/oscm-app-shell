@@ -62,24 +62,30 @@ public class ScriptValidator {
     }
 
     public void validateInteractiveCommands(Script script) throws APPlatformException {
-        // TODO: Verify if an interactive flag is passed to a command (rm -i, cp -i, mv -i).
-        String[] interactiveCommands = {"read"};
+
+        final String readCommand = "^\\s*read\\s";
+        final String interactiveFlag = "^((?![#]).)*[a-zA-Z0-9$,.\\s|]--interactive\\s?";
+
+        final String[] patternList = {readCommand, interactiveFlag};
+
         String content = script.getContent();
-        StringReader stringReader = new StringReader(content);
-        BufferedReader bufferedReader = new BufferedReader(stringReader);
-        try {
-            while ((content = bufferedReader.readLine()) != null) {
-                for (int i = 0; i < interactiveCommands.length; i++) {
-                    if (content.matches("^(\\s)*" + interactiveCommands[i] + "\\s(.*)")) {
-                        throw new APPlatformException("Script " + script.getPath() + " " +
-                                "contains an interactive command! Line that caused the exception: " + content);
-                    }
-                }
+
+        boolean found = false;
+
+        for (String stringPattern : patternList) {
+            Pattern pattern = Pattern.compile(stringPattern, Pattern.MULTILINE);
+            Matcher matcher = pattern.matcher(content);
+            while (matcher.find()) {
+                found = true;
+                LOGGER.warn("Found an interactive command: " + matcher.group(0));
             }
-        } catch (IOException e) {
-            throw new APPlatformException("IOException caught while working with script: " + script.getPath() +
-                    ". Error message: " + e.getMessage());
         }
+
+        if (found) {
+            LOGGER.error("Script " + script.getPath() + " contains an interactive command.");
+            throw new APPlatformException("Script " + script.getPath() + " contains an interactive command.");
+        }
+
     }
 
     public void validateEndOfScript(Script script) throws APPlatformException {
@@ -161,11 +167,12 @@ public class ScriptValidator {
                 "\\\\\"data\\\\\":\\s?[$]?[a-zA-Z0-9\\s]+\\s*(\\\\n)?\\s*" +
                 "[}]['\"]";
 
-        String content = script.getContent();
 
         final String[] patternList = {multilineEchoWithoutData, multilineEchoEscapedWithoutData,
                 printfWithoutData, echoEWithoutData, echoEEscapedWithoutData, multilineEchoWithData,
                 multilineEchoEscapedWithData, printfWithData, echoEWithData, echoEEscapedWithData};
+
+        String content = script.getContent();
 
         boolean found = false;
 
@@ -180,9 +187,9 @@ public class ScriptValidator {
 
         if (!found) {
             LOGGER.error("Script " + script.getPath() +
-                    "does not return JSON or the JSON is not created correctly");
+                    " does not return JSON or the JSON is not created correctly");
             throw new APPlatformException("Script " + script.getPath() +
-                    "does not return JSON or the JSON is not created correctly");
+                    " does not return JSON or the JSON is not created correctly");
         }
 
     }
