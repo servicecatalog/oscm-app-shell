@@ -45,7 +45,6 @@ import javax.json.JsonObject;
 public class Shell implements AutoCloseable {
 
     public static final String VERIFICATION_MESSAGE = "VERIFICATION_MESSAGE";
-
     private static final Logger LOG = LoggerFactory.getLogger(Shell.class);
 
     public static final String STATUS_ERROR = "error";

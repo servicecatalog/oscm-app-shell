@@ -96,6 +96,26 @@ public class ScriptValidatorTest {
     }
 
     @Test
+    public void testValidateInteractiveCommands() throws Exception {
+
+        ScriptValidator validator = new ScriptValidator();
+        Script validScript = getValidScript();
+
+        validator.validateInteractiveCommands(validScript);
+
+    }
+
+    @Test(expected = APPlatformException.class)
+    public void testValidateInteractiveCommands_failing() throws Exception {
+
+        ScriptValidator validator = new ScriptValidator();
+        Script invalidScript = getInvalidScript();
+
+        validator.validateInteractiveCommands(invalidScript);
+
+    }
+
+    @Test
     public void testValidateJSONinScript() throws Exception {
 
         ScriptValidator validator = new ScriptValidator();
@@ -155,6 +175,7 @@ public class ScriptValidatorTest {
         return "#!/bin/bash" + NEW_LINE +
                 "# This is a comment!" + NEW_LINE +
                 "echo Hello World" + NEW_LINE +
+                "read VARIABLE" + NEW_LINE +
                 "sleep 10s" + NEW_LINE +
                 "echo NO_END";
     }
