@@ -69,6 +69,16 @@ public class ScriptValidatorTest {
         //exception is thrown
     }
 
+    @Test(expected = APPlatformException.class)
+    public void testValidateIfScriptExists_doesntExist() throws APPlatformException {
+
+        ScriptValidator validator = new ScriptValidator();
+        String scriptPath = "invalid/path";
+
+        validator.validateIfScriptExists(scriptPath);
+
+    }
+
     @Test
     public void testValidateEndOfScript() throws Exception {
 
