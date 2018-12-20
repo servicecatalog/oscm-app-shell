@@ -175,7 +175,6 @@ public class ShellControllerTest {
         InstanceStatus status = controller.getInstanceStatus("instance_4332312", settings);
 
         //then
-        verify(controller, times(1)).updateProvisioningSettings(anyString(), any(Configuration.class), any(StateMachine.class));
         assertEquals(settings.getParameters(), status.getChangedParameters());
         assertTrue(status.isReady());
     }
