@@ -97,60 +97,60 @@ public class ScriptValidator {
         final String multilineEchoWithoutData = "echo\\s" +
                 "['\"][{]\\s*" +
                 "\"status\":\\s?\"[$]?[a-zA-Z0-9]+\",\\s+" +
-                "\"message\":\\s?\"[a-zA-Z0-9$\\s]+\"\\s*" +
+                "\"message\":\\s?\"[a-zA-Z0-9$,.\\s]+\"\\s*" +
                 "[}]['\"]";
 
         final String multilineEchoEscapedWithoutData = "echo\\s" +
                 "['\"][{]\\s*" +
                 "\\\\\"status\\\\\":\\s?\\\\\"[$]?[a-zA-Z0-9]+\\\\\",\\s+" +
-                "\\\\\"message\\\\\":\\s?\\\\\"[a-zA-Z0-9$\\s]+\\\\\"\\s*" +
+                "\\\\\"message\\\\\":\\s?\\\\\"[a-zA-Z0-9$,.\\s]+\\\\\"\\s*" +
                 "[}]['\"]";
 
         final String printfWithoutData = "printf\\s" +
                 "['\"][{]\\s*(\\\\n)?\\s?" +
                 "\\\\\"status\\\\\":\\s?\\\\\"%s\\\\\",\\s?\\\\n\\s?" +
-                "\\\\\"message\\\\\":\\s?\\\\\"[a-zA-Z0-9$\\s]*%s[a-zA-Z0-9$\\s]*\\\\\"\\s?(\\\\n)?\\s*" +
+                "\\\\\"message\\\\\":\\s?\\\\\"[a-zA-Z0-9$,.\\s]*%s[a-zA-Z0-9$,.\\s]*\\\\\"\\s?(\\\\n)?\\s*" +
                 "[}]['\"]";
 
         final String echoEWithoutData = "echo\\s[-]e\\s" +
                 "['\"][{]\\s*(\\\\n)?\\s?" +
                 "\"status\":\\s?\"[$]?[a-zA-Z0-9]+\",\\s?\\\\n\\s?" +
-                "\"message\":\\s?\"\\s*[a-zA-Z0-9$\\s]+\"\\s?(\\\\n)?\\s*" +
+                "\"message\":\\s?\"\\s*[a-zA-Z0-9$,.\\s]+\"\\s?(\\\\n)?\\s*" +
                 "[}]['\"]";
 
         final String echoEEscapedWithoutData = "echo\\s[-]e\\s" +
                 "['\"][{]\\s*(\\\\n)?\\s?" +
                 "\\\\\"status\\\\\":\\s?\\\\\"[$]?[a-zA-Z0-9]+\\\\\",\\s?(\\\\n)?\\s?" +
-                "\\\\\"message\\\\\":\\s?\\\\\"\\s*[a-zA-Z0-9$\\s]+\\\\\"\\s?(\\\\n)?\\s*" +
+                "\\\\\"message\\\\\":\\s?\\\\\"\\s*[a-zA-Z0-9$,.\\s]+\\\\\"\\s?(\\\\n)?\\s*" +
                 "[}]['\"]";
 
         final String multilineEchoWithData = "echo\\s" +
                 "['\"][{]\\s*" +
                 "\"status\":\\s?\"[$]?[a-zA-Z0-9]+\",\\s+" +
-                "\"message\":\\s?\"\\s*[a-zA-Z0-9$\\s]+\",\\s+" +
+                "\"message\":\\s?\"\\s*[a-zA-Z0-9$,.\\s]+\",\\s+" +
                 "\"data\":\\s*((\\s?[$]?[a-zA-Z0-9\\s]+)|" +
-                "([{]\\s*(\"[a-zA-Z0-9]+\":\\s?\"[a-zA-Z0-9$\\s]+\",?\\s*)+[}]))\\s*" +
+                "([{]\\s*(\"[a-zA-Z0-9]+\":\\s?\"[a-zA-Z0-9$,.\\s]+\",?\\s*)+[}]))\\s*" +
                 "[}]['\"]";
 
         final String multilineEchoEscapedWithData = "echo\\s" +
                 "['\"][{]\\s*" +
                 "\\\\\"status\\\\\":\\s?\\\\\"[$]?[a-zA-Z0-9]+\\\\\",\\s+" +
-                "\\\\\"message\\\\\":\\s?\\\\\"\\s*[a-zA-Z0-9$\\s]+\\\\\",\\s+" +
+                "\\\\\"message\\\\\":\\s?\\\\\"\\s*[a-zA-Z0-9$,.\\s]+\\\\\",\\s+" +
                 "\\\\\"data\\\\\":\\s*((\\s?[$]?[a-zA-Z0-9\\s]+)|" +
-                "([{]\\s*(\\\\\"[a-zA-Z0-9]+\\\\\":\\s?\\\\\"[a-zA-Z0-9$\\s]+\\\\\",?\\s*)+[}]))\\s*" +
+                "([{]\\s*(\\\\\"[a-zA-Z0-9]+\\\\\":\\s?\\\\\"[a-zA-Z0-9$,.\\s]+\\\\\",?\\s*)+[}]))\\s*" +
                 "[}]['\"]";
 
         final String printfWithData = "printf\\s" +
                 "['\"][{]\\s*(\\\\n)?\\s*" +
                 "\\\\\"status\\\\\":\\s?\\\\\"\\s?%s\\s?\\\\\",\\\\n\\s*" +
-                "\\\\\"message\\\\\":\\s?\\\\\"[a-zA-Z0-9$\\s]*%s[a-zA-Z0-9$\\s]*\\\\\"\\\\n\\s*" +
+                "\\\\\"message\\\\\":\\s?\\\\\"[a-zA-Z0-9$,.\\s]*%s[a-zA-Z0-9$,.\\s]*\\\\\"\\\\n\\s*" +
                 "\\\\\"data\\\\\":\\s?\\s?%s\\s?(\\\\n)?\\s*" +
                 "[}]['\"]";
 
         final String echoEWithData = "echo\\s[-]e\\s" +
                 "['\"][{]\\s*(\\\\n)?\\s*" +
                 "\"status\":\\s?\"[$]?[a-zA-Z0-9]+\",\\s?\\\\n\\s*" +
-                "\"message\":\\s?\"\\s*[a-zA-Z0-9$\\s]+\",\\s?\\\\n\\s*" +
+                "\"message\":\\s?\"\\s*[a-zA-Z0-9$,.\\s]+\",\\s?\\\\n\\s*" +
                 "\"data\":\\s?\"[$]?[a-zA-Z0-9]+\"\\s?(\\\\n)?\\s*" +
                 "[}]['\"]";
 
