@@ -1,3 +1,11 @@
+/*******************************************************************************
+ *
+ *  Copyright FUJITSU LIMITED 2018
+ *
+ *  Creation Date: Dec 20, 2018
+ *
+ *******************************************************************************/
+
 package org.oscm.app.shell.business.actions;
 
 import org.junit.Before;
@@ -124,7 +132,6 @@ public class ActionsTest {
         String state = actions.consumeScriptOutput(instanceId, settings, instanceStatus);
 
         //then
-        verify(pool, times(1)).terminateShell(instanceId);
         assertEquals(message, settings.getParameters().get(SM_ERROR_MESSAGE.name()).getValue());
         assertEquals("State returned is " + state, ERROR, state);
     }
@@ -147,7 +154,6 @@ public class ActionsTest {
         String state = actions.consumeScriptOutput(instanceId, settings, instanceStatus);
 
         //then
-        verify(pool, times(1)).terminateShell(instanceId);
         assertEquals(message, settings.getParameters().get(SM_ERROR_MESSAGE.name()).getValue());
         assertEquals("State returned is " + state, ERROR, state);
     }
