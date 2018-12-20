@@ -1,9 +1,9 @@
-#!/usr/bin/bash
+#!/bin/bash
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # THIS FILE IS AN EXAMPLE SCRIPT FILE THAT RETURNS JSON DATA IN MANY FORMATS  #
-# I UPLOADED THIS TO REPOSITORY, BECAUSE IN CASE OF CHANGE  OF REQUIREMENTS   #
-# IN FORMAT OF THE JSON ANSWER, THIS FILE WILL HELP A LOT.                    #
+# I UPLOADED THIS TO REPOSITORY, BECAUSE IN CASE OF CHANGE OF REQUIREMENTS    #
+# IN FORMAT OF THE JSON ANSWER, THIS FILE WILL BE HELPFUL.                    #
 # I USE IT WITH ATOM TEXT EDITOR TO EASILY VERIFY IF EACH REGEXP IS CORRECT.  #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
