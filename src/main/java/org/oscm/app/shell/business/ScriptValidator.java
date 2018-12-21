@@ -135,7 +135,7 @@ public class ScriptValidator {
                 "\"status\":\\s?\"[$]?[a-zA-Z0-9]+\",\\s+" +
                 "\"message\":\\s?\"\\s*[a-zA-Z0-9$,.\\s]+\",\\s+" +
                 "\"data\":\\s*((\\s?[$]?[a-zA-Z0-9\\s]+)|" +
-                "([{]\\s*(\"[a-zA-Z0-9]+\":\\s?\"[a-zA-Z0-9$,.<>;:#%/\\\\s]+\",?\\s*)+[}]))\\s*" +
+                "([{].*[}]))\\s*" +
                 "[}]\\s*['\"]";
 
         final String multilineEchoEscapedWithData = "echo\\s" +
@@ -143,7 +143,7 @@ public class ScriptValidator {
                 "\\\\\"status\\\\\":\\s?\\\\\"[$]?[a-zA-Z0-9]+\\\\\",\\s+" +
                 "\\\\\"message\\\\\":\\s?\\\\\"\\s*[a-zA-Z0-9$,.\\s]+\\\\\",\\s+" +
                 "\\\\\"data\\\\\":\\s*((\\s?[$]?[a-zA-Z0-9\\s]+)|" +
-                "([{]\\s*(\\\\\"[a-zA-Z0-9]+\\\\\":\\s?\\\\\"[a-zA-Z0-9$,.<>;:#%/\\\\s]+\\\\\",?\\s*)+[}]))\\s*" +
+                "([{].*[}]))\\s*" +
                 "[}]\\s*['\"]";
 
         final String printfWithData = "printf\\s" +
