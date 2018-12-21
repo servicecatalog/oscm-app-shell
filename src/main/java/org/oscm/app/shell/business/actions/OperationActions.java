@@ -16,6 +16,7 @@ import org.oscm.app.shell.ScriptLogger;
 import org.oscm.app.shell.business.Configuration;
 import org.oscm.app.shell.business.ConfigurationKey;
 import org.oscm.app.shell.business.Script;
+import org.oscm.app.shell.business.api.ShellPoolException;
 import org.oscm.app.v2_0.data.InstanceStatus;
 import org.oscm.app.v2_0.data.ProvisioningSettings;
 import org.slf4j.Logger;
@@ -25,51 +26,50 @@ import org.oscm.app.statemachine.api.StateMachineAction;
 
 public class OperationActions {
 
-        private static final Logger LOG = LoggerFactory
-                .getLogger(OperationActions.class);
+    private static final Logger LOG = LoggerFactory
+            .getLogger(OperationActions.class);
 
-        Actions getActions() {
-                return new Actions();
+    Actions getActions() {
+        return new Actions();
+    }
+
+    @StateMachineAction
+    public String executeScript(String instanceId, ProvisioningSettings settings,
+                                InstanceStatus result) {
+
+        Configuration config = new Configuration(settings);
+        ScriptLogger logger = new ScriptLogger();
+
+        try {
+            Script script = new Script(config.getSetting(SCRIPT_FILE));
+            script.loadContent();
+            script.insertOperationId(config);
+            script.insertProvisioningSettings(settings);
+
+            logger.logScriptConfiguration(config, ConfigurationKey.PROVISIONING_SCRIPT.name(),
+                    script.getContent());
+
+            return getActions().executeScript(instanceId, settings, result, script);
+
+        } catch (Exception e) {
+            LOG.error("Couldn't execute shell script", e);
+            config.setSetting(SM_ERROR_MESSAGE, e.getMessage());
+            return FAILED;
         }
+    }
 
-        @StateMachineAction
-        public String executeScript(String instanceId,
-                ProvisioningSettings settings, InstanceStatus result) {
-                Configuration config = new Configuration(settings);
-                ScriptLogger logger = new ScriptLogger();
-                try {
-                        Script script = new Script(
-                                config.getSetting(SCRIPT_FILE));
-                        script.loadContent();
-                        script.insertOperationId(config);
-                        script.insertProvisioningSettings(settings);
-                        logger.logScriptConfiguration(config,
-                                ConfigurationKey.PROVISIONING_SCRIPT.name(),
-                                script.getContent());
-                        return getActions()
-                                .executeScript(instanceId, settings, result,
-                                        script);
-                } catch (Exception e) {
-                        LOG.error("Couldn't execute shell script", e);
-                        config.setSetting(SM_ERROR_MESSAGE, e.getMessage());
-                        return FAILED;
-                }
-        }
+    @StateMachineAction
+    public String consumeScriptOutput(String instanceId, ProvisioningSettings settings,
+                                      InstanceStatus result) throws Exception {
 
-        @StateMachineAction
-        public String consumeScriptOutput(String instanceId,
-                ProvisioningSettings settings, InstanceStatus result)
-                throws Exception {
+        return getActions().consumeScriptOutput(instanceId, settings, result);
+    }
 
-                return getActions()
-                        .consumeScriptOutput(instanceId, settings, result);
-        }
+    @StateMachineAction
+    public String finalizeScriptExecution(String instanceId, ProvisioningSettings settings,
+                                          InstanceStatus result) throws Exception {
 
-        @StateMachineAction
-        public String finalizeOperation(String instanceId,
-                ProvisioningSettings settings, InstanceStatus result) {
-                result.setIsReady(true);
-                return StatemachineEvents.SUCCESS;
-        }
+        return getActions().finalizeScriptExecution(instanceId, settings, result);
+    }
 
 }

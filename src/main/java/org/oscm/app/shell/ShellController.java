@@ -9,6 +9,7 @@
 package org.oscm.app.shell;
 
 import org.oscm.app.shell.business.*;
+import org.oscm.app.shell.business.actions.StateMachineId;
 import org.oscm.app.shell.business.api.Shell;
 import org.oscm.app.shell.business.api.ShellCommand;
 import org.oscm.app.shell.business.api.ShellPool;
@@ -18,7 +19,6 @@ import org.oscm.app.statemachine.StateMachine;
 import org.oscm.app.statemachine.api.StateMachineException;
 import org.oscm.app.v2_0.data.*;
 import org.oscm.app.v2_0.exceptions.APPlatformException;
-import org.oscm.app.v2_0.exceptions.SuspendException;
 import org.oscm.app.v2_0.intf.APPlatformController;
 import org.oscm.app.v2_0.intf.ControllerAccess;
 import org.slf4j.Logger;
@@ -27,7 +27,6 @@ import org.slf4j.LoggerFactory;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.json.JsonObject;
 import java.util.List;
 import java.util.Properties;
 import java.util.UUID;
@@ -51,11 +50,8 @@ import static org.oscm.app.shell.business.api.ShellStatus.RUNNING;
 @ProvisioningSettingsLogger
 public class ShellController implements APPlatformController {
 
-    private static final Logger LOG = LoggerFactory
-            .getLogger(ShellController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ShellController.class);
 
-    private static final String ASYNC_ERROR = "ASYNC_ERROR";
-    private static final String SYNC_ERROR = "ERROR";
     private static final String STATEMACHINE_PROVISION = "provision.xml";
     private static final String STATEMACHINE_DEPROVISION = "deprovision.xml";
     private static final String STATEMACHINE_UPDATE = "update.xml";
@@ -78,8 +74,8 @@ public class ShellController implements APPlatformController {
     }
 
     @Override
-    public InstanceStatus activateInstance(String instanceId,
-                                           ProvisioningSettings settings) throws APPlatformException {
+    public InstanceStatus activateInstance(String instanceId, ProvisioningSettings settings) {
+
         InstanceStatus result = new InstanceStatus();
         result.setChangedParameters(settings.getParameters());
         return result;
@@ -88,6 +84,7 @@ public class ShellController implements APPlatformController {
     @Override
     public InstanceDescription createInstance(ProvisioningSettings settings)
             throws APPlatformException {
+
         InstanceDescription id = new InstanceDescription();
         id.setInstanceId(UUID.randomUUID().toString());
         id.setChangedParameters(settings.getParameters());
@@ -98,10 +95,9 @@ public class ShellController implements APPlatformController {
         config.setSetting(INSTANCE_ID, id.getInstanceId());
 
         validateAllScripts(config);
-        LOG.info("All scripts are correct");
+
         runVerificationScript(config);
-        initStateMachine(settings, PROVISIONING_SCRIPT,
-                STATEMACHINE_PROVISION);
+        initStateMachine(settings, PROVISIONING_SCRIPT, STATEMACHINE_PROVISION);
 
         return id;
     }
@@ -114,6 +110,8 @@ public class ShellController implements APPlatformController {
         for (ConfigurationKey scriptKey : scriptKeys) {
             validator.validate(config, scriptKey);
         }
+
+        LOGGER.info("All scripts were successfully validated");
     }
 
     void runVerificationScript(Configuration config) throws APPlatformException {
@@ -126,86 +124,71 @@ public class ShellController implements APPlatformController {
 
         Script script;
         ScriptLogger scriptLogger = new ScriptLogger();
+
         try {
             script = new Script(verificationScript);
             script.loadContent();
-            script.insertProvisioningSettings(
-                    config.getProvisioningSettings());
+            script.insertProvisioningSettings(config.getProvisioningSettings());
         } catch (Exception e) {
             throw new APPlatformException(e.getMessage());
         }
 
         try {
-            ShellCommand command = new ShellCommand(
-                    script.getContent());
+            ShellCommand command = new ShellCommand(script.getContent());
 
             try (Shell shell = new Shell()) {
                 shell.lockShell(config.getSetting(INSTANCE_ID));
-                shell.runCommand(config.getSetting(INSTANCE_ID),
-                        command);
+                shell.runCommand(config.getSetting(INSTANCE_ID), command);
                 long ref = currentTimeMillis();
                 ShellStatus rc;
                 do {
-                    rc = shell.consumeOutput(
-                            config.getSetting(INSTANCE_ID));
+                    rc = shell.consumeOutput(config.getSetting(INSTANCE_ID));
                     sleep(100);
                 } while (rc == RUNNING
-                        && currentTimeMillis() - ref < valueOf(
-                        config.getSetting(
-                                VERIFICATION_TIMEOUT)));
-                String shellOutput = shell.getOutput(
-                );
+                        && currentTimeMillis() - ref < valueOf(config.getSetting(VERIFICATION_TIMEOUT)));
+
+                String shellOutput = shell.getOutput();
                 //JsonObject jsonOutput = shell.getResult();
-                //LOG.warn("Json output : " + jsonOutput);
-                scriptLogger.logOutputFromScript(config,
-                        "VERIFICATION_SCRIPT", shellOutput);
-                Pattern p = compile(format(".*%s=(.*?)$",
-                        VERIFICATION_MESSAGE),
-                        MULTILINE);
+                //LOGGER.warn("Json output : " + jsonOutput);
+                scriptLogger.logOutputFromScript(config, "VERIFICATION_SCRIPT", shellOutput);
+
+                Pattern p = compile(format(".*%s=(.*?)$", VERIFICATION_MESSAGE), MULTILINE);
                 Matcher matcher = p.matcher(shellOutput);
+
                 if (matcher.find()) {
-                    throw new APPlatformException(
-                            "Verification failed: "
-                                    + matcher.group(1));
+                    throw new APPlatformException("Verification failed: " + matcher.group(1));
                 }
             }
         } catch (APPlatformException e) {
             throw e;
         } catch (Exception e) {
-            throw new APPlatformException(
-                    "Verification failed because of an exception",
-                    e);
+            throw new APPlatformException("Verification failed because of an exception", e);
         }
     }
 
-    private void initStateMachine(ProvisioningSettings settings,
-                                  ConfigurationKey serviceParamKey, String statemachineFilename)
-            throws APPlatformException {
+    private void initStateMachine(ProvisioningSettings settings, ConfigurationKey serviceParamKey,
+                                  String stateMachineFilename) throws APPlatformException {
+
         try {
             Configuration config = new Configuration(settings);
-            Setting setting = new Setting(SCRIPT_FILE.name(),
-                    config.getSetting(serviceParamKey));
-            settings.getParameters()
-                    .put(SCRIPT_FILE.name(), setting);
-            StateMachine.initializeProvisioningSettings(settings,
-                    statemachineFilename);
+            Setting setting = new Setting(SCRIPT_FILE.name(), config.getSetting(serviceParamKey));
+            settings.getParameters().put(SCRIPT_FILE.name(), setting);
+            StateMachine.initializeProvisioningSettings(settings, stateMachineFilename);
+
         } catch (Exception e) {
-            LOG.error("Failed to initialize state machine "
-                    + statemachineFilename + ". ", e);
+            LOGGER.error("Failed to initialize state machine " + stateMachineFilename + ". ", e);
             throw new APPlatformException(e.getMessage(), e);
         }
     }
 
     @Override
-    public InstanceStatusUsers createUsers(String instanceId,
-                                           ProvisioningSettings settings, List<ServiceUser> users)
-            throws APPlatformException {
+    public InstanceStatusUsers createUsers(String instanceId, ProvisioningSettings settings,
+                                           List<ServiceUser> users) throws APPlatformException {
 
         Configuration config = new Configuration(settings);
         config.setRequestingUser();
         validator.validate(config, ASSIGN_USER_SCRIPT);
-        initStateMachine(settings, ASSIGN_USER_SCRIPT,
-                STATEMACHINE_ASSIGN_USER);
+        initStateMachine(settings, ASSIGN_USER_SCRIPT, STATEMACHINE_ASSIGN_USER);
 
         config.addUsersToParameter(users);
 
@@ -217,8 +200,7 @@ public class ShellController implements APPlatformController {
     }
 
     @Override
-    public InstanceStatus deactivateInstance(String instanceId,
-                                             ProvisioningSettings settings) throws APPlatformException {
+    public InstanceStatus deactivateInstance(String instanceId, ProvisioningSettings settings) {
 
         InstanceStatus result = new InstanceStatus();
         result.setChangedParameters(settings.getParameters());
@@ -226,30 +208,26 @@ public class ShellController implements APPlatformController {
     }
 
     @Override
-    public InstanceStatus deleteInstance(String instanceId,
-                                         ProvisioningSettings settings) throws APPlatformException {
-        LOG.debug("instanceId: {}", instanceId);
-        Configuration config = new Configuration(settings);
-        validator.validate(config,
-                ConfigurationKey.DEPROVISIONING_SCRIPT);
-        initStateMachine(settings,
-                ConfigurationKey.DEPROVISIONING_SCRIPT,
-                STATEMACHINE_DEPROVISION);
-        InstanceStatus result = new InstanceStatus();
-        result.setChangedParameters(settings.getParameters());
-        return result;
-    }
-
-    @Override
-    public InstanceStatus deleteUsers(String instanceId,
-                                      ProvisioningSettings settings, List<ServiceUser> users)
+    public InstanceStatus deleteInstance(String instanceId, ProvisioningSettings settings)
             throws APPlatformException {
+
+        Configuration config = new Configuration(settings);
+        validator.validate(config, DEPROVISIONING_SCRIPT);
+        initStateMachine(settings, DEPROVISIONING_SCRIPT, STATEMACHINE_DEPROVISION);
+
+        InstanceStatus result = new InstanceStatus();
+        result.setChangedParameters(settings.getParameters());
+        return result;
+    }
+
+    @Override
+    public InstanceStatus deleteUsers(String instanceId, ProvisioningSettings settings,
+                                      List<ServiceUser> users) throws APPlatformException {
 
         Configuration config = new Configuration(settings);
         config.setRequestingUser();
         validator.validate(config, DEASSIGN_USER_SCRIPT);
-        initStateMachine(settings, DEASSIGN_USER_SCRIPT,
-                STATEMACHINE_DEASSIGN_USER);
+        initStateMachine(settings, DEASSIGN_USER_SCRIPT, STATEMACHINE_DEASSIGN_USER);
 
         config.addUsersToParameter(users);
 
@@ -260,9 +238,8 @@ public class ShellController implements APPlatformController {
     }
 
     @Override
-    public InstanceStatus executeServiceOperation(String userId,
-                                                  String instanceId, String transactionId, String operationId,
-                                                  List<OperationParameter> parameters,
+    public InstanceStatus executeServiceOperation(String userId, String instanceId, String transactionId,
+                                                  String operationId, List<OperationParameter> parameters,
                                                   ProvisioningSettings settings)
             throws APPlatformException {
 
@@ -270,114 +247,88 @@ public class ShellController implements APPlatformController {
         config.setSetting(REQUESTING_USER_ID, userId);
         validator.validate(config, OPERATIONS_SCRIPT);
         config.setSetting(OPERATIONS_ID, operationId);
-        initStateMachine(settings, OPERATIONS_SCRIPT,
-                STATEMACHINE_OPERATION);
+        initStateMachine(settings, OPERATIONS_SCRIPT, STATEMACHINE_OPERATION);
+
         InstanceStatus result = new InstanceStatus();
         result.setChangedParameters(settings.getParameters());
         return result;
     }
 
     @Override
-    public List<LocalizedText> getControllerStatus(ControllerSettings arg0)
-            throws APPlatformException {
+    public List<LocalizedText> getControllerStatus(ControllerSettings settings) {
 
         throw new UnsupportedOperationException("Not implemented");
     }
 
     @Override
-    public InstanceStatus getInstanceStatus(String instanceId,
-                                            ProvisioningSettings settings) throws APPlatformException {
+    public InstanceStatus getInstanceStatus(String instanceId, ProvisioningSettings settings)
+            throws APPlatformException {
 
-        ScriptLogger logger = new ScriptLogger();
         Configuration config = new Configuration(settings);
         InstanceStatus status = new InstanceStatus();
         StateMachine stateMachine;
+
         try {
             stateMachine = new StateMachine(settings);
-            stateMachine
-                    .executeAction(settings, instanceId, status);
+            stateMachine.executeAction(settings, instanceId, status);
+
+            StateMachineId stateId = StateMachineId.valueOf(stateMachine.getStateId());
+
+            if (StateMachineId.ERROR.equals(stateId)) {
+                String errorMsg = config.getSetting(SM_ERROR_MESSAGE);
+                LOGGER.error("Failed to getInstanceStatus for Instance [" + instanceId + "]", errorMsg);
+                handleScriptExecutionError(instanceId, errorMsg);
+            }
+
+            config.setSetting(SM_STATE_HISTORY, stateMachine.getHistory());
+            config.setSetting(SM_STATE, stateMachine.getStateId());
+
         } catch (StateMachineException e) {
-            LOG.error("Failed to getContent instance status", e);
-            pool.terminateShell(instanceId);
-            throw new APPlatformException(
-                    "Failed to getContent instance status. " + e
-                            .getMessage());
+
+            LOGGER.error("Failed to getInstanceStatus for Instance [" + instanceId + "]", e);
+            handleScriptExecutionError(instanceId, e.getMessage());
         }
-        updateProvisioningSettings(instanceId, config, stateMachine);
+
         status.setChangedParameters(settings.getParameters());
 
         return status;
     }
 
-    void updateProvisioningSettings(String instanceId, Configuration config,
-                                    StateMachine stateMachine)
-            throws SuspendException, APPlatformException {
-
-        String nextState = stateMachine.getStateId();
-        switch (nextState) {
-            case ASYNC_ERROR:
-                StringBuilder sb = new StringBuilder();
-                sb.append("Asynchronous task failed.");
-                if (config.getSetting(SM_ERROR_MESSAGE) != null) {
-                    sb.append(" Error message: "
-                            + config.getSetting(SM_ERROR_MESSAGE));
-                }
-                pool.terminateShell(instanceId);
-                throw new APPlatformException(sb.toString());
-            case SYNC_ERROR:
-                pool.terminateShell(instanceId);
-                throw new SuspendException(
-                        config.getSetting(SM_ERROR_MESSAGE));
-            default:
-                config.setSetting(SM_STATE_HISTORY,
-                        stateMachine.getHistory());
-                config.setSetting(SM_STATE, nextState);
-                break;
-        }
-    }
 
     @Override
-    public List<OperationParameter> getOperationParameters(String arg0,
-                                                           String arg1, String arg2, ProvisioningSettings arg3)
-            throws APPlatformException {
+    public List<OperationParameter> getOperationParameters(String arg0, String arg1, String arg2,
+                                                           ProvisioningSettings arg3) {
 
         throw new UnsupportedOperationException("Not implemented");
     }
 
     @Override
-    public InstanceStatus modifyInstance(String instanceId,
-                                         ProvisioningSettings settings, ProvisioningSettings newSettings)
-            throws APPlatformException {
+    public InstanceStatus modifyInstance(String instanceId, ProvisioningSettings settings,
+                                         ProvisioningSettings newSettings) throws APPlatformException {
 
-        LOG.debug("instanceId: {}", instanceId);
         Configuration config = new Configuration(newSettings);
         validator.validate(config, UPDATE_SCRIPT);
-        config.setSetting(REQUESTING_USER_ID,
-                settings.getRequestingUser().getUserId());
-        initStateMachine(newSettings, UPDATE_SCRIPT,
-                STATEMACHINE_UPDATE);
+        config.setSetting(REQUESTING_USER_ID, settings.getRequestingUser().getUserId());
+        initStateMachine(newSettings, UPDATE_SCRIPT, STATEMACHINE_UPDATE);
+
         InstanceStatus result = new InstanceStatus();
         result.setChangedParameters(newSettings.getParameters());
         return result;
     }
 
     @Override
-    public InstanceStatus notifyInstance(String arg0,
-                                         ProvisioningSettings arg1,
-                                         Properties arg2) throws APPlatformException {
+    public InstanceStatus notifyInstance(String arg0, ProvisioningSettings arg1, Properties arg2) {
         return null;
     }
 
     @Override
-    public InstanceStatus updateUsers(String instanceId,
-                                      ProvisioningSettings settings, List<ServiceUser> users)
-            throws APPlatformException {
+    public InstanceStatus updateUsers(String instanceId, ProvisioningSettings settings,
+                                      List<ServiceUser> users) throws APPlatformException {
 
         Configuration config = new Configuration(settings);
         config.setRequestingUser();
         validator.validate(config, UPDATE_USER_SCRIPT);
-        initStateMachine(settings, UPDATE_USER_SCRIPT,
-                STATEMACHINE_UPDATE_USER);
+        initStateMachine(settings, UPDATE_USER_SCRIPT, STATEMACHINE_UPDATE_USER);
 
         config.addUsersToParameter(users);
         config.setSetting(USER_COUNT, valueOf(users.size()));
@@ -393,6 +344,13 @@ public class ShellController implements APPlatformController {
         if (controllerAccess != null) {
             controllerAccess.storeSettings(settings);
         }
+    }
+
+    private void handleScriptExecutionError(String instanceId, String errorMessage)
+            throws APPlatformException {
+
+        pool.terminateShell(instanceId);
+        throw new APPlatformException("Script execution failed: " + errorMessage);
     }
 
 }

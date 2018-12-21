@@ -36,7 +36,7 @@ public class ShellControllerTest {
 
     @Spy
     @InjectMocks
-    private ShellController controller = new ShellController();
+    private ShellController controller;
 
     @Mock
     private ScriptValidator validator;
@@ -45,7 +45,7 @@ public class ShellControllerTest {
     private ShellPool pool;
 
     @Before
-    public void before() throws Exception {
+    public void before(){
         MockitoAnnotations.initMocks(this);
     }
 
@@ -175,7 +175,6 @@ public class ShellControllerTest {
         InstanceStatus status = controller.getInstanceStatus("instance_4332312", settings);
 
         //then
-        verify(controller, times(1)).updateProvisioningSettings(anyString(), any(Configuration.class), any(StateMachine.class));
         assertEquals(settings.getParameters(), status.getChangedParameters());
         assertTrue(status.isReady());
     }

@@ -70,6 +70,11 @@ public class ShellPool {
     @Lock(WRITE)
     public ShellStatus runCommand(ShellCommand command, String lockId, String shellConsoleFile)
             throws ShellPoolException, IOException, APPlatformException {
+
+        LOG.info("available permits: "+shellctrl.availablePermits());
+        LOG.info("hasQueuedThreads: "+shellctrl.hasQueuedThreads());
+        LOG.info("hasQueuedThreads: "+shellctrl.getQueueLength());
+
         for (Shell shell : shellPool) {
             if (shell.lockShell(lockId)) {
                 ShellStatus result = shell.runCommand(lockId, command);

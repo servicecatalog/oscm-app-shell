@@ -12,7 +12,7 @@
     <event id="error" state="ERROR" />
   </state>
 
-  <state id="END" action="finalizeProvisioning">
+  <state id="END" action="finalizeScriptExecution">
     <event id="success" state="SUCCESS" />
     <event id="waiting" state="END" />
     <event id="failed" state="ERROR" />
