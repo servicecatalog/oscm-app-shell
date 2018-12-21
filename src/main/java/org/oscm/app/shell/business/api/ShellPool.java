@@ -119,7 +119,7 @@ public class ShellPool {
     }
 
     @Lock(READ)
-    public ShellResult getShellResult(String lockId) throws ShellPoolException {
+    public ShellResult getShellResult(String lockId) throws ShellPoolException, ShellResultException {
         for (Shell shell : shellPool) {
             if (lockId.equals(shell.isLockedFor())) {
                 return shell.getResult();

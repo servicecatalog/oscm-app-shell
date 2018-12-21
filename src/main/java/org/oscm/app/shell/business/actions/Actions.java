@@ -62,7 +62,7 @@ public class Actions {
     }
 
     public String consumeScriptOutput(String instanceId, ProvisioningSettings settings,
-                                      InstanceStatus result) throws ShellPoolException {
+                                      InstanceStatus result) throws ShellPoolException, ShellResultException {
 
         initializeShellPool();
         ShellStatus shellStatus = pool.consumeShellOutput(instanceId);
@@ -99,7 +99,7 @@ public class Actions {
     }
 
     public String finalizeScriptExecution(String instanceId, ProvisioningSettings settings,
-                                          InstanceStatus result) throws ShellPoolException {
+                                          InstanceStatus result) throws ShellPoolException, ShellResultException {
 
         initializeShellPool();
         ShellResult shellResult = pool.getShellResult(instanceId);

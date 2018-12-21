@@ -154,7 +154,7 @@ public class Shell implements AutoCloseable {
         return output;
     }
 
-    public ShellResult getResult() {
+    public ShellResult getResult() throws ShellResultException {
 
         if (!command.getError().isEmpty()) {
 
@@ -168,10 +168,14 @@ public class Shell implements AutoCloseable {
             ArrayList<String> output = command.getOutput();
             String jsonOutput = output.stream().collect(Collectors.joining());
 
-            Gson json = new Gson();
-            ShellResult shellResult = json.fromJson(jsonOutput, ShellResult.class);
+            try {
+                Gson json = new Gson();
+                ShellResult shellResult = json.fromJson(jsonOutput, ShellResult.class);
+                return shellResult;
 
-            return shellResult;
+            } catch (Exception e) {
+                throw new ShellResultException("Invalid script result JSON format", e);
+            }
         }
     }
 

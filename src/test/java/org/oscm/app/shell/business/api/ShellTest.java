@@ -90,7 +90,7 @@ public class ShellTest {
         assertEquals(shell.getErrorOutput(), result.getMessage());
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test(expected = ShellResultException.class)
     public void testGetResult_throwsException_ifReturnedDataIsInvalid() throws Exception {
 
         //given
