@@ -19,6 +19,7 @@ import org.oscm.app.statemachine.StateMachine;
 import org.oscm.app.statemachine.api.StateMachineException;
 import org.oscm.app.v2_0.data.*;
 import org.oscm.app.v2_0.exceptions.APPlatformException;
+import org.oscm.app.v2_0.exceptions.SuspendException;
 import org.oscm.app.v2_0.intf.APPlatformController;
 import org.oscm.app.v2_0.intf.ControllerAccess;
 import org.slf4j.Logger;
@@ -276,8 +277,8 @@ public class ShellController implements APPlatformController {
 
             if (StateMachineId.ERROR.equals(stateId)) {
                 String errorMsg = config.getSetting(SM_ERROR_MESSAGE);
-                LOGGER.error("Failed to getInstanceStatus for Instance [" + instanceId + "]", errorMsg);
-                handleScriptExecutionError(instanceId, errorMsg);
+                LOGGER.error("Script execution for Instance [" + instanceId + "] failed: "+ errorMsg);
+                throw new SuspendException("Script execution failed: " + errorMsg);
             }
 
             config.setSetting(SM_STATE_HISTORY, stateMachine.getHistory());
@@ -286,7 +287,8 @@ public class ShellController implements APPlatformController {
         } catch (StateMachineException e) {
 
             LOGGER.error("Failed to getInstanceStatus for Instance [" + instanceId + "]", e);
-            handleScriptExecutionError(instanceId, e.getMessage());
+            pool.terminateShell(instanceId);
+            throw new APPlatformException("Failed to getInstanceStatus for Instance [" + instanceId + "]", e);
         }
 
         status.setChangedParameters(settings.getParameters());
@@ -344,13 +346,6 @@ public class ShellController implements APPlatformController {
         if (controllerAccess != null) {
             controllerAccess.storeSettings(settings);
         }
-    }
-
-    private void handleScriptExecutionError(String instanceId, String errorMessage)
-            throws APPlatformException {
-
-        pool.terminateShell(instanceId);
-        throw new APPlatformException("Script execution failed: " + errorMessage);
     }
 
 }
