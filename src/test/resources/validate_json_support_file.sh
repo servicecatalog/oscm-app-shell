@@ -50,11 +50,13 @@ set_status ok
 # SCENARIOS WITHOUT DATA INITIALIZED                                          #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-# Regexp: echo\s['"][{]\s*"status":\s?"[$]?[a-zA-Z0-9]+",\s+"message":\s?"[a-zA-Z0-9$,.\s]+"\s*[}]['"]
-echo '{
+# Regexp: echo\s['"]\s*[{]\s*"status":\s?"[$]?[a-zA-Z0-9]+",\s+"message":\s?"[a-zA-Z0-9$,.\s]+"\s*[}]\s*['"]
+echo '
+{
  "status": "$STATUS",
  "message": "$MESSAGE"
-}'
+}
+'
 echo '{"status": "$STATUS",
        "message": "Test $MESSAGE words and $VARS."}'
 echo '{ "status": "$STATUS",
@@ -62,7 +64,7 @@ echo '{ "status": "$STATUS",
 echo '{ "status":"$STATUS",
         "message":"$MESSAGE" }'
 
-# Regexp: echo\s['"][{]\s*\\"status\\":\s?\\"[$]?[a-zA-Z0-9]+\\",\s+\\"message\\":\s?\\"[a-zA-Z0-9$,.\s]+\\"\s*[}]['"]
+# Regexp: echo\s['"]\s*[{]\s*\\"status\\":\s?\\"[$]?[a-zA-Z0-9]+\\",\s+\\"message\\":\s?\\"[a-zA-Z0-9$,.\s]+\\"\s*[}]\s*['"]
 echo "{
  \"status\": \"$STATUS\",
  \"message\": \"$MESSAGE\"
@@ -74,19 +76,19 @@ echo "{\"status\":\"$STATUS\",
 echo "{\"status\": \"$STATUS\",
        \"message\": \"$MESSAGE\"}"
 
-# Regexp: printf\s['"][{]\s*(\\n)?\s?\\"status\\":\s?\\"%s\\",\s?\\n\s?\\"message\\":\s?\\"[a-zA-Z0-9$\s]*%s[a-zA-Z0-9$,.\s]*\\"\s?(\\n)?\s*[}]['"]
+# Regexp: printf\s['"]\s*[{]\s*(\\n)?\s?\\"status\\":\s?\\"%s\\",\s?\\n\s?\\"message\\":\s?\\"[a-zA-Z0-9$\s]*%s[a-zA-Z0-9$,.\s]*\\"\s?(\\n)?\s*[}]\s*['"]
 printf '{\n \"status\": \"%s\",\n \"message\": \"%s\"\n}' "$STATUS" "$MESSAGE"
 printf '{\n\"status\":\"%s\",\n\"message\":\"Test %s words and vars.\"\n}' "$STATUS" "$MESSAGE"
 printf '{  \n \"status\": \"%s\", \n \"message\": \"%s\" \n  }' "$STATUS" "$MESSAGE"
 printf '{\"status\": \"%s\", \n \"message\": \"%s\"}' "$STATUS" "$MESSAGE"
 
-# Regexp: echo\s[-]e\s['"][{]\s*(\\n)?\s?"status":\s?"[$]?[a-zA-Z0-9]+",\s?\\n\s?"message":\s?"\s*[a-zA-Z0-9$,.\s]+"\s?(\\n)?\s*[}]['"]
+# Regexp: echo\s[-]e\s['"]\s*[{]\s*(\\n)?\s?"status":\s?"[$]?[a-zA-Z0-9]+",\s?\\n\s?"message":\s?"\s*[a-zA-Z0-9$,.\s]+"\s?(\\n)?\s*[}]\s*['"]
 echo -e '{\n "status": "$STATUS",\n "message": " $MESSAGE"\n}'
 echo -e '{"status": "$STATUS",\n "message": "Test $MESSAGE words and $VARS."}'
 echo -e '{ \n "status": "$STATUS", \n "message": "$MESSAGE"\n }'
 echo -e '{\n "status":"$STATUS",\n "message":"$MESSAGE"\n}'
 
-# Regexp: echo\s[-]e\s['"][{]\s*(\\n)?\s?\\"status\\":\s?\\"[$]?[a-zA-Z0-9]+\\",\s?(\\n)?\s?\\"message\\":\s?\\"\s*[a-zA-Z0-9$,.\s]+\\"\s?(\\n)?\s*[}]['"]
+# Regexp: echo\s[-]e\s['"]\s*[{]\s*(\\n)?\s?\\"status\\":\s?\\"[$]?[a-zA-Z0-9]+\\",\s?(\\n)?\s?\\"message\\":\s?\\"\s*[a-zA-Z0-9$,.\s]+\\"\s?(\\n)?\s*[}]\s*['"]
 echo -e "{\n \"status\": \"$STATUS\",\n \"message\": \"$MESSAGE\"\n}"
 echo -e "{\"status\":\"$STATUS\",\n \"message\":\" $MESSAGE\"}"
 echo -e "{ \n \"status\": \"$STATUS\",\n \"message\": \"Test $MESSAGE words and $VARS.\" \n }"
@@ -96,12 +98,12 @@ echo -e "{\n \"status\":\"$STATUS\", \n \"message\":\"$MESSAGE\"\n }"
 # SCENARIOS WITH DATA INITIALIZED                                             #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-# Regexp: echo\s['"][{]\s*"status":\s?"[$]?[a-zA-Z0-9]+",\s+"message":\s?"\s*[a-zA-Z0-9$,.\s]+",\s+"data":\s*((\s?[$]?[a-zA-Z0-9\s]+)|([{]\s*("[a-zA-Z0-9]+":\s?"[a-zA-Z0-9$,.\s]+",?\s*)+[}]))\s*[}]['"]
+# Regexp: echo\s['"]\s*[{]\s*"status":\s?"[$]?[a-zA-Z0-9]+",\s+"message":\s?"\s*[a-zA-Z0-9$,.\s]+",\s+"data":\s*((\s?[$]?[a-zA-Z0-9\s]+)|([{]\s*("[a-zA-Z0-9]+":\s?"[a-zA-Z0-9$,.<>;:#%/\s]+",?\s*)+[}]))\s*[}]\s*['"]
 echo '{
  "status": "$STATUS",
  "message": "Test $MESSAGE words and $VARS.",
  "data": {
-   "id": "Test $VAR1 and $VAR2.",
+   "id": "Test $VAR1 <html> <br/>; %20 and $VAR2.",
    "type": "Test $VAR1 and $VAR2."
  }
 }'
@@ -127,12 +129,12 @@ echo '{"status": "$STATUS",
       "message": "$MESSAGE",
       "data": $DATA}'
 
-# Regexp: echo\s['"][{]\s*\\"status\\":\s?\\"[$]?[a-zA-Z0-9]+\\",\s+\\"message\\":\s?\\"\s*[a-zA-Z0-9$,.\s]+\\",\s+\\"data\\":\s*((\s?[$]?[a-zA-Z0-9\s]+)|([{]\s*(\\"[a-zA-Z0-9]+\\":\s?\\"[a-zA-Z0-9$,.\s]+\\",?\s*)+[}]))\s*[}]['"]
+# Regexp: echo\s['"]\s*[{]\s*\\"status\\":\s?\\"[$]?[a-zA-Z0-9]+\\",\s+\\"message\\":\s?\\"\s*[a-zA-Z0-9$,.\s]+\\",\s+\\"data\\":\s*((\s?[$]?[a-zA-Z0-9\s]+)|([{]\s*(\\"[a-zA-Z0-9]+\\":\s?\\"[a-zA-Z0-9$,.<>;:#%/\\\s]+\\",?\s*)+[}]))\s*[}]\s*['"]
 echo "{
  \"status\": \"$STATUS\",
  \"message\": \"Test $MESSAGE words and $VARS.\",
  \"data\": {
-   \"id\": \"Test $MESSAGE words and $VARS.\",
+   \"id\": \"Test $MESSAGE <html> <br/>; %20 words and $VARS.\",
    \"type\": \"server1, server2.\"
  }
 }"
@@ -142,19 +144,19 @@ echo "{
  \"data\": $DATA
 }"
 
-# Regexp: printf\s['"][{]\s*(\\n)?\s*\\"status\\":\s?\\"\s?%s\s?\\",\\n\s*\\"message\\":\s?\\"[a-zA-Z0-9$\s]*%s[a-zA-Z0-9$,.\s]*\\"\\n\s*\\"data\\":\s?\s?%s\s?(\\n)?\s*[}]['"]
+# Regexp: printf\s['"]\s*[{]\s*(\\n)?\s*\\"status\\":\s?\\"\s?%s\s?\\",\\n\s*\\"message\\":\s?\\"[a-zA-Z0-9$\s]*%s[a-zA-Z0-9$,.\s]*\\"\\n\s*\\"data\\":\s?\s?%s\s?(\\n)?\s*[}]\s*['"]
 printf '{\n   \"status\": \"%s\",\n \"message\": \"%s\"\n \"data\": %s\n}' "$STATUS" "$MESSAGE" "$DATA"
 printf '{ \n \"status\": \"%s\",\n   \"message\": \"Test %s words and vars.\"\n \"data\": %s\n }' "$STATUS" "$MESSAGE" "$DATA"
 printf '{\n \"status\":\"%s\",\n\"message\":\"%s\"\n    \"data\":%s\n    }' "$STATUS" "$MESSAGE" "$DATA"
 printf '{\"status\":\"%s\",\n   \"message\":\"%s\"\n   \"data\":%s}' "$STATUS" "$MESSAGE" "$DATA"
 
-# Regexp: echo\s[-]e\s['"][{]\s*(\\n)?\s*"status":\s?"[$]?[a-zA-Z0-9]+",\s?\\n\s*"message":\s?"\s*[a-zA-Z0-9$,.\s]+",\s?\\n\s*"data":\s?"[$]?[a-zA-Z0-9]+"\s?(\\n)?\s*[}]['"]
+# Regexp: echo\s[-]e\s['"]\s*[{]\s*(\\n)?\s*"status":\s?"[$]?[a-zA-Z0-9]+",\s?\\n\s*"message":\s?"\s*[a-zA-Z0-9$,.\s]+",\s?\\n\s*"data":\s?"[$]?[a-zA-Z0-9]+"\s?(\\n)?\s*[}]\s*['"]
 echo -e '{\n "status": "$STATUS",\n "message": "  $MESSAGE,  ",\n    "data": "$DATA"\n}'
 echo -e '{"status": "$STATUS",\n "message":" Test $MESSAGE words and $VARS. ",\n "data": "$DATA"}'
 echo -e '{\n   "status":"$STATUS",\n   "message":"$MESSAGE",\n "data":"$DATA"   }'
 echo -e '{\n    "status": "$STATUS",\n   "message": "$MESSAGE Test $MESSAGE",\n   "data": "$DATA"\n}'
 
-# Regexp: echo\s[-]e\s['"][{]\s*(\\n)?\s*\\"status\\":\s?\\"[$]?[a-zA-Z0-9]+\\",\s*(\\n)?\s?\\"message\\":\s?\\"\s*[a-zA-Z0-9$,.\s]+\\",\s*(\\n)?\s?\\"data\\":\s?[$]?[a-zA-Z0-9\s]+\s*(\\n)?\s*[}]['"]
+# Regexp: echo\s[-]e\s['"]\s*[{]\s*(\\n)?\s*\\"status\\":\s?\\"[$]?[a-zA-Z0-9]+\\",\s*(\\n)?\s?\\"message\\":\s?\\"\s*[a-zA-Z0-9$,.\s]+\\",\s*(\\n)?\s?\\"data\\":\s?[$]?[a-zA-Z0-9\s]+\s*(\\n)?\s*[}]\s*['"]
 echo -e "{   \n  \"status\": \"$STATUS\",\n \"message\": \"$MESSAGE\", \"data\": $DATA \n}"
 echo -e "{\n \"status\": \"$STATUS\", \n\"message\": \"Test $MESSAGE words and $VARS.\",  \"data\": $DATA\n}"
 echo -e "{\n \"status\":\"$STATUS\",\n\"message\":\"$MESSAGE  \",  \"data\": $DATA}"
