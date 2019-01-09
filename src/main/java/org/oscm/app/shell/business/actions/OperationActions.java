@@ -26,8 +26,7 @@ import org.oscm.app.statemachine.api.StateMachineAction;
 
 public class OperationActions {
 
-    private static final Logger LOG = LoggerFactory
-            .getLogger(OperationActions.class);
+    private static final Logger LOG = LoggerFactory.getLogger(OperationActions.class);
 
     Actions getActions() {
         return new Actions();

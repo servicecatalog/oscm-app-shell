@@ -15,7 +15,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
@@ -84,8 +83,9 @@ public class Script {
         } catch (Exception e) {
             if (url.startsWith("https")) {
                 LOG.error("Failed to download content file " + url + " " + e);
-                throw new Exception("Failed to load script from URL. The server might be unreachable or " +
-                        "the SSL certificate is not trusted. Exception: " + e.getMessage());
+                throw new Exception("Failed to load script from URL. The server might be " +
+                        "unreachable or the SSL certificate is not trusted. Exception: " +
+                        e.getMessage());
             } else {
                 LOG.error("Failed to download content file " + url + " " + e);
                 throw e;
@@ -123,17 +123,21 @@ public class Script {
         content = patchedScript;
     }
 
-    private void insertBasicParameters(TreeSet<String> scriptParameters, ProvisioningSettings settings){
+    private void insertBasicParameters(TreeSet<String> scriptParameters,
+                                       ProvisioningSettings settings){
 
         scriptParameters.add(buildParameterCommand("SUBSCRIPTION_ID", settings.getSubscriptionId()));
         if (settings.getRequestingUser() != null) {
-            scriptParameters.add(buildParameterCommand("REQUESTING_USER", settings.getRequestingUser().getUserId()));
+            scriptParameters.add(buildParameterCommand("REQUESTING_USER",
+                    settings.getRequestingUser().getUserId()));
         }
-        scriptParameters.add(buildParameterCommand("REQUESTING_ORGANIZATION_ID", settings.getOrganizationId()));
+        scriptParameters.add(buildParameterCommand("REQUESTING_ORGANIZATION_ID",
+                settings.getOrganizationId()));
         scriptParameters.add(buildParameterCommand("REFERENCE_ID", settings.getReferenceId()));
     }
 
-    private void insertServiceParameters(TreeSet<String> scriptParameters, ProvisioningSettings settings){
+    private void insertServiceParameters(TreeSet<String> scriptParameters,
+                                         ProvisioningSettings settings){
 
         HashMap<String, Setting> params = settings.getParameters();
 
@@ -157,8 +161,8 @@ public class Script {
 
         String firstLine = content.substring(0, content.indexOf(NEW_LINE));
         String rest = content.substring(content.indexOf(NEW_LINE) + 1, content.length());
-        content = buildParameterCommand("OPERATION", config.getSetting(OPERATIONS_ID)) + NEW_LINE + firstLine + NEW_LINE
-                + rest;
+        content = buildParameterCommand("OPERATION", config.getSetting(OPERATIONS_ID)) +
+                NEW_LINE + firstLine + NEW_LINE + rest;
     }
 
     private String buildParameterCommand(String key, String value) {

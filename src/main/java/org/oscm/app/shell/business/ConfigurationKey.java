@@ -13,7 +13,6 @@ import java.util.List;
 
 /**
  * @author kulle
- *
  */
 public enum ConfigurationKey {
 
@@ -69,36 +68,38 @@ public enum ConfigurationKey {
     private String defaultValue;
 
     private ConfigurationKey(String type) {
-	if (!type.equals("CONFIGURABLE") && !type.equals("INTERNAL")) {
-	    throw new IllegalArgumentException("Type of enum is wrong, use either CONFIGURABLE or INTERNAL");
-	}
-	this.type = type;
+        if (!type.equals("CONFIGURABLE") && !type.equals("INTERNAL")) {
+            throw new IllegalArgumentException("Type of enum is wrong, " +
+                    "use either CONFIGURABLE or INTERNAL");
+        }
+        this.type = type;
     }
 
     private ConfigurationKey(String type, String defaultValue) {
-	if (!type.equals("CONFIGURABLE") && !type.equals("INTERNAL")) {
-	    throw new IllegalArgumentException("Type of enum is wrong, use either CONFIGURABLE or INTERNAL");
-	}
-	this.type = type;
-	this.defaultValue = defaultValue;
+        if (!type.equals("CONFIGURABLE") && !type.equals("INTERNAL")) {
+            throw new IllegalArgumentException("Type of enum is wrong, " +
+                    "use either CONFIGURABLE or INTERNAL");
+        }
+        this.type = type;
+        this.defaultValue = defaultValue;
     }
 
     public boolean isInternalSetting() {
-	return type.equals("INTERNAL");
+        return type.equals("INTERNAL");
     }
 
     public static List<ConfigurationKey> configurableSettings() {
-	List<ConfigurationKey> result = new ArrayList<>();
-	for (ConfigurationKey c : ConfigurationKey.values()) {
-	    if (!c.isInternalSetting()) {
-		result.add(c);
-	    }
-	}
-	return result;
+        List<ConfigurationKey> result = new ArrayList<>();
+        for (ConfigurationKey c : ConfigurationKey.values()) {
+            if (!c.isInternalSetting()) {
+                result.add(c);
+            }
+        }
+        return result;
     }
 
     public String getDefaultValue() {
-	return defaultValue;
+        return defaultValue;
     }
 
 }

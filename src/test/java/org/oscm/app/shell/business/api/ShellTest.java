@@ -9,7 +9,6 @@
 package org.oscm.app.shell.business.api;
 
 import org.junit.Test;
-import org.richfaces.json.JSONException;
 
 import java.net.URI;
 import java.nio.file.Files;

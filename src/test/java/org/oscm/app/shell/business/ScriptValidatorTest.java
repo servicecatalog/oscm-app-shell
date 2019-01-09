@@ -72,16 +72,21 @@ public class ScriptValidatorTest {
     @Test(expected = APPlatformException.class)
     public void testValidateIfScriptExists_doesntExist() throws APPlatformException {
 
+        //given
         ScriptValidator validator = new ScriptValidator();
         String scriptPath = "invalid/path";
 
+        //when
         validator.validateIfScriptExists(scriptPath);
 
+        //then
+        //exception is thrown
     }
 
     @Test
     public void testValidateEndOfScript() throws Exception {
 
+        //given
         ScriptValidator validator = new ScriptValidator();
         Script validScript = getValidScript();
 
@@ -95,6 +100,7 @@ public class ScriptValidatorTest {
     @Test(expected = APPlatformException.class)
     public void testValidateEndOfScript_invalidEnd() throws Exception {
 
+        //given
         ScriptValidator validator = new ScriptValidator();
         Script invalidScript = getInvalidScript();
 
@@ -108,41 +114,57 @@ public class ScriptValidatorTest {
     @Test
     public void testValidateInteractiveCommands() throws Exception {
 
+        //given
         ScriptValidator validator = new ScriptValidator();
         Script validScript = getValidScript();
 
+        //when
         validator.validateInteractiveCommands(validScript);
 
+        //then
+        //validation executed without any issues
     }
 
     @Test(expected = APPlatformException.class)
     public void testValidateInteractiveCommands_failing() throws Exception {
 
+        //given
         ScriptValidator validator = new ScriptValidator();
         Script invalidScript = getInvalidScript();
 
+        //when
         validator.validateInteractiveCommands(invalidScript);
 
+        //then
+        //exception is thrown
     }
 
     @Test
     public void testValidateJSONinScript() throws Exception {
 
+        //given
         ScriptValidator validator = new ScriptValidator();
         Script validScript = getValidScript();
 
+        //when
         validator.validateJSONinScript(validScript);
 
+        //then
+        //validation executed without any issues
     }
 
     @Test(expected = APPlatformException.class)
     public void testValidateJSONinScript_noJSON() throws Exception {
 
+        //given
         ScriptValidator validator = new ScriptValidator();
         Script invalidScript = getInvalidScript();
 
+        //when
         validator.validateJSONinScript(invalidScript);
 
+        //then
+        //exception is thrown
     }
 
     private Script getValidScript() throws Exception {

@@ -11,7 +11,6 @@ package org.oscm.app.shell.business.api;
 public class ShellResultData {
 
     private String accessInfo;
-
     private String output;
 
     public String getAccessInfo() {

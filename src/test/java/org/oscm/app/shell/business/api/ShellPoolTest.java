@@ -19,7 +19,6 @@ import static org.oscm.app.shell.business.api.ShellStatus.*;
 
 /**
  * FIXME
- *
  */
 
 @Ignore
@@ -40,7 +39,7 @@ public class ShellPoolTest {
 
     @Ignore
     public void runSingleCommand() throws Exception {
-        
+
         // given
         String instanceId = "myInstanceId";
         ShellCommand command = new ShellCommand("echo $?;sleep(2);echo \"END_OF_SCRIPT\"");

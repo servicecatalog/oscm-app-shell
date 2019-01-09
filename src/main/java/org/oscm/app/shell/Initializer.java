@@ -1,9 +1,9 @@
 /*******************************************************************************
- *                                                                              
+ *
  *  Copyright FUJITSU LIMITED 2018                                           
- *                                                                                                                                 
+ *
  *  Creation Date: Aug 2, 2017                                                      
- *                                                                              
+ *
  *******************************************************************************/
 
 package org.oscm.app.shell;
@@ -89,7 +89,7 @@ public class Initializer {
     }
 
     private void publishTemplateFile() throws Exception {
-        try (InputStream is = controllerAccess.getClass().getClassLoader().getResourceAsStream(LOG4J_TEMPLATE);) {
+        try (InputStream is = controllerAccess.getClass().getClassLoader().getResourceAsStream(LOG4J_TEMPLATE)) {
             if (is == null) {
                 LOG.warn("Template file not found: " + LOG4J_TEMPLATE);
             } else if (logFile.getParentFile().exists()) {

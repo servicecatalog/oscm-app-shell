@@ -50,7 +50,7 @@ public class ProvisioningActions {
             return getActions().executeScript(instanceId, settings, result, script);
 
         } catch (Exception e) {
-            LOG.error("Couldn't execute shell script", e);
+            LOG.error("Couldn't execute shell script ", e);
             config.setSetting(SM_ERROR_MESSAGE, e.getMessage());
             return FAILED;
         }

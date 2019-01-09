@@ -112,7 +112,7 @@ public class ShellBean implements Serializable {
 
                 Optional<ShellResultData> data = result.getData();
 
-                if(data.isPresent()){
+                if (data.isPresent()) {
                     return data.get().getOutput();
                 }
 

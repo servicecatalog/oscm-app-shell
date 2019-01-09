@@ -40,8 +40,8 @@ public class Actions {
         }
     }
 
-    public String executeScript(String instanceId, ProvisioningSettings settings,
-                                InstanceStatus result, Script script) throws IOException, APPlatformException {
+    public String executeScript(String instanceId, ProvisioningSettings settings, InstanceStatus result, Script script)
+            throws IOException, APPlatformException {
 
         initializeShellPool();
         Configuration config = new Configuration(settings);
@@ -61,8 +61,8 @@ public class Actions {
         }
     }
 
-    public String consumeScriptOutput(String instanceId, ProvisioningSettings settings,
-                                      InstanceStatus result) throws ShellPoolException, ShellResultException {
+    public String consumeScriptOutput(String instanceId, ProvisioningSettings settings, InstanceStatus result)
+            throws ShellPoolException, ShellResultException {
 
         initializeShellPool();
         ShellStatus shellStatus = pool.consumeShellOutput(instanceId);
@@ -94,12 +94,13 @@ public class Actions {
                 break;
         }
 
-        LOG.info("Instance [" + instanceId + "] returned with StateMachineEvent [" + stateMachineEvent + "]");
+        LOG.info("Instance [" + instanceId + "] returned with StateMachineEvent " +
+                "[" + stateMachineEvent + "]");
         return stateMachineEvent;
     }
 
-    public String finalizeScriptExecution(String instanceId, ProvisioningSettings settings,
-                                          InstanceStatus result) throws ShellPoolException, ShellResultException {
+    public String finalizeScriptExecution(String instanceId, ProvisioningSettings settings, InstanceStatus result)
+            throws ShellPoolException, ShellResultException {
 
         initializeShellPool();
         ShellResult shellResult = pool.getShellResult(instanceId);

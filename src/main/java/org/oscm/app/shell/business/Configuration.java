@@ -35,7 +35,6 @@ import org.slf4j.LoggerFactory;
  * All non-user configurable settings are of type SIP.
  *
  * @author kulle
- *
  */
 public class Configuration {
 
@@ -45,46 +44,46 @@ public class Configuration {
     private final ProvisioningSettings settings;
 
     public Configuration(ProvisioningSettings settings) {
-	this.settings = settings;
+        this.settings = settings;
     }
 
     /**
      * Loads either controller configuration settings (CTL) or service instance
      * parameters (SIP) from the wrapped ProvisioningSettings object.
      *
-     * @param key
-     *            which identifies the value to load
+     * @param key which identifies the value to load
      * @return the value or null if the key does not exist
      */
     public String getSetting(ConfigurationKey key) {
-		if (key.isInternalSetting()) {
-	    return getParameterValue(key);
-	}
-	return loadConfigurableSetting(key);
+        if (key.isInternalSetting()) {
+            return getParameterValue(key);
+        }
+        return loadConfigurableSetting(key);
     }
 
     private String getParameterValue(ConfigurationKey key) {
-	if (settings.getParameters().containsKey(key.name())) {
-	    return settings.getParameters().get(key.name()).getValue();
-	}
+        if (settings.getParameters().containsKey(key.name())) {
+            return settings.getParameters().get(key.name()).getValue();
+        }
 
-	LOG.warn(String.format("The instance, for subscription %s, does not has a parameter with key %s",
-		settings.getSubscriptionId(), key.name()));
-	return "";
+        LOG.warn(String.format("The instance, for subscription %s, does not has a parameter " +
+                        "with key %s", settings.getSubscriptionId(), key.name()));
+        return "";
     }
 
     private String loadConfigurableSetting(ConfigurationKey key) {
-	if (settings.getParameters().containsKey(key.name())) {
-	    return settings.getParameters().get(key.name()).getValue();
-	} else if (settings.getConfigSettings().containsKey(key.name())) {
-	    return settings.getConfigSettings().get(key.name()).getValue();
-	}
+        if (settings.getParameters().containsKey(key.name())) {
+            return settings.getParameters().get(key.name()).getValue();
+        } else if (settings.getConfigSettings().containsKey(key.name())) {
+            return settings.getConfigSettings().get(key.name()).getValue();
+        }
 
-	LOG.warn(String.format("Key '%s' not found in instance parameters or configuration settings.", key.name()));
-	if (key.getDefaultValue() != null) {
-	    return key.getDefaultValue();
-	}
-	return "";
+        LOG.warn(String.format("Key '%s' not found in instance parameters " +
+                        "or configuration settings.", key.name()));
+        if (key.getDefaultValue() != null) {
+            return key.getDefaultValue();
+        }
+        return "";
     }
 
     /**
@@ -92,7 +91,7 @@ public class Configuration {
      * {@code Integer}.
      */
     public Integer getIntegerSetting(ConfigurationKey key) {
-	return Integer.valueOf(getSetting(key));
+        return Integer.valueOf(getSetting(key));
     }
 
     /**
@@ -100,27 +99,27 @@ public class Configuration {
      * update database settings please use the controller UI or other means.
      */
     public void setSetting(ConfigurationKey key, String value) {
-	settings.getParameters().put(key.name(), new Setting(key.name(), value));
+        settings.getParameters().put(key.name(), new Setting(key.name(), value));
     }
 
     public ProvisioningSettings getProvisioningSettings() {
-	return settings;
+        return settings;
     }
 
     public ServiceUser getRequestingUser() {
-	return settings.getRequestingUser();
+        return settings.getRequestingUser();
     }
 
     public String getSubscriptionId() {
-	return settings.getSubscriptionId();
+        return settings.getSubscriptionId();
     }
 
     public String getOrganizationId() {
-	return settings.getOrganizationId();
+        return settings.getOrganizationId();
     }
 
     public String getOrganizationName() {
-	return settings.getOrganizationName();
+        return settings.getOrganizationName();
     }
 
     /**
@@ -128,7 +127,7 @@ public class Configuration {
      * otherwise
      */
     public void setRequestingUser() {
-	setSetting(REQUESTING_USER_ID, settings.getRequestingUser().getUserId());
+        setSetting(REQUESTING_USER_ID, settings.getRequestingUser().getUserId());
     }
 
     /**
@@ -136,50 +135,51 @@ public class Configuration {
      * as parameters.
      */
     public void addUsersToParameter(List<ServiceUser> users) {
-	List<String> tobeRemoved = new ArrayList<String>();
-	for (String key : settings.getParameters().keySet()) {
-	    if (key.startsWith("USER_")) {
-		tobeRemoved.add(key);
-	    }
-	}
-	tobeRemoved.forEach(k -> settings.getParameters().remove(k));
+        List<String> tobeRemoved = new ArrayList<String>();
+        for (String key : settings.getParameters().keySet()) {
+            if (key.startsWith("USER_")) {
+                tobeRemoved.add(key);
+            }
+        }
+        tobeRemoved.forEach(k -> settings.getParameters().remove(k));
 
-	for (int i = 0; i < users.size(); i++) {
-	    String idKey = String.format("USER_%d_ID", i);
-	    settings.getParameters().put(idKey, new Setting(idKey, users.get(i).getUserId()));
+        for (int i = 0; i < users.size(); i++) {
+            String idKey = String.format("USER_%d_ID", i);
+            settings.getParameters().put(idKey, new Setting(idKey, users.get(i).getUserId()));
 
-	    if (users.get(i).getRoleIdentifier() != null) {
-		String roleKey = String.format("USER_%d_ROLE", i);
-		settings.getParameters().put(roleKey, new Setting(roleKey, users.get(i).getRoleIdentifier()));
-	    }
-	}
+            if (users.get(i).getRoleIdentifier() != null) {
+                String roleKey = String.format("USER_%d_ROLE", i);
+                settings.getParameters().put(roleKey, new Setting(roleKey,
+                        users.get(i).getRoleIdentifier()));
+            }
+        }
     }
 
     public List<ServiceUser> getUsers() {
-	List<ServiceUser> result = new ArrayList<>();
-	for (String key : settings.getParameters().keySet()) {
-	    if (key.matches("USER_\\d+_ID")) {
-		String id = settings.getParameters().get(key).getValue();
+        List<ServiceUser> result = new ArrayList<>();
+        for (String key : settings.getParameters().keySet()) {
+            if (key.matches("USER_\\d+_ID")) {
+                String id = settings.getParameters().get(key).getValue();
 
-		String role = null;
-		String roleKey = key.replace("ID", "ROLE");
-		if (settings.getParameters().containsKey(roleKey)) {
-		    role = settings.getParameters().get(roleKey).getValue();
-		}
+                String role = null;
+                String roleKey = key.replace("ID", "ROLE");
+                if (settings.getParameters().containsKey(roleKey)) {
+                    role = settings.getParameters().get(roleKey).getValue();
+                }
 
-		result.add(newServiceUser(id, role));
-	    }
-	}
-	return result;
+                result.add(newServiceUser(id, role));
+            }
+        }
+        return result;
     }
 
     private ServiceUser newServiceUser(String userId, String roleIdentifier) {
-	ServiceUser user = new ServiceUser();
-	user.setUserId(userId);
-	if (roleIdentifier != null) {
-	    user.setRoleIdentifier(roleIdentifier);
-	}
-	return user;
+        ServiceUser user = new ServiceUser();
+        user.setUserId(userId);
+        if (roleIdentifier != null) {
+            user.setRoleIdentifier(roleIdentifier);
+        }
+        return user;
     }
 
 }

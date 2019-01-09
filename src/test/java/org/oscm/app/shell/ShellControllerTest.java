@@ -45,7 +45,7 @@ public class ShellControllerTest {
     private ShellPool pool;
 
     @Before
-    public void before(){
+    public void before() {
         MockitoAnnotations.initMocks(this);
     }
 

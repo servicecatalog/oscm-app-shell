@@ -57,7 +57,8 @@ public class ScriptValidator {
             script.loadContent();
             return script;
         } catch (Exception e) {
-            throw new APPlatformException("Script: " + scriptPath + " cannot be loaded: " + e.getMessage());
+            throw new APPlatformException("Script: " + scriptPath + " cannot be loaded: " +
+                    e.getMessage());
         }
     }
 
@@ -65,7 +66,6 @@ public class ScriptValidator {
 
         final String readCommand = "^\\s*read\\s";
         final String interactiveFlag = "^((?![#]).)*[a-zA-Z0-9$,.\\s|]--interactive\\s?";
-
         final String[] patternList = {readCommand, interactiveFlag};
 
         String content = script.getContent();
@@ -83,7 +83,8 @@ public class ScriptValidator {
 
         if (found) {
             LOGGER.error("Script " + script.getPath() + " contains an interactive command.");
-            throw new APPlatformException("Script " + script.getPath() + " contains an interactive command.");
+            throw new APPlatformException("Script " + script.getPath() +
+                    " contains an interactive command.");
         }
 
     }
@@ -115,7 +116,8 @@ public class ScriptValidator {
         final String printfWithoutData = "printf\\s" +
                 "['\"]\\s*[{]\\s*(\\\\n)?\\s?" +
                 "\\\\\"status\\\\\":\\s?\\\\\"%s\\\\\",\\s?\\\\n\\s?" +
-                "\\\\\"message\\\\\":\\s?\\\\\"[a-zA-Z0-9$,.\\s]*%s[a-zA-Z0-9$,.\\s]*\\\\\"\\s?(\\\\n)?\\s*" +
+                "\\\\\"message\\\\\":\\s?\\\\\"[a-zA-Z0-9$,.\\s]*%s[a-zA-Z0-9$,.\\s]*\\\\\"" +
+                "\\s?(\\\\n)?\\s*" +
                 "[}]\\s*['\"]";
 
         final String echoEWithoutData = "echo\\s[-]e\\s" +
@@ -149,7 +151,8 @@ public class ScriptValidator {
         final String printfWithData = "printf\\s" +
                 "['\"]\\s*[{]\\s*(\\\\n)?\\s*" +
                 "\\\\\"status\\\\\":\\s?\\\\\"\\s?%s\\s?\\\\\",\\\\n\\s*" +
-                "\\\\\"message\\\\\":\\s?\\\\\"[a-zA-Z0-9$,.\\s]*%s[a-zA-Z0-9$,.\\s]*\\\\\"\\\\n\\s*" +
+                "\\\\\"message\\\\\":\\s?\\\\\"[a-zA-Z0-9$,.\\s]*%s[a-zA-Z0-9$,.\\s]*\\\\\"" +
+                "\\\\n\\s*" +
                 "\\\\\"data\\\\\":\\s?\\s?%s\\s?(\\\\n)?\\s*" +
                 "[}]\\s*['\"]";
 
@@ -166,7 +169,6 @@ public class ScriptValidator {
                 "\\\\\"message\\\\\":\\s?\\\\\"\\s*[a-zA-Z0-9$\\s]+\\\\\",\\s*(\\\\n)?\\s?" +
                 "\\\\\"data\\\\\":\\s?[$]?[a-zA-Z0-9\\s]+\\s*(\\\\n)?\\s*" +
                 "[}]\\s*['\"]";
-
 
         final String[] patternList = {multilineEchoWithoutData, multilineEchoEscapedWithoutData,
                 printfWithoutData, echoEWithoutData, echoEEscapedWithoutData, multilineEchoWithData,

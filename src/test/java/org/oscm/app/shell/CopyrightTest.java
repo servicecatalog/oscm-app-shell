@@ -1,9 +1,9 @@
 /*******************************************************************************
- *                                                                              
+ *
  *  Copyright FUJITSU LIMITED 2018
- *                                                                                                                                 
+ *
  *  Creation Date: 2015年4月30日                                                      
- *                                                                              
+ *
  *******************************************************************************/
 
 package org.oscm.app.shell;
@@ -22,13 +22,11 @@ import org.junit.Test;
 
 /**
  * @author goebel
- * 
  */
 public class CopyrightTest {
 
     static ArrayList<String> failed = new ArrayList<String>();
-    static final List<String> EXCLUDES = Arrays.asList("target", ".settings",
-            "pom.xml", "settings.xml");
+    static final List<String> EXCLUDES = Arrays.asList("target", ".settings", "pom.xml", "settings.xml");
     static boolean success = true;
 
     @Test
@@ -84,19 +82,19 @@ public class CopyrightTest {
         String ext = extension(fileName);
         System.out.println("* " + ext);
         switch (ext) {
-        case "java":
-        case "css":
-        case "js":
-            checkFile(fileName, "*  Copyright FUJITSU LIMITED 2018");
-            break;
-        case "xml":
-        case "xhtml":
-            checkFile(fileName, "<!-- Copyright FUJITSU LIMITED 2018-->");
-            break;
-        case "properties":
-            checkFile(fileName, "# Copyright FUJITSU LIMITED 2018");
-            break;
-        default:
+            case "java":
+            case "css":
+            case "js":
+                checkFile(fileName, "*  Copyright FUJITSU LIMITED 2018");
+                break;
+            case "xml":
+            case "xhtml":
+                checkFile(fileName, "<!-- Copyright FUJITSU LIMITED 2018-->");
+                break;
+            case "properties":
+                checkFile(fileName, "# Copyright FUJITSU LIMITED 2018");
+                break;
+            default:
         }
     }
 
