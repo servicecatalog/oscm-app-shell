@@ -38,7 +38,7 @@ public class StreamGobbler extends Thread {
 
     @Override
     public void run() {
-        try (BufferedReader stream = new BufferedReader(new InputStreamReader(inputStream));) {
+        try (BufferedReader stream = new BufferedReader(new InputStreamReader(inputStream))) {
             while (!isInterrupted()) {
                 if (!stream.ready()) {
                     sleep(100);

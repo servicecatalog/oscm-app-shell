@@ -38,7 +38,7 @@ public class CopyrightTest {
         for (String dir : dirs) {
             checkFiles(dir);
         }
-        assertEquals("", Boolean.TRUE, Boolean.valueOf(success));
+        assertEquals("", Boolean.TRUE, success);
     }
 
     @After

@@ -46,7 +46,7 @@ public class ActionsTest {
 
         //given
         String instanceId = "Instance_4343434";
-        ProvisioningSettings settings = new ProvisioningSettings(new HashMap<>(),new HashMap<>(),"en");
+        ProvisioningSettings settings = new ProvisioningSettings(new HashMap<>(), new HashMap<>(), "en");
         InstanceStatus status = null;
         Script script = mock(Script.class);
 
@@ -64,7 +64,7 @@ public class ActionsTest {
 
         //given
         String instanceId = "Instance_4343434";
-        ProvisioningSettings settings = new ProvisioningSettings(new HashMap<>(),new HashMap<>(),"en");
+        ProvisioningSettings settings = new ProvisioningSettings(new HashMap<>(), new HashMap<>(), "en");
         InstanceStatus status = null;
         Script script = mock(Script.class);
 
@@ -119,7 +119,7 @@ public class ActionsTest {
 
         //given
         String instanceId = "Instance_4343434";
-        ProvisioningSettings settings = new ProvisioningSettings(new HashMap<>(),new HashMap<>(),"en");
+        ProvisioningSettings settings = new ProvisioningSettings(new HashMap<>(), new HashMap<>(), "en");
         InstanceStatus instanceStatus = null;
         String status = "error";
         String message = "Script failed";
@@ -141,7 +141,7 @@ public class ActionsTest {
 
         //given
         String instanceId = "Instance_4343434";
-        ProvisioningSettings settings = new ProvisioningSettings(new HashMap<>(),new HashMap<>(),"en");
+        ProvisioningSettings settings = new ProvisioningSettings(new HashMap<>(), new HashMap<>(), "en");
         InstanceStatus instanceStatus = null;
         String status = "error";
         String message = "Script failed";
