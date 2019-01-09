@@ -88,7 +88,7 @@ public class Initializer {
         }
     }
 
-    private void publishTemplateFile() throws Exception {
+    private void publishTemplateFile() {
         try (InputStream is = controllerAccess.getClass().getClassLoader().getResourceAsStream(LOG4J_TEMPLATE)) {
             if (is == null) {
                 LOG.warn("Template file not found: " + LOG4J_TEMPLATE);
