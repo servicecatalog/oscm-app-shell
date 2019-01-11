@@ -79,13 +79,15 @@ public class InitializerTest {
         verify(timerService, never()).createTimer(anyInt(), any(), null);
     }
 
-    @Ignore
+    @Test
     public void testHandleTimer_triggersHandleOnChange_ifLogFileNotNull() {
 
         //given
         Timer timer = mock(Timer.class);
+        File logFile = mock(File.class);
 
         //when
+        initializer.setLogFile(logFile);
         initializer.handleTimer(timer);
 
         //then

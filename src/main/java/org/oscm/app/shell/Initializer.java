@@ -46,6 +46,14 @@ public class Initializer {
     private long logFileLastModified = 0;
     private boolean logFileWarning = false;
 
+    public File getLogFile() {
+        return logFile;
+    }
+
+    public void setLogFile(File logFile) {
+        this.logFile = logFile;
+    }
+
     @Inject
     private ControllerAccess controllerAccess;
 
