@@ -7,14 +7,14 @@
  *******************************************************************************/
 package org.oscm.app.shell.business.api;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.concurrent.CopyOnWriteArrayList;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Stream gobbler for handling of StdOut/StdErr pipes on Java runtime

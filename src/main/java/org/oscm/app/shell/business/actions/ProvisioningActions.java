@@ -8,21 +8,19 @@
 
 package org.oscm.app.shell.business.actions;
 
-import static org.oscm.app.shell.business.ConfigurationKey.SCRIPT_FILE;
-import static org.oscm.app.shell.business.ConfigurationKey.SM_ERROR_MESSAGE;
-import static org.oscm.app.shell.business.actions.StatemachineEvents.FAILED;
-
 import org.oscm.app.shell.ScriptLogger;
 import org.oscm.app.shell.business.Configuration;
 import org.oscm.app.shell.business.ConfigurationKey;
 import org.oscm.app.shell.business.Script;
-import org.oscm.app.shell.business.api.ShellPoolException;
+import org.oscm.app.statemachine.api.StateMachineAction;
 import org.oscm.app.v2_0.data.InstanceStatus;
 import org.oscm.app.v2_0.data.ProvisioningSettings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.oscm.app.statemachine.api.StateMachineAction;
+import static org.oscm.app.shell.business.ConfigurationKey.SCRIPT_FILE;
+import static org.oscm.app.shell.business.ConfigurationKey.SM_ERROR_MESSAGE;
+import static org.oscm.app.shell.business.actions.StatemachineEvents.FAILED;
 
 public class ProvisioningActions {
 

@@ -9,49 +9,58 @@
 
 package org.oscm.app.shell;
 
-import org.junit.Ignore;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.oscm.app.shell.business.Configuration;
 import org.oscm.app.v2_0.data.ServiceUser;
-import org.slf4j.Logger;
 
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
 
 public class ScriptLoggerTest {
 
     @Mock
-    Logger LOG;
-
-    @Mock
     Configuration configuration;
 
-    //Null pointery...
-
-    @Ignore
-    public void testLogScriptConfiguration_logsScriptConfigurationForNullUser_ifCalled() {
-        //given
-
-        //when
-        when(configuration.getRequestingUser()).thenReturn(null);
-        ScriptLogger.logScriptConfiguration(configuration, anyString(), anyString());
-
-        //then
-        verify(LOG, times(4)).info(anyString());
+    @Before
+    public void before() {
+        MockitoAnnotations.initMocks(this);
     }
 
-    @Ignore
-    public void testLogScriptConfiguration_logsScriptConfigurationForExistingUser_ifCalled() {
+    @Test
+    public void testLogScriptConfiguration_logsScriptConfigurationForNullUser_ifCalled() {
         //given
-        ServiceUser serviceUser = spy(new ServiceUser());
+        String scriptName = "scriptName";
+        String script = "/path/to/script";
+        when(configuration.getRequestingUser()).thenReturn(null);
 
         //when
-        when(configuration.getRequestingUser()).thenReturn(serviceUser);
-        ScriptLogger.logScriptConfiguration(configuration, anyString(), anyString());
+        ScriptLogger.logScriptConfiguration(configuration, scriptName, script);
 
         //then
-        verify(LOG, atLeast(4)).info(anyString());
+        verify(configuration, times(1)).getRequestingUser();
+        verify(configuration, times(1)).getOrganizationId();
+        verify(configuration, times(1)).getOrganizationName();
+        verify(configuration, times(1)).getSubscriptionId();
+    }
+
+    @Test
+    public void testLogScriptConfiguration_logsScriptConfigurationForExistingUser_ifCalled() {
+        //given
+        String scriptName = "scriptName";
+        String script = "/path/to/script";
+        ServiceUser serviceUser = mock(ServiceUser.class);
+        when(configuration.getRequestingUser()).thenReturn(serviceUser);
+
+        //when
+        ScriptLogger.logScriptConfiguration(configuration, scriptName, script);
+
+        //then
+        verify(configuration, times(3)).getRequestingUser();
+        verify(configuration, times(1)).getOrganizationId();
+        verify(configuration, times(1)).getOrganizationName();
+        verify(configuration, times(1)).getSubscriptionId();
     }
 
 }

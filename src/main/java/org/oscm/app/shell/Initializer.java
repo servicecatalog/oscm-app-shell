@@ -8,19 +8,6 @@
 
 package org.oscm.app.shell;
 
-import java.io.File;
-import java.io.InputStream;
-import java.util.Collection;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-import javax.ejb.Singleton;
-import javax.ejb.Startup;
-import javax.ejb.Timeout;
-import javax.ejb.Timer;
-import javax.ejb.TimerService;
-import javax.inject.Inject;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.LogManager;
@@ -28,6 +15,14 @@ import org.apache.log4j.PropertyConfigurator;
 import org.oscm.app.v2_0.intf.ControllerAccess;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
+import javax.ejb.*;
+import javax.inject.Inject;
+import java.io.File;
+import java.io.InputStream;
+import java.util.Collection;
 
 @Singleton
 @Startup
@@ -43,8 +38,18 @@ public class Initializer {
     private TimerService timerService;
 
     private File logFile;
+
     private long logFileLastModified = 0;
+
     private boolean logFileWarning = false;
+
+    public boolean isLogFileWarning() {
+        return logFileWarning;
+    }
+
+    public long getLogFileLastModified() {
+        return logFileLastModified;
+    }
 
     public File getLogFile() {
         return logFile;
@@ -122,7 +127,7 @@ public class Initializer {
             if (lastModif > logFileLastModified) {
                 logFileLastModified = lastModif;
                 LOG.debug("Reload log4j configuration from " + logFile.getAbsolutePath());
-                new PropertyConfigurator().doConfigure(logFile.getAbsolutePath(), LogManager.getLoggerRepository());
+                configurePropertyConfigurator(logFile);
                 logFileWarning = false;
             }
         } catch (Exception e) {
@@ -131,5 +136,9 @@ public class Initializer {
                 LOG.error(logFile.getAbsolutePath(), e);
             }
         }
+    }
+
+    void configurePropertyConfigurator(File logFile) {
+        new PropertyConfigurator().doConfigure(logFile.getAbsolutePath(), LogManager.getLoggerRepository());
     }
 }

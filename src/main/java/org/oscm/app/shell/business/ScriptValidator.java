@@ -8,15 +8,10 @@
 
 package org.oscm.app.shell.business;
 
-import org.oscm.app.shell.ShellController;
 import org.oscm.app.v2_0.exceptions.APPlatformException;
-import org.richfaces.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.StringReader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

@@ -2,13 +2,14 @@
  *
  *  Copyright FUJITSU LIMITED 2018
  *
- *  Creation Date: 2015年4月30日                                                      
+ *  Creation Date: 2015年4月30日
  *
  *******************************************************************************/
 
 package org.oscm.app.shell;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.After;
+import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,8 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.After;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
 /**
  * @author goebel
@@ -120,10 +120,10 @@ public class CopyrightTest {
             randomFile.readFully(fileContent);
             randomFile.close();
             String text = new String(fileContent);
-            if (text.indexOf("Copyright IBM Corp") != -1) {
+            if (text.contains("Copyright IBM Corp")) {
                 return;
             }
-            if (text.indexOf(header) < 0) {
+            if (!text.contains(header)) {
                 success = false;
                 failed.add(filePath);
             }

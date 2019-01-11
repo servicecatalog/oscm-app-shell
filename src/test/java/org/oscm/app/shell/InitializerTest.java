@@ -10,23 +10,14 @@ package org.oscm.app.shell;
 
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
-import org.mockito.internal.util.reflection.FieldSetter;
 
-import javax.ejb.Init;
 import javax.ejb.Timer;
-import javax.ejb.TimerService;
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.Collection;
 
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
 public class InitializerTest {
@@ -34,49 +25,12 @@ public class InitializerTest {
     @Mock
     File logFile;
 
-    @InjectMocks
     @Spy
     Initializer initializer;
 
     @Before
     public void before() {
         MockitoAnnotations.initMocks(this);
-    }
-
-    @Ignore
-    public void testInitializeTimerService_callsCreateTimer_ifCollectionEmpty()
-            throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-
-        //given
-        TimerService timerService = mock(TimerService.class);
-        Method postConstructor = Initializer.class.getDeclaredMethod("postConstruct",null);
-        postConstructor.setAccessible(true);
-
-        //when
-        when(timerService.getTimers()).thenReturn(mock(Collection.class));
-        postConstructor.invoke(initializer);
-
-        //then
-        verify(timerService, times(1)).createTimer(anyInt(), any(), null);
-    }
-
-    @Ignore
-    public void testInitializeTimerService_doesNotCallCreateTimer_ifCollectionNotEmpty()
-            throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-
-        //given
-        TimerService timerService = mock(TimerService.class);
-        Collection<Timer> timers = mock(Collection.class);
-        Method postConstructor = Initializer.class.getDeclaredMethod("postConstruct",null);
-        postConstructor.setAccessible(true);
-
-        //when
-        timers.add(mock(Timer.class));
-        when(timerService.getTimers()).thenReturn(timers);
-        postConstructor.invoke(initializer);
-
-        //then
-        verify(timerService, never()).createTimer(anyInt(), any(), null);
     }
 
     @Test
@@ -94,44 +48,47 @@ public class InitializerTest {
         verify(initializer, times(1)).handleOnChange(logFile);
     }
 
-    @Ignore
+    @Test
     public void testHandleTimer_doesNothing_ifLogFileIsNull() {
 
         //given
         Timer timer = mock(Timer.class);
 
         //when
-        logFile = null;
+        initializer.setLogFile(null);
         initializer.handleTimer(timer);
 
         //then
         verify(initializer, times(0)).handleOnChange(logFile);
     }
 
-    @Ignore
+    @Test
     public void testHandleOnChange_doesNothing_ifNothingChanged() {
 
         //given
-        Timer timer = mock(Timer.class);
+        when(logFile.lastModified()).thenReturn((long) 1000);
+        doNothing().when(initializer).configurePropertyConfigurator(any(File.class));
 
         //when
-        initializer.handleTimer(timer);
+        initializer.handleOnChange(logFile);
 
         //then
-        //Assert.assertFalse(logFileWarning);
+        Assert.assertEquals(1000, initializer.getLogFileLastModified());
+        Assert.assertFalse(initializer.isLogFileWarning());
     }
 
-    @Ignore
+    @Test
     public void testHandleOnChange_reloadsConfiguration_ifLogFileModified() {
 
         //given
-        Timer timer = mock(Timer.class);
+        when(logFile.lastModified()).thenThrow(Exception.class);
+        doNothing().when(initializer).configurePropertyConfigurator(any(File.class));
 
         //when
-        initializer.handleTimer(timer);
+        initializer.handleOnChange(logFile);
 
         //then
-        //Assert.assertTrue(logFileWarning);
+        Assert.assertTrue(initializer.isLogFileWarning());
     }
 
 }

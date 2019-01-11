@@ -8,9 +8,6 @@
 
 package org.oscm.app.shell.business;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.oscm.app.v2_0.APPlatformServiceFactory;
 import org.oscm.app.v2_0.data.ControllerSettings;
 import org.oscm.app.v2_0.exceptions.APPlatformException;
@@ -18,6 +15,9 @@ import org.oscm.app.v2_0.i18n.Messages;
 import org.oscm.app.v2_0.intf.ControllerAccess;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ShellControllerAccess implements ControllerAccess {
 

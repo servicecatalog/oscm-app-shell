@@ -19,9 +19,7 @@ import org.oscm.app.shell.business.ConfigurationKey;
 import org.oscm.app.shell.business.ScriptValidator;
 import org.oscm.app.shell.business.ShellControllerAccess;
 import org.oscm.app.shell.business.api.ShellPool;
-import org.oscm.app.statemachine.StateMachine;
 import org.oscm.app.v2_0.data.*;
-import org.oscm.app.v2_0.exceptions.APPlatformException;
 
 import java.util.ArrayList;
 import java.util.Collections;
