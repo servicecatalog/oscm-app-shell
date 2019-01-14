@@ -17,8 +17,8 @@ import org.mockito.Spy;
 import org.oscm.app.shell.business.Configuration;
 import org.oscm.app.shell.business.ConfigurationKey;
 import org.oscm.app.shell.business.ScriptValidator;
+import org.oscm.app.shell.business.ShellControllerAccess;
 import org.oscm.app.shell.business.api.ShellPool;
-import org.oscm.app.statemachine.StateMachine;
 import org.oscm.app.v2_0.data.*;
 
 import java.util.ArrayList;
@@ -45,7 +45,7 @@ public class ShellControllerTest {
     private ShellPool pool;
 
     @Before
-    public void before(){
+    public void before() {
         MockitoAnnotations.initMocks(this);
     }
 
@@ -178,6 +178,21 @@ public class ShellControllerTest {
         assertEquals(settings.getParameters(), status.getChangedParameters());
         assertTrue(status.isReady());
     }
+
+    @Ignore
+    public void testSetControllerSettings() {
+
+        // given
+        ShellControllerAccess shellControllerAccess = mock(ShellControllerAccess.class);
+
+        // when
+        controller.setControllerSettings(any(ControllerSettings.class));
+
+        //then
+        verify(shellControllerAccess, times(1)).storeSettings(any(ControllerSettings.class));
+    }
+
+
 
     private ProvisioningSettings getProvisioningSettings() {
 

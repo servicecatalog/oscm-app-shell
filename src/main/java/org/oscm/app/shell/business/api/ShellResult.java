@@ -21,9 +21,7 @@ public class ShellResult {
     }
 
     private String status;
-
     private String message;
-
     private ShellResultData data;
 
     public String getStatus() {
@@ -51,7 +49,7 @@ public class ShellResult {
         this.data = data;
     }
 
-    public Optional<ShellResultData> getData(){
+    public Optional<ShellResultData> getData() {
 
         return Optional.ofNullable(this.data);
     }

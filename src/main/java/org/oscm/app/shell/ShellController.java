@@ -241,8 +241,7 @@ public class ShellController implements APPlatformController {
     @Override
     public InstanceStatus executeServiceOperation(String userId, String instanceId, String transactionId,
                                                   String operationId, List<OperationParameter> parameters,
-                                                  ProvisioningSettings settings)
-            throws APPlatformException {
+                                                  ProvisioningSettings settings) throws APPlatformException {
 
         Configuration config = new Configuration(settings);
         config.setSetting(REQUESTING_USER_ID, userId);
@@ -288,7 +287,7 @@ public class ShellController implements APPlatformController {
 
             LOGGER.error("Failed to getInstanceStatus for Instance [" + instanceId + "]", e);
             pool.terminateShell(instanceId);
-            throw new APPlatformException("Failed to getInstanceStatus for Instance [" + instanceId + "]", e);
+            throw new APPlatformException("Failed to getInstanceStatus for Instance " + "[" + instanceId + "]", e);
         }
 
         status.setChangedParameters(settings.getParameters());

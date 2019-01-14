@@ -7,37 +7,23 @@
  *******************************************************************************/
 package org.oscm.app.shell.business.api;
 
-import static java.lang.String.join;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import static org.oscm.app.shell.business.api.ShellStatus.CALLERID_DOES_NOT_MATCH;
-import static org.oscm.app.shell.business.api.ShellStatus.PSSHELL_ERROR;
-import static org.oscm.app.shell.business.api.ShellStatus.RUNNING;
-import static org.oscm.app.shell.business.api.ShellStatus.STDIN_CLOSED;
-import static org.oscm.app.shell.business.api.ShellStatus.SUCCESS;
+import com.google.gson.Gson;
+import org.oscm.app.shell.ScriptLogger;
+import org.oscm.app.v2_0.exceptions.APPlatformException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
-import com.google.gson.Gson;
-import org.oscm.app.shell.ScriptLogger;
-import org.oscm.app.v2_0.exceptions.APPlatformException;
-import org.richfaces.json.JSONException;
-import org.richfaces.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.json.Json;
-import javax.json.JsonObject;
+import static java.lang.String.join;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static org.oscm.app.shell.business.api.ShellStatus.*;
 
 /**
  * Shell runtime used to execute Shell scripts
@@ -77,6 +63,14 @@ public class Shell implements AutoCloseable {
     private ShellCommand command;
 
     private ScriptLogger scriptLogger;
+
+    public String getLockId() {
+        return lockId;
+    }
+
+    public void setLockId(String lockId) {
+        this.lockId = lockId;
+    }
 
     public Shell() throws IOException, APPlatformException {
         this(null);

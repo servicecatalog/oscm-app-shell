@@ -8,25 +8,24 @@
 
 package org.oscm.app.shell.business.api;
 
-import static javax.ejb.ConcurrencyManagementType.CONTAINER;
-import static javax.ejb.LockType.READ;
-import static javax.ejb.LockType.WRITE;
-import static org.oscm.app.shell.business.api.ShellStatus.RUNNING;
-import static org.oscm.app.shell.business.api.ShellStatus.STDIN_CLOSED;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.concurrent.Semaphore;
+import org.oscm.app.v2_0.exceptions.APPlatformException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.ejb.ConcurrencyManagement;
 import javax.ejb.Lock;
 import javax.ejb.Singleton;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.concurrent.Semaphore;
 
-import org.oscm.app.v2_0.exceptions.APPlatformException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static javax.ejb.ConcurrencyManagementType.CONTAINER;
+import static javax.ejb.LockType.READ;
+import static javax.ejb.LockType.WRITE;
+import static org.oscm.app.shell.business.api.ShellStatus.RUNNING;
+import static org.oscm.app.shell.business.api.ShellStatus.STDIN_CLOSED;
 
 /**
  * Manages a number of Shell sessions. The pool can grow up to 100 shells.
@@ -71,9 +70,9 @@ public class ShellPool {
     public ShellStatus runCommand(ShellCommand command, String lockId, String shellConsoleFile)
             throws ShellPoolException, IOException, APPlatformException {
 
-        LOG.info("available permits: "+shellctrl.availablePermits());
-        LOG.info("hasQueuedThreads: "+shellctrl.hasQueuedThreads());
-        LOG.info("hasQueuedThreads: "+shellctrl.getQueueLength());
+        LOG.info("available permits: " + shellctrl.availablePermits());
+        LOG.info("hasQueuedThreads: " + shellctrl.hasQueuedThreads());
+        LOG.info("hasQueuedThreads: " + shellctrl.getQueueLength());
 
         for (Shell shell : shellPool) {
             if (shell.lockShell(lockId)) {

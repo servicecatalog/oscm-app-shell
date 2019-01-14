@@ -1,14 +1,15 @@
 /*******************************************************************************
- *                                                                              
+ *
  *  Copyright FUJITSU LIMITED 2018
- *                                                                                                                                 
- *  Creation Date: 2015年4月30日                                                      
- *                                                                              
+ *
+ *  Creation Date: 2015年4月30日
+ *
  *******************************************************************************/
 
 package org.oscm.app.shell;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.After;
+import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,18 +18,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.After;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
 /**
  * @author goebel
- * 
  */
 public class CopyrightTest {
 
     static ArrayList<String> failed = new ArrayList<String>();
-    static final List<String> EXCLUDES = Arrays.asList("target", ".settings",
-            "pom.xml", "settings.xml");
+    static final List<String> EXCLUDES = Arrays.asList("target", ".settings", "pom.xml", "settings.xml");
     static boolean success = true;
 
     @Test
@@ -40,7 +38,7 @@ public class CopyrightTest {
         for (String dir : dirs) {
             checkFiles(dir);
         }
-        assertEquals("", Boolean.TRUE, Boolean.valueOf(success));
+        assertEquals("", Boolean.TRUE, success);
     }
 
     @After
@@ -84,19 +82,19 @@ public class CopyrightTest {
         String ext = extension(fileName);
         System.out.println("* " + ext);
         switch (ext) {
-        case "java":
-        case "css":
-        case "js":
-            checkFile(fileName, "*  Copyright FUJITSU LIMITED 2018");
-            break;
-        case "xml":
-        case "xhtml":
-            checkFile(fileName, "<!-- Copyright FUJITSU LIMITED 2018-->");
-            break;
-        case "properties":
-            checkFile(fileName, "# Copyright FUJITSU LIMITED 2018");
-            break;
-        default:
+            case "java":
+            case "css":
+            case "js":
+                checkFile(fileName, "*  Copyright FUJITSU LIMITED 2018");
+                break;
+            case "xml":
+            case "xhtml":
+                checkFile(fileName, "<!-- Copyright FUJITSU LIMITED 2018-->");
+                break;
+            case "properties":
+                checkFile(fileName, "# Copyright FUJITSU LIMITED 2018");
+                break;
+            default:
         }
     }
 
@@ -122,10 +120,10 @@ public class CopyrightTest {
             randomFile.readFully(fileContent);
             randomFile.close();
             String text = new String(fileContent);
-            if (text.indexOf("Copyright IBM Corp") != -1) {
+            if (text.contains("Copyright IBM Corp")) {
                 return;
             }
-            if (text.indexOf(header) < 0) {
+            if (!text.contains(header)) {
                 success = false;
                 failed.add(filePath);
             }
