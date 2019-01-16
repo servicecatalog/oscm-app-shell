@@ -32,7 +32,6 @@ public class ScriptValidator {
         Script script = validateIfScriptExists(scriptPath);
         validateInteractiveCommands(script);
         validateEndOfScript(script);
-        validateJSONinScript(script);
 
         LOGGER.debug("Validation of script [" + scriptKey + "] finished successfully");
     }
@@ -81,7 +80,6 @@ public class ScriptValidator {
             throw new APPlatformException("Script " + script.getPath() +
                     " contains an interactive command.");
         }
-
     }
 
     public void validateEndOfScript(Script script) throws APPlatformException {
@@ -92,102 +90,5 @@ public class ScriptValidator {
             throw new APPlatformException(
                     "Missing output \"END_OF_SCRIPT\" in " + script.getPath());
         }
-    }
-
-    public void validateJSONinScript(Script script) throws APPlatformException {
-
-        final String multilineEchoWithoutData = "echo\\s" +
-                "['\"]\\s*[{]\\s*" +
-                "\"status\":\\s?\"[$]?[a-zA-Z0-9]+\",\\s+" +
-                "\"message\":\\s?\"[a-zA-Z0-9$,.\\s]+\"\\s*" +
-                "[}]\\s*['\"]";
-
-        final String multilineEchoEscapedWithoutData = "echo\\s" +
-                "['\"]\\s*[{]\\s*" +
-                "\\\\\"status\\\\\":\\s?\\\\\"[$]?[a-zA-Z0-9]+\\\\\",\\s+" +
-                "\\\\\"message\\\\\":\\s?\\\\\"[a-zA-Z0-9$,.\\s]+\\\\\"\\s*" +
-                "[}]\\s*['\"]";
-
-        final String printfWithoutData = "printf\\s" +
-                "['\"]\\s*[{]\\s*(\\\\n)?\\s?" +
-                "\\\\\"status\\\\\":\\s?\\\\\"%s\\\\\",\\s?\\\\n\\s?" +
-                "\\\\\"message\\\\\":\\s?\\\\\"[a-zA-Z0-9$,.\\s]*%s[a-zA-Z0-9$,.\\s]*\\\\\"" +
-                "\\s?(\\\\n)?\\s*" +
-                "[}]\\s*['\"]";
-
-        final String echoEWithoutData = "echo\\s[-]e\\s" +
-                "['\"]\\s*[{]\\s*(\\\\n)?\\s?" +
-                "\"status\":\\s?\"[$]?[a-zA-Z0-9]+\",\\s?\\\\n\\s?" +
-                "\"message\":\\s?\"\\s*[a-zA-Z0-9$,.\\s]+\"\\s?(\\\\n)?\\s*" +
-                "[}]\\s*['\"]";
-
-        final String echoEEscapedWithoutData = "echo\\s[-]e\\s" +
-                "['\"]\\s*[{]\\s*(\\\\n)?\\s?" +
-                "\\\\\"status\\\\\":\\s?\\\\\"[$]?[a-zA-Z0-9]+\\\\\",\\s?(\\\\n)?\\s?" +
-                "\\\\\"message\\\\\":\\s?\\\\\"\\s*[a-zA-Z0-9$,.\\s]+\\\\\"\\s?(\\\\n)?\\s*" +
-                "[}]\\s*['\"]";
-
-        final String multilineEchoWithData = "echo\\s" +
-                "['\"]\\s*[{]\\s*" +
-                "\"status\":\\s?\"[$]?[a-zA-Z0-9]+\",\\s+" +
-                "\"message\":\\s?\"\\s*[a-zA-Z0-9$,.\\s]+\",\\s+" +
-                "\"data\":\\s*((\\s?[$]?[a-zA-Z0-9\\s]+)|" +
-                "([{].*[}]))\\s*" +
-                "[}]\\s*['\"]";
-
-        final String multilineEchoEscapedWithData = "echo\\s" +
-                "['\"]\\s*[{]\\s*" +
-                "\\\\\"status\\\\\":\\s?\\\\\"[$]?[a-zA-Z0-9]+\\\\\",\\s+" +
-                "\\\\\"message\\\\\":\\s?\\\\\"\\s*[a-zA-Z0-9$,.\\s]+\\\\\",\\s+" +
-                "\\\\\"data\\\\\":\\s*((\\s?[$]?[a-zA-Z0-9\\s]+)|" +
-                "([{].*[}]))\\s*" +
-                "[}]\\s*['\"]";
-
-        final String printfWithData = "printf\\s" +
-                "['\"]\\s*[{]\\s*(\\\\n)?\\s*" +
-                "\\\\\"status\\\\\":\\s?\\\\\"\\s?%s\\s?\\\\\",\\\\n\\s*" +
-                "\\\\\"message\\\\\":\\s?\\\\\"[a-zA-Z0-9$,.\\s]*%s[a-zA-Z0-9$,.\\s]*\\\\\"" +
-                "\\\\n\\s*" +
-                "\\\\\"data\\\\\":\\s?\\s?%s\\s?(\\\\n)?\\s*" +
-                "[}]\\s*['\"]";
-
-        final String echoEWithData = "echo\\s[-]e\\s" +
-                "['\"]\\s*[{]\\s*(\\\\n)?\\s*" +
-                "\"status\":\\s?\"[$]?[a-zA-Z0-9]+\",\\s?\\\\n\\s*" +
-                "\"message\":\\s?\"\\s*[a-zA-Z0-9$,.\\s]+\",\\s?\\\\n\\s*" +
-                "\"data\":\\s?\"[$]?[a-zA-Z0-9]+\"\\s?(\\\\n)?\\s*" +
-                "[}]\\s*['\"]";
-
-        final String echoEEscapedWithData = "echo\\s[-]e\\s" +
-                "['\"]\\s*[{]\\s*(\\\\n)?\\s*" +
-                "\\\\\"status\\\\\":\\s?\\\\\"[$]?[a-zA-Z0-9]+\\\\\",\\s*(\\\\n)?\\s?" +
-                "\\\\\"message\\\\\":\\s?\\\\\"\\s*[a-zA-Z0-9$\\s]+\\\\\",\\s*(\\\\n)?\\s?" +
-                "\\\\\"data\\\\\":\\s?[$]?[a-zA-Z0-9\\s]+\\s*(\\\\n)?\\s*" +
-                "[}]\\s*['\"]";
-
-        final String[] patternList = {multilineEchoWithoutData, multilineEchoEscapedWithoutData,
-                printfWithoutData, echoEWithoutData, echoEEscapedWithoutData, multilineEchoWithData,
-                multilineEchoEscapedWithData, printfWithData, echoEWithData, echoEEscapedWithData};
-
-        String content = script.getContent();
-
-        boolean found = false;
-
-        for (String stringPattern : patternList) {
-            Pattern pattern = Pattern.compile(stringPattern, Pattern.DOTALL);
-            Matcher matcher = pattern.matcher(content);
-            while (matcher.find()) {
-                found = true;
-                LOGGER.debug("Found match: " + matcher.group(0));
-            }
-        }
-
-        if (!found) {
-            LOGGER.error("Script " + script.getPath() +
-                    " does not return JSON or the JSON is not created correctly");
-            throw new APPlatformException("Script " + script.getPath() +
-                    " does not return JSON or the JSON is not created correctly");
-        }
-
     }
 }

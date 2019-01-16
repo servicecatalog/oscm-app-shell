@@ -139,34 +139,6 @@ public class ScriptValidatorTest {
         //exception is thrown
     }
 
-    @Test
-    public void testValidateJSONinScript() throws Exception {
-
-        //given
-        ScriptValidator validator = new ScriptValidator();
-        Script validScript = getValidScript();
-
-        //when
-        validator.validateJSONinScript(validScript);
-
-        //then
-        //validation executed without any issues
-    }
-
-    @Test(expected = APPlatformException.class)
-    public void testValidateJSONinScript_noJSON() throws Exception {
-
-        //given
-        ScriptValidator validator = new ScriptValidator();
-        Script invalidScript = getInvalidScript();
-
-        //when
-        validator.validateJSONinScript(invalidScript);
-
-        //then
-        //exception is thrown
-    }
-
     private Script getValidScript() throws Exception {
 
         String filename = "file.name";
@@ -190,14 +162,6 @@ public class ScriptValidatorTest {
         return "#!/bin/bash" + NEW_LINE +
                 "# This is a comment!" + NEW_LINE +
                 "echo Hello World" + NEW_LINE +
-                "echo '{" + NEW_LINE +
-                " \"status\": \"ok\"," + NEW_LINE +
-                " \"message\": \"valid message\"," + NEW_LINE +
-                " \"data\": {" + NEW_LINE +
-                "   \"key1\": \"value1\"," + NEW_LINE +
-                "   \"key2\": \"value2\"" + NEW_LINE +
-                " }" + NEW_LINE +
-                "}'" + NEW_LINE +
                 "sleep 10s" + NEW_LINE +
                 "echo END_OF_SCRIPT";
     }
