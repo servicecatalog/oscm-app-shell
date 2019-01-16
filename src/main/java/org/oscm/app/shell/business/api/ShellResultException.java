@@ -10,6 +10,10 @@ package org.oscm.app.shell.business.api;
 
 public class ShellResultException extends Exception {
 
+    public ShellResultException(String message) {
+        super(message);
+    }
+
     public ShellResultException(String message, Throwable cause) {
         super(message, cause);
     }

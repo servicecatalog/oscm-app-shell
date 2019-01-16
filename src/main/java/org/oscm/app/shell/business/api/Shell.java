@@ -31,10 +31,11 @@ import static org.oscm.app.shell.business.api.ShellStatus.*;
 public class Shell implements AutoCloseable {
 
     public static final String VERIFICATION_MESSAGE = "VERIFICATION_MESSAGE";
-    private static final Logger LOG = LoggerFactory.getLogger(Shell.class);
-
     public static final String STATUS_ERROR = "error";
     public static final String STATUS_OK = "ok";
+
+    private static final String INVALID_JSON_MESSAGE = "Invalid JSON returned after script execution";
+    private static final Logger LOG = LoggerFactory.getLogger(Shell.class);
 
     private final Process shell;
 
@@ -155,8 +156,8 @@ public class Shell implements AutoCloseable {
             ShellResult shellResult = new ShellResult();
             shellResult.setStatus(STATUS_ERROR);
             shellResult.setMessage(getErrorOutput());
-
             return shellResult;
+
         } else {
 
             ArrayList<String> output = command.getOutput();
@@ -165,11 +166,21 @@ public class Shell implements AutoCloseable {
             try {
                 Gson json = new Gson();
                 ShellResult shellResult = json.fromJson(jsonOutput, ShellResult.class);
+                validateJsonResult(shellResult);
                 return shellResult;
 
-            } catch (Exception e) {
-                throw new ShellResultException("Invalid script result JSON format", e);
+            } catch (ShellResultException exception) {
+                throw exception;
+            } catch (Exception exception) {
+                throw new ShellResultException(INVALID_JSON_MESSAGE + ": " + exception.getMessage(), exception);
             }
+        }
+    }
+
+    private void validateJsonResult(ShellResult result) throws ShellResultException {
+        if (result.getStatus() == null || result.getMessage() == null) {
+            throw new ShellResultException(INVALID_JSON_MESSAGE +
+                    ": [status] and [message] fields are mandatory");
         }
     }
 
@@ -276,7 +287,7 @@ public class Shell implements AutoCloseable {
         if (!stdErr.buffer.isEmpty()) {
             while (!stdErr.buffer.isEmpty()) {
                 String errorLine = stdErr.buffer.remove(0);
-                LOG.trace("callerid: " + lockId + " error line: " + errorLine);
+                LOG.trace("CallerId: " + lockId + " error line: " + errorLine);
                 command.addErrorLine(errorLine);
             }
             status = PSSHELL_ERROR;
@@ -287,15 +298,11 @@ public class Shell implements AutoCloseable {
     }
 
     private boolean hasErrors() {
-        ExecutorService executor = Executors.newFixedThreadPool(1);
-        Callable<Integer> readTask = new Callable<Integer>() {
-            @Override
-            public Integer call() throws Exception {
-                return shell.getErrorStream().read();
-            }
-        };
 
-        List<Integer> bytes = new ArrayList<Integer>();
+        ExecutorService executor = Executors.newFixedThreadPool(1);
+        Callable<Integer> readTask = () -> shell.getErrorStream().read();
+
+        List<Integer> bytes = new ArrayList<>();
         int readByte = 1;
         try {
             while (readByte >= 0) {
