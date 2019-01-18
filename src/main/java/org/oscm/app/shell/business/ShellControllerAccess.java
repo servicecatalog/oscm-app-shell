@@ -47,7 +47,7 @@ public class ShellControllerAccess implements ControllerAccess {
     public ControllerSettings getSettings() {
         if (settings == null) {
             try {
-                APPlatformServiceFactory.getInstance().requestControllerSettings(getControllerId());
+                requestControllerSettings();
                 LOGGER.debug("Settings were NULL. Requested from APP and got {}", settings);
             } catch (APPlatformException e) {
                 LOGGER.error("Error while ControllerAccess was requesting " +
@@ -55,6 +55,10 @@ public class ShellControllerAccess implements ControllerAccess {
             }
         }
         return settings;
+    }
+
+    void requestControllerSettings() throws APPlatformException{
+        APPlatformServiceFactory.getInstance().requestControllerSettings(getControllerId());
     }
 
     public void storeSettings(ControllerSettings settings) {

@@ -15,6 +15,7 @@ import org.mockito.internal.util.reflection.Whitebox;
 import java.util.ArrayList;
 
 import static org.oscm.app.shell.business.api.Shell.STATUS_ERROR;
+import static org.oscm.app.shell.business.api.ShellStatus.SUCCESS;
 
 public class ShellPoolTest {
 
@@ -99,9 +100,101 @@ public class ShellPoolTest {
         Whitebox.setInternalState(shellPool, "shellPool", shellPoolList);
 
         //when
-        ShellResult result = shellPool.getShellResult("300");
+        shellPool.getShellResult("300");
 
         //then
         //exception is thrown
     }
+
+    @Test
+    public void testConsumeShellOutput_returnsSuccess_ifReturnCodeSuccess() throws Exception {
+
+        //given
+        ShellCommand shellCommand = new ShellCommand();
+        shellCommand.setReturnCode(SUCCESS);
+        shellCommand.addOutputLine("output string");
+        Shell shell = new Shell();
+        Whitebox.setInternalState(shell, "command", shellCommand);
+        shell.setLockId("100");
+        ArrayList<Shell> shellPoolList = new ArrayList<>();
+        shellPoolList.add(shell);
+        ShellPool shellPool = new ShellPool();
+        Whitebox.setInternalState(shellPool, "shellPool", shellPoolList);
+
+        //when
+        ShellStatus result = shellPool.consumeShellOutput("100");
+
+        //then
+        Assert.assertEquals(SUCCESS, result);
+    }
+
+    @Test(expected = ShellPoolException.class)
+    public void testConsumeShellOutput_throwsException_ifLockIdNotFound() throws Exception {
+
+        //given
+        ShellCommand shellCommand = new ShellCommand();
+        shellCommand.addOutputLine("output string");
+        Shell shell = new Shell();
+        Whitebox.setInternalState(shell, "command", shellCommand);
+        shell.setLockId("100");
+        ArrayList<Shell> shellPoolList = new ArrayList<>();
+        shellPoolList.add(shell);
+        ShellPool shellPool = new ShellPool();
+        Whitebox.setInternalState(shellPool, "shellPool", shellPoolList);
+
+        //when
+        shellPool.consumeShellOutput("300");
+
+        //then
+        //exception is thrown
+    }
+
+    @Test
+    public void testGetShellErrorOutput_returnsOutput_ifFoundShellForLockId() throws Exception {
+
+        //given
+        ShellCommand shellCommand = new ShellCommand();
+        shellCommand.addOutputLine("output string");
+        ArrayList<String> errorOutput = new ArrayList<>();
+        errorOutput.add("Error output");
+        Whitebox.setInternalState(shellCommand, "errorOutput", errorOutput);
+        Shell shell = new Shell();
+        Whitebox.setInternalState(shell, "command", shellCommand);
+        shell.setLockId("100");
+        ArrayList<Shell> shellPoolList = new ArrayList<>();
+        shellPoolList.add(shell);
+        ShellPool shellPool = new ShellPool();
+        Whitebox.setInternalState(shellPool, "shellPool", shellPoolList);
+
+        //when
+        String result = shellPool.getShellErrorOutput("100");
+
+        //then
+        Assert.assertEquals("Error output\n\t", result);
+    }
+
+    @Test
+    public void testGetShellErrorOutput_returnsEmptyString_ifLockIdNotFound() throws Exception {
+
+        //given
+        ShellCommand shellCommand = new ShellCommand();
+        shellCommand.addOutputLine("output string");
+        ArrayList<String> errorOutput = new ArrayList<>();
+        errorOutput.add("Error output");
+        Whitebox.setInternalState(shellCommand, "errorOutput", errorOutput);
+        Shell shell = new Shell();
+        Whitebox.setInternalState(shell, "command", shellCommand);
+        shell.setLockId("100");
+        ArrayList<Shell> shellPoolList = new ArrayList<>();
+        shellPoolList.add(shell);
+        ShellPool shellPool = new ShellPool();
+        Whitebox.setInternalState(shellPool, "shellPool", shellPoolList);
+
+        //when
+        String result = shellPool.getShellErrorOutput("200");
+
+        //then
+        Assert.assertEquals("", result);
+    }
+
 }
