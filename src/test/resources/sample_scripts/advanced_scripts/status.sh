@@ -10,4 +10,3 @@ date >> $OUT
 status_success "sample output"
 
 echo "END_OF_SCRIPT"
-

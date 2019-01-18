@@ -10,7 +10,7 @@ export MY_SCRIPT_VM_NAME
 VM_URL="https://example.com"
 export VM_URL
 
-. /opt/scripts/answers.sh
+. /opt/scripts/responses.sh
 
 # Define your functions here
 get_script_dir() {
@@ -89,5 +89,3 @@ VM_Exists() {
     else return 0
   fi
 }
-
-

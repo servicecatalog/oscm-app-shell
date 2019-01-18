@@ -14,4 +14,3 @@ default_success
 #uptime
 #ps ax |grep myvm |grep -v grep
 echo "END_OF_SCRIPT"
-
