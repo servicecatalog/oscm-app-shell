@@ -24,7 +24,7 @@ log() {
 
 entry_log() {
   get_script_dir
-  log "Running script ${0} from directory: $CURRENT_SCRIPT_PATH."
+  log "Running script $THIS from directory: $CURRENT_SCRIPT_PATH."
 }
 
 VM_Create() { 
@@ -63,19 +63,6 @@ VM_Stop() {
 
   MYPID=`ps ax|grep "$VM_FILE " | grep -v grep | awk '{print $1}'`
   kill $MYPID >> $OUT 2>&1
-}
-
-VM_IsRunning() {
-  log "Call of VM_IsRunning $*"
-
-  VM_FILE=$PREFIX.$1
-  VM_PATH=$DIR/$VM_FILE
-
-  MYPID=`ps ax|grep "$VM_FILE " | grep -v grep | awk '{print $1}'`
-  if [ "$MYPID" == "" ]
-    then return 0
-    else return 1
-  fi
 }
 
 VM_Exists() {

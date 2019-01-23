@@ -17,5 +17,4 @@ case $OPERATION in
   *) default ;;
 esac
 
-
 echo "END_OF_SCRIPT"

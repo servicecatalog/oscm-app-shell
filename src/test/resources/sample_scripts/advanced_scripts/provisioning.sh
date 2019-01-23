@@ -7,21 +7,21 @@ entry_log
 
 VM_Exists $MY_SCRIPT_VM_NAME
 if [ $? == 1 ] ; then 
-  script_failure $0 "VM $MY_SCRIPT_VM_NAME already exists"
+  script_failure $THIS "VM $MY_SCRIPT_VM_NAME already exists"
   echo "END_OF_SCRIPT"
   exit 1
 fi
 
 VM_Create $MY_SCRIPT_VM_NAME
 if [ $? == 1 ] ; then
-  script_failure $0 "Failed to create VM $MY_SCRIPT_VM_NAME"
+  script_failure $THIS "Failed to create VM $MY_SCRIPT_VM_NAME"
   echo "END_OF_SCRIPT"
   exit 1
 fi
 
 VM_Start $MY_SCRIPT_VM_NAME
 if [ $? == 1 ] ; then
-  script_failure $0 "Failed to start VM $MY_SCRIPT_VM_NAME"
+  script_failure $THIS "Failed to start VM $MY_SCRIPT_VM_NAME"
   echo "END_OF_SCRIPT"
   exit 1
 fi
