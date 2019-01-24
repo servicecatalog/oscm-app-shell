@@ -20,6 +20,7 @@ import org.oscm.app.shell.business.ScriptValidator;
 import org.oscm.app.shell.business.ShellControllerAccess;
 import org.oscm.app.shell.business.api.ShellPool;
 import org.oscm.app.v2_0.data.*;
+import org.oscm.app.v2_0.exceptions.APPlatformException;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,6 +38,9 @@ public class ShellControllerTest {
     @Spy
     @InjectMocks
     private ShellController controller;
+
+    @Mock
+    ShellControllerAccess controllerAccess;
 
     @Mock
     private ScriptValidator validator;
@@ -161,7 +165,7 @@ public class ShellControllerTest {
         assertFalse(status.isReady());
     }
 
-    @Ignore
+    @Test(expected = APPlatformException.class)
     public void testGetInstanceStatus() throws Exception {
 
         // given
@@ -174,22 +178,17 @@ public class ShellControllerTest {
         // when
         InstanceStatus status = controller.getInstanceStatus("instance_4332312", settings);
 
-        //then
-        assertEquals(settings.getParameters(), status.getChangedParameters());
-        assertTrue(status.isReady());
+        //then - exception is thrown as no state machine action is not executed without proper context
     }
 
-    @Ignore
+    @Test
     public void testSetControllerSettings() {
-
-        // given
-        ShellControllerAccess shellControllerAccess = mock(ShellControllerAccess.class);
 
         // when
         controller.setControllerSettings(any(ControllerSettings.class));
 
         //then
-        verify(shellControllerAccess, times(1)).storeSettings(any(ControllerSettings.class));
+        verify(controllerAccess, times(1)).storeSettings(any(ControllerSettings.class));
     }
 
 

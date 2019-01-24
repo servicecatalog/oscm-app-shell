@@ -276,8 +276,8 @@ public class ShellController implements APPlatformController {
 
             if (StateMachineId.ERROR.equals(stateId)) {
                 String errorMsg = config.getSetting(SM_ERROR_MESSAGE);
-                LOGGER.error("Script execution for Instance [" + instanceId + "] failed: "+ errorMsg);
-                throw new SuspendException("Script execution failed: " + errorMsg);
+                LOGGER.error("Script execution for Instance [" + instanceId + "] resulted with error: "+ errorMsg);
+                handleErrorSituation(instanceId, errorMsg);
             }
 
             config.setSetting(SM_STATE_HISTORY, stateMachine.getHistory());
@@ -286,8 +286,7 @@ public class ShellController implements APPlatformController {
         } catch (StateMachineException e) {
 
             LOGGER.error("Failed to getInstanceStatus for Instance [" + instanceId + "]", e);
-            pool.terminateShell(instanceId);
-            throw new APPlatformException("Failed to getInstanceStatus for Instance " + "[" + instanceId + "]", e);
+            handleErrorSituation(instanceId, e.getMessage());
         }
 
         status.setChangedParameters(settings.getParameters());
@@ -295,6 +294,11 @@ public class ShellController implements APPlatformController {
         return status;
     }
 
+    private void handleErrorSituation(String instanceId, String message) throws APPlatformException {
+
+        pool.terminateShell(instanceId);
+        throw new APPlatformException(message);
+    }
 
     @Override
     public List<OperationParameter> getOperationParameters(String arg0, String arg1, String arg2,
