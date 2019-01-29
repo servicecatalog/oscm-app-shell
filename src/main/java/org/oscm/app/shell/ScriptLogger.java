@@ -17,39 +17,39 @@ import java.util.Map;
 
 public class ScriptLogger {
 
-    private static final Logger LOG = LoggerFactory
-            .getLogger(ShellController.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ShellController.class);
 
-    public static void logOutputFromScript(Configuration config,
-                                           String scriptKey, String output) {
-        LOG.warn("Output from script " + scriptKey);
-        LOG.info(output);
+    public static void logOutputFromScript(String scriptKey, String output) {
+        LOG.debug("*********************** script output ***********************");
+        LOG.debug("Output from script " + scriptKey);
+        LOG.debug(output);
     }
 
     public static void logScriptConfiguration(Configuration configuration,
-                                              String scriptName, String script) {
-        LOG.info("***********************configuration information*****************************");
-        LOG.info("<scriptType>:" + "<" + scriptName + ">");
-        LOG.info("<scriptName>: " + getScriptPath(script, scriptName));
+                                              String scriptType, String script) {
+
+        LOG.info("Running: " + scriptType + " located in: " + getScriptPath(script, scriptType));
+        LOG.debug("*********************** configuration information ***********************");
+        LOG.debug("<scriptType>:" + "<" + scriptType + ">");
+        LOG.debug("<scriptName>: " + getScriptPath(script, scriptType));
         if (configuration.getRequestingUser() != null) {
-            LOG.info("<requestingUser>: " + "<"
+            LOG.debug("<requestingUser>: " + "<"
                     + configuration.getRequestingUser()
                     .getFirstName() + ":"
                     + configuration.getRequestingUser()
                     .getLastName() + ">");
         } else
-            LOG.info("<requestingUser>: <>");
+            LOG.debug("<requestingUser>: <>");
 
-        LOG.info("<organizationId>:" + "<" + configuration
+        LOG.debug("<organizationId>:" + "<" + configuration
                 .getOrganizationId() + ">");
-        LOG.info("<organizationName>:" + "<" + configuration
+        LOG.debug("<organizationName>:" + "<" + configuration
                 .getOrganizationName() + ">");
-        LOG.info("<subscriptionId>:" + "<" + configuration
+        LOG.debug("<subscriptionId>:" + "<" + configuration
                 .getSubscriptionId() + ">");
     }
 
     private static String getScriptPath(String script, String scriptName) {
-
         String fileName = "";
         Map<String, String> map = new LinkedHashMap<>();
         for (String keyValue : script.split("\n")) {
@@ -66,9 +66,8 @@ public class ScriptLogger {
     }
 
     public static void logScriptCommand(ShellCommand command) {
-        LOG.info(
-                "********************* script command *****************");
-        LOG.info(command.getCommand());
+        LOG.debug("*********************** script command ***********************");
+        LOG.debug(command.getCommand());
     }
 
 }

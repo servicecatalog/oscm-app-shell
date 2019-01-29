@@ -15,8 +15,11 @@ import org.oscm.app.shell.business.Script;
 import org.oscm.app.statemachine.api.StateMachineAction;
 import org.oscm.app.v2_0.data.InstanceStatus;
 import org.oscm.app.v2_0.data.ProvisioningSettings;
+import org.oscm.app.v2_0.data.Setting;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.HashMap;
 
 import static org.oscm.app.shell.business.ConfigurationKey.SCRIPT_FILE;
 import static org.oscm.app.shell.business.ConfigurationKey.SM_ERROR_MESSAGE;
@@ -35,14 +38,12 @@ public class ProvisioningActions {
                                 InstanceStatus result) {
 
         Configuration config = new Configuration(settings);
-        ScriptLogger logger = new ScriptLogger();
 
         try {
             Script script = new Script(config.getSetting(SCRIPT_FILE));
             script.loadContent();
             script.insertProvisioningSettings(settings);
-
-            logger.logScriptConfiguration(config, ConfigurationKey.PROVISIONING_SCRIPT.name(),
+            ScriptLogger.logScriptConfiguration(config, script.getScriptType(settings),
                     script.getContent());
 
             return getActions().executeScript(instanceId, settings, result, script);
@@ -63,7 +64,7 @@ public class ProvisioningActions {
 
     @StateMachineAction
     public String finalizeScriptExecution(String instanceId, ProvisioningSettings settings,
-                                       InstanceStatus result) throws Exception {
+                                          InstanceStatus result) throws Exception {
 
         return getActions().finalizeScriptExecution(instanceId, settings, result);
     }

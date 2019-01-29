@@ -67,6 +67,40 @@ public class Script {
         return external;
     }
 
+    public String getScriptType(ProvisioningSettings settings) {
+
+        String smStateMachine = settings.getParameters().get("SM_STATE_MACHINE").getValue();
+        String currentType;
+        switch (smStateMachine) {
+            case "assign_user.xml":
+                currentType = "ASSIGN_USER_SCRIPT";
+                break;
+            case "deassign_user.xml":
+                currentType = "DEASSIGN_USER_SCRIPT";
+                break;
+            case "deprovision.xml":
+                currentType = "DEPROVISIONING_SCRIPT";
+                break;
+            case "operation.xml":
+                currentType = "OPERATION_SCRIPT";
+                break;
+            case "provision.xml":
+                currentType = "PROVISIONING_SCRIPT";
+                break;
+            case "update.xml":
+                currentType = "UPDATE_SCRIPT";
+                break;
+            case "update_user.xml":
+                currentType = "UPDATE_USER_SCRIPT";
+                break;
+            default:
+                currentType = "UNRESOLVED";
+                LOG.error("SM_STATE_MACHINE not recognizable!");
+                break;
+        }
+        return currentType;
+    }
+
     public String loadLocalScript(String pathfile) throws FileNotFoundException {
         try (Scanner scanner = new Scanner(new File(pathfile)).useDelimiter("\\A")) {
             return scanner.hasNext() ? scanner.next() : "";
