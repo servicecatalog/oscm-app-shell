@@ -60,6 +60,10 @@
       <LocalizedDescription locale="en">Number of seconds until a running script is canceled</LocalizedDescription>
     </ParameterDefinition>
 	
+    <ParameterDefinition id="USAGEDATA_SCRIPT" valueType="STRING" default="" configurable="true" mandatory="true" >
+      <LocalizedDescription locale="en">A script for retrieving usage data, like memory hours and VCPU hours, for given instance. Absolute filesystem path or URL to script file</LocalizedDescription>
+    </ParameterDefinition>  
+
     <ParameterDefinition id="MY_SCRIPT_PARAM_1" valueType="STRING" default="" configurable="true" mandatory="false" >
       <LocalizedDescription locale="en">My parameter that is patched into the script</LocalizedDescription>
     </ParameterDefinition>
@@ -78,7 +82,8 @@
     
     <ParameterDefinition id="VERIFICATION_SCRIPT" valueType="STRING" default="" configurable="true" mandatory="false" >
       <LocalizedDescription locale="en">Verification Script. Absolute filesystem path or URL to script file</LocalizedDescription>
-    </ParameterDefinition>    
+    </ParameterDefinition>  
+    
     
     <Operation id="OPERATION" actionURL="http://oscm-app:8880/oscm-app/webservices/oscm-app/oscm-app/org.oscm.app.v2_0.service.AsynchronousOperationProxy?wsdl">
        <LocalizedName locale="en">Executes the OPERATION</LocalizedName>
