@@ -136,10 +136,12 @@ public class ShellController implements APPlatformController {
             } while (status == RUNNING && currentTimeMillis() - startTime < timeout);
 
             ShellResult result = shell.getResult();
+            String message = result.getMessage();
 
             if (STATUS_ERROR.equals(result.getStatus())) {
-                throw new APPlatformException("Verification failed: " + result.getMessage());
+                throw new APPlatformException(message);
             }
+            LOGGER.info("Verification has been finished successfully:" + message);
 
         } catch (Exception exception) {
             LOGGER.error("Verification failed: ", exception);
