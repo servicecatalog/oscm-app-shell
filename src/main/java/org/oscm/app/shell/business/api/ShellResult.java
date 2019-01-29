@@ -22,7 +22,7 @@ public class ShellResult {
 
     private String status;
     private String message;
-    private ShellResultData data;
+    protected ShellResultData data;
 
     public String getStatus() {
 

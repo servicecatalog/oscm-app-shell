@@ -41,8 +41,8 @@ public class Shell implements AutoCloseable {
 
     /**
      * Indicates if a shell is in use. A shell is free if the callerid is null.
-     * Otherwise an APP instance set any callerid to lock the shell and additionally
-     * to aquire the shell again by the callerid.
+     * Otherwise an APP instance set any callerid to lock the shell and
+     * additionally to aquire the shell again by the callerid.
      */
     private volatile String lockId;
 
@@ -79,24 +79,27 @@ public class Shell implements AutoCloseable {
 
     public Shell(String psconsole) throws IOException, APPlatformException {
 
-        //TODO: psconsole was powershell configuration file, is it still needed for shell scripts
+        // TODO: psconsole was powershell configuration file, is it still needed
+        // for shell scripts
         scriptLogger = new ScriptLogger();
         if (psconsole == null || psconsole.isEmpty()) {
             psconsole = "sh";
         } else {
-            //psconsole = "sh -PSConsoleFile \"" + psconsole + "\" -ExecutionPolicy Bypass -NoExit -";
+            // psconsole = "sh -PSConsoleFile \"" + psconsole + "\"
+            // -ExecutionPolicy Bypass -NoExit -";
         }
 
         shell = Runtime.getRuntime().exec(psconsole);
 
-        stdIn = new BufferedWriter(new OutputStreamWriter(shell.getOutputStream()));
+        stdIn = new BufferedWriter(
+                new OutputStreamWriter(shell.getOutputStream()));
         stdOut = new StreamGobbler(shell.getInputStream());
         stdErr = new StreamGobbler(shell.getErrorStream());
 
-
         if (!stdErr.buffer.isEmpty()) {
             throw new APPlatformException(
-                    "Shell initialization problem, error stream not empty: " + join("", stdErr.buffer));
+                    "Shell initialization problem, error stream not empty: "
+                            + join("", stdErr.buffer));
         }
 
         if (!stdOut.buffer.isEmpty()) {
@@ -106,21 +109,24 @@ public class Shell implements AutoCloseable {
         lockId = null;
     }
 
-
-    public ShellStatus runCommand(final String lockId, final ShellCommand command) {
+    public ShellStatus runCommand(final String lockId,
+            final ShellCommand command) {
         if (!lockId.equals(this.lockId)) {
-            LOG.error("shell called by " + lockId + ", but locked for " + this.lockId);
+            LOG.error("shell called by " + lockId + ", but locked for "
+                    + this.lockId);
             return CALLERID_DOES_NOT_MATCH;
         }
         this.command = command;
         try {
-            LOG.debug(String.format("lockId: %s, command:\n%s", lockId, command.getCommand()));
+            LOG.debug(String.format("lockId: %s, command:\n%s", lockId,
+                    command.getCommand()));
             scriptLogger.logScriptCommand(command);
             stdIn.write(command.getCommand());
             stdIn.newLine();
             stdIn.flush();
         } catch (IOException e) {
-            LOG.error("lockId: " + lockId + " failed to write command to shell stdin", e);
+            LOG.error("lockId: " + lockId
+                    + " failed to write command to shell stdin", e);
             return STDIN_CLOSED;
         }
 
@@ -145,18 +151,31 @@ public class Shell implements AutoCloseable {
             sb.append("\n\t");
         }
         String output = sb.toString();
-        LOG.trace("lockId: " + lockId + " found shell with error output: " + output);
+        LOG.trace("lockId: " + lockId + " found shell with error output: "
+                + output);
         return output;
     }
 
     public ShellResult getResult() throws ShellResultException {
+        return getResult(ShellResult.class);
+    }
+
+    public <T extends ShellResult> T getResult(Class<T> resultType)
+            throws ShellResultException {
 
         if (!command.getError().isEmpty()) {
 
-            ShellResult shellResult = new ShellResult();
-            shellResult.setStatus(STATUS_ERROR);
-            shellResult.setMessage(getErrorOutput());
-            return shellResult;
+            T result;
+            try {
+                result = resultType.newInstance();
+                result.setStatus(STATUS_ERROR);
+                result.setMessage(getErrorOutput());
+                return result;
+
+            } catch (InstantiationException | IllegalAccessException e) {
+                throw new ShellResultException(
+                        INVALID_JSON_MESSAGE + ": " + e.getMessage(), e);
+            }
 
         } else {
 
@@ -165,28 +184,32 @@ public class Shell implements AutoCloseable {
 
             try {
                 Gson json = new Gson();
-                ShellResult shellResult = json.fromJson(jsonOutput, ShellResult.class);
+                T shellResult = json.fromJson(jsonOutput, resultType);
                 validateJsonResult(shellResult);
                 return shellResult;
 
             } catch (ShellResultException exception) {
                 throw exception;
             } catch (Exception exception) {
-                throw new ShellResultException(INVALID_JSON_MESSAGE + ": " + exception.getMessage(), exception);
+                throw new ShellResultException(
+                        INVALID_JSON_MESSAGE + ": " + exception.getMessage(),
+                        exception);
             }
         }
     }
 
-    private void validateJsonResult(ShellResult result) throws ShellResultException {
+    private void validateJsonResult(ShellResult result)
+            throws ShellResultException {
         if (result.getStatus() == null || result.getMessage() == null) {
-            throw new ShellResultException(INVALID_JSON_MESSAGE +
-                    ": [status] and [message] fields are mandatory");
+            throw new ShellResultException(INVALID_JSON_MESSAGE
+                    + ": [status] and [message] fields are mandatory");
         }
     }
 
     public ShellStatus consumeOutput(String lockId) {
         if (!lockId.equals(this.lockId)) {
-            LOG.error("shell called by " + lockId + ", but locked for " + this.lockId);
+            LOG.error("shell called by " + lockId + ", but locked for "
+                    + this.lockId);
             return CALLERID_DOES_NOT_MATCH;
         }
         if (command.getReturnCode() == SUCCESS) {
@@ -211,8 +234,8 @@ public class Shell implements AutoCloseable {
     }
 
     /**
-     * returns lock status of Shell runtime utilizing id of calling command
-     * from API class
+     * returns lock status of Shell runtime utilizing id of calling command from
+     * API class
      *
      * @return caller id, if shell is locked / empty string, if shell is free
      */
@@ -223,8 +246,8 @@ public class Shell implements AutoCloseable {
     /**
      * locks Shell runtime, if unlocked
      *
-     * @return lock status: true, if shell has been free and is now locked / false,
-     * if shell was already locked and could not be locked
+     * @return lock status: true, if shell has been free and is now locked /
+     *         false, if shell was already locked and could not be locked
      */
     public boolean lockShell(String lockId) {
         if (this.lockId == null) {

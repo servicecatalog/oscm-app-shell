@@ -204,6 +204,7 @@ public class ShellControllerTest {
         parameters.put(ASSIGN_USER_SCRIPT.name(), new Setting(ASSIGN_USER_SCRIPT.name(), sampleScriptPath));
         parameters.put(DEASSIGN_USER_SCRIPT.name(), new Setting(DEASSIGN_USER_SCRIPT.name(), sampleScriptPath));
         parameters.put(CHECK_STATUS_SCRIPT.name(), new Setting(CHECK_STATUS_SCRIPT.name(), sampleScriptPath));
+        parameters.put(USAGEDATA_SCRIPT.name(), new Setting(USAGEDATA_SCRIPT.name(), sampleScriptPath));
 
         HashMap<String, Setting> emptyMap = new HashMap<>();
 

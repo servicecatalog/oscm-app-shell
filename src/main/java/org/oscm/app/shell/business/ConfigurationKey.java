@@ -54,6 +54,8 @@ public enum ConfigurationKey {
     CHECK_STATUS_SCRIPT("CONFIGURABLE"),
     OPERATIONS_SCRIPT("CONFIGURABLE"),
     UPDATE_USER_SCRIPT("CONFIGURABLE"),
+    
+    USAGEDATA_SCRIPT("CONFIGURABLE"),
 
     /**
      * Runs verifications in the synchronous part of the createInstance method, e.g.
