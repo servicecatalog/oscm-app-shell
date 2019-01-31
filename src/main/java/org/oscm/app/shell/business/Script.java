@@ -67,7 +67,7 @@ public class Script {
         return external;
     }
 
-    public String getScriptType(ProvisioningSettings settings) {
+    public String getScriptType(ProvisioningSettings settings) throws Exception {
 
         String smStateMachine = settings.getParameters().get("SM_STATE_MACHINE").getValue();
         String currentType;
@@ -96,7 +96,7 @@ public class Script {
             default:
                 currentType = "UNRESOLVED";
                 LOG.error("SM_STATE_MACHINE not recognizable!");
-                break;
+                throw new Exception("SM_STATE_MACHINE was not recognized!");
         }
         return currentType;
     }
