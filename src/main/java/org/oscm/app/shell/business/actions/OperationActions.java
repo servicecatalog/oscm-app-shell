@@ -35,19 +35,15 @@ public class OperationActions {
                                 InstanceStatus result) {
 
         Configuration config = new Configuration(settings);
-        ScriptLogger logger = new ScriptLogger();
 
         try {
             Script script = new Script(config.getSetting(SCRIPT_FILE));
             script.loadContent();
             script.insertOperationId(config);
             script.insertProvisioningSettings(settings);
-
-            logger.logScriptConfiguration(config, ConfigurationKey.PROVISIONING_SCRIPT.name(),
+            ScriptLogger.logScriptConfiguration(config, ConfigurationKey.OPERATIONS_SCRIPT.name(),
                     script.getContent());
-
             return getActions().executeScript(instanceId, settings, result, script);
-
         } catch (Exception e) {
             LOG.error("Couldn't execute shell script", e);
             config.setSetting(SM_ERROR_MESSAGE, e.getMessage());

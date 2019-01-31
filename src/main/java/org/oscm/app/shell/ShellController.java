@@ -124,7 +124,6 @@ public class ShellController implements APPlatformController {
         }
 
         Script script;
-        ScriptLogger scriptLogger = new ScriptLogger();
 
         try {
             script = new Script(verificationScript);
@@ -151,7 +150,7 @@ public class ShellController implements APPlatformController {
                 String shellOutput = shell.getOutput();
                 //JsonObject jsonOutput = shell.getResult();
                 //LOGGER.warn("Json output : " + jsonOutput);
-                scriptLogger.logOutputFromScript(config, "VERIFICATION_SCRIPT", shellOutput);
+                ScriptLogger.logOutputFromScript("VERIFICATION_SCRIPT", shellOutput);
 
                 Pattern p = compile(format(".*%s=(.*?)$", VERIFICATION_MESSAGE), MULTILINE);
                 Matcher matcher = p.matcher(shellOutput);

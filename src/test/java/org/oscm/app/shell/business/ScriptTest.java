@@ -8,12 +8,16 @@
 
 package org.oscm.app.shell.business;
 
+import org.junit.Assert;
 import org.junit.Test;
+import org.mockito.internal.util.reflection.Whitebox;
 import org.oscm.app.v2_0.data.ProvisioningSettings;
 import org.oscm.app.v2_0.data.ServiceUser;
 import org.oscm.app.v2_0.data.Setting;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyString;
@@ -25,6 +29,65 @@ public class ScriptTest {
 
     private static final String NEW_LINE = System.getProperty("line.separator");
     private static final String LOCAL_SCRIPT_LOCATION = "/opt/scripts/";
+
+    @Test
+    public void testGetScriptType() throws Exception {
+
+        //given
+        String filename = "file.name";
+        Script script = spy(new Script(filename));
+        ProvisioningSettings provisioningSettings = mock(ProvisioningSettings.class);
+        HashMap<String, Setting> parameters = new HashMap<>();
+
+        List<Setting> settingList = new ArrayList<>();
+        settingList.add(new Setting("SM_STATE_MACHINE", "assign_user.xml"));
+        settingList.add(new Setting("SM_STATE_MACHINE", "deassign_user.xml"));
+        settingList.add(new Setting("SM_STATE_MACHINE", "deprovision.xml"));
+        settingList.add(new Setting("SM_STATE_MACHINE", "operation.xml"));
+        settingList.add(new Setting("SM_STATE_MACHINE", "provision.xml"));
+        settingList.add(new Setting("SM_STATE_MACHINE", "update.xml"));
+        settingList.add(new Setting("SM_STATE_MACHINE", "update_user.xml"));
+        settingList.add(new Setting("SM_STATE_MACHINE", "assign_user.xml"));
+
+        List<String> expectedList = new ArrayList<>();
+        expectedList.add("ASSIGN_USER_SCRIPT");
+        expectedList.add("DEASSIGN_USER_SCRIPT");
+        expectedList.add("DEPROVISIONING_SCRIPT");
+        expectedList.add("OPERATION_SCRIPT");
+        expectedList.add("PROVISIONING_SCRIPT");
+        expectedList.add("UPDATE_SCRIPT");
+        expectedList.add("UPDATE_USER_SCRIPT");
+
+        when(provisioningSettings.getParameters()).thenReturn(parameters);
+
+        //when
+        String result;
+        for (int i = 0; i < settingList.size() - 1; i++) {
+            parameters.put("SM_STATE_MACHINE", new Setting("SM_STATE_MACHINE", settingList.get(i).getValue()));
+            result = script.getScriptType(provisioningSettings);
+
+            // then
+            Assert.assertEquals(expectedList.get(i), result);
+        }
+    }
+
+    @Test(expected = Exception.class)
+    public void testGetScriptType_throwsException_whenSMStateMachineNotRecognized() throws Exception {
+
+        //given
+        String filename = "file.name";
+        Script script = spy(new Script(filename));
+        ProvisioningSettings provisioningSettings = mock(ProvisioningSettings.class);
+        HashMap<String, Setting> parameters = new HashMap<>();
+        parameters.put("SM_STATE_MACHINE", new Setting("SM_STATE_MACHINE", "unrecognizable"));
+        when(provisioningSettings.getParameters()).thenReturn(parameters);
+
+        //when
+        script.getScriptType(provisioningSettings);
+
+        //then
+        //exception is thrown
+    }
 
     @Test
     public void testLoadContent_localScriptIsLoaded() throws Exception {

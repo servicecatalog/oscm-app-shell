@@ -63,8 +63,6 @@ public class Shell implements AutoCloseable {
 
     private ShellCommand command;
 
-    private ScriptLogger scriptLogger;
-
     public String getLockId() {
         return lockId;
     }
@@ -80,7 +78,6 @@ public class Shell implements AutoCloseable {
     public Shell(String psconsole) throws IOException, APPlatformException {
 
         //TODO: psconsole was powershell configuration file, is it still needed for shell scripts
-        scriptLogger = new ScriptLogger();
         if (psconsole == null || psconsole.isEmpty()) {
             psconsole = "sh";
         } else {
@@ -115,7 +112,7 @@ public class Shell implements AutoCloseable {
         this.command = command;
         try {
             LOG.debug(String.format("lockId: %s, command:\n%s", lockId, command.getCommand()));
-            scriptLogger.logScriptCommand(command);
+            ScriptLogger.logScriptCommand(command);
             stdIn.write(command.getCommand());
             stdIn.newLine();
             stdIn.flush();
