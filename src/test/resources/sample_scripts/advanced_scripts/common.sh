@@ -57,12 +57,7 @@ VM_Start() {
 
 VM_Stop() {
   log "Call of VM_Stop $*"
-
-  VM_FILE=$PREFIX.$1
-  VM_PATH=$DIR/$VM_FILE
-
-  MYPID=`ps ax|grep "$VM_FILE " | grep -v grep | awk '{print $1}'`
-  kill $MYPID >> $OUT 2>&1
+  log "VM stopped."
 }
 
 VM_Exists() {
