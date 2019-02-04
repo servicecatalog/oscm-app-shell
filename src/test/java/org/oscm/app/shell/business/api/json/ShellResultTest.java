@@ -1,3 +1,11 @@
+/*******************************************************************************
+ *
+ *  Copyright FUJITSU LIMITED 2019
+ *
+ *  Creation Date: 01.02.2019
+ *
+ *******************************************************************************/
+
 package org.oscm.app.shell.business.api.json;
 
 import com.google.gson.Gson;

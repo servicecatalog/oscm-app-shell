@@ -42,12 +42,11 @@ public class UsageHandler {
         this.connector = new UsageConnector(settings);
     }
 
-    public void registerUsageEvents(long startTime, long endTime)
-            throws ConfigurationException, MalformedURLException,
-            ObjectNotFoundException, OrganizationAuthoritiesException,
-            ValidationException {
+    public void registerUsageEvents(long startTime, long endTime) throws Exception {
 
         Set<ShellResultUsageData> usageData = connector.getData(startTime, endTime);
+
+        LOGGER.info("Number of gathered events: " + usageData.size());
 
         for (ShellResultUsageData data : usageData) {
             submit(data.getEventId(), data.getMultiplier(), endTime);

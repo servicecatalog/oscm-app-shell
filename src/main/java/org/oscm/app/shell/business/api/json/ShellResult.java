@@ -58,4 +58,14 @@ public class ShellResult {
     public void setUsageData(Set<ShellResultUsageData> usageData) {
         this.usageData = usageData;
     }
+
+    @Override
+    public String toString() {
+        return "ShellResult{" +
+                "status='" + status + '\'' +
+                ", message='" + message + '\'' +
+                ", data=" + data +
+                ", usageData=" + usageData +
+                '}';
+    }
 }

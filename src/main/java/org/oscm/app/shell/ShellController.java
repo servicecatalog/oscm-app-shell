@@ -110,7 +110,7 @@ public class ShellController implements APPlatformController {
 
     @Override
     public InstanceStatus activateInstance(String instanceId,
-            ProvisioningSettings settings) {
+                                           ProvisioningSettings settings) {
 
         InstanceStatus result = new InstanceStatus();
         result.setChangedParameters(settings.getParameters());
@@ -141,9 +141,9 @@ public class ShellController implements APPlatformController {
     private void validateAllScripts(Configuration config)
             throws APPlatformException {
 
-        ConfigurationKey[] scriptKeys = { PROVISIONING_SCRIPT,
+        ConfigurationKey[] scriptKeys = {PROVISIONING_SCRIPT,
                 DEPROVISIONING_SCRIPT, UPDATE_SCRIPT, ASSIGN_USER_SCRIPT,
-                DEASSIGN_USER_SCRIPT, CHECK_STATUS_SCRIPT };
+                DEASSIGN_USER_SCRIPT, CHECK_STATUS_SCRIPT};
 
         for (ConfigurationKey scriptKey : scriptKeys) {
             validator.validate(config, scriptKey);
@@ -208,7 +208,7 @@ public class ShellController implements APPlatformController {
     }
 
     private void initStateMachine(ProvisioningSettings settings,
-            ConfigurationKey serviceParamKey, String stateMachineFilename)
+                                  ConfigurationKey serviceParamKey, String stateMachineFilename)
             throws APPlatformException {
 
         try {
@@ -228,7 +228,7 @@ public class ShellController implements APPlatformController {
 
     @Override
     public InstanceStatusUsers createUsers(String instanceId,
-            ProvisioningSettings settings, List<ServiceUser> users)
+                                           ProvisioningSettings settings, List<ServiceUser> users)
             throws APPlatformException {
 
         Configuration config = new Configuration(settings);
@@ -248,7 +248,7 @@ public class ShellController implements APPlatformController {
 
     @Override
     public InstanceStatus deactivateInstance(String instanceId,
-            ProvisioningSettings settings) {
+                                             ProvisioningSettings settings) {
 
         InstanceStatus result = new InstanceStatus();
         result.setChangedParameters(settings.getParameters());
@@ -257,7 +257,7 @@ public class ShellController implements APPlatformController {
 
     @Override
     public InstanceStatus deleteInstance(String instanceId,
-            ProvisioningSettings settings) throws APPlatformException {
+                                         ProvisioningSettings settings) throws APPlatformException {
 
         Configuration config = new Configuration(settings);
         validator.validate(config, DEPROVISIONING_SCRIPT);
@@ -271,7 +271,7 @@ public class ShellController implements APPlatformController {
 
     @Override
     public InstanceStatus deleteUsers(String instanceId,
-            ProvisioningSettings settings, List<ServiceUser> users)
+                                      ProvisioningSettings settings, List<ServiceUser> users)
             throws APPlatformException {
 
         Configuration config = new Configuration(settings);
@@ -290,8 +290,8 @@ public class ShellController implements APPlatformController {
 
     @Override
     public InstanceStatus executeServiceOperation(String userId,
-            String instanceId, String transactionId, String operationId,
-            List<OperationParameter> parameters, ProvisioningSettings settings)
+                                                  String instanceId, String transactionId, String operationId,
+                                                  List<OperationParameter> parameters, ProvisioningSettings settings)
             throws APPlatformException {
 
         Configuration config = new Configuration(settings);
@@ -314,7 +314,7 @@ public class ShellController implements APPlatformController {
 
     @Override
     public InstanceStatus getInstanceStatus(String instanceId,
-            ProvisioningSettings settings) throws APPlatformException {
+                                            ProvisioningSettings settings) throws APPlatformException {
 
         Configuration config = new Configuration(settings);
         InstanceStatus status = new InstanceStatus();
@@ -358,14 +358,14 @@ public class ShellController implements APPlatformController {
 
     @Override
     public List<OperationParameter> getOperationParameters(String arg0,
-            String arg1, String arg2, ProvisioningSettings arg3) {
+                                                           String arg1, String arg2, ProvisioningSettings arg3) {
 
         throw new UnsupportedOperationException("Not implemented");
     }
 
     @Override
     public InstanceStatus modifyInstance(String instanceId,
-            ProvisioningSettings settings, ProvisioningSettings newSettings)
+                                         ProvisioningSettings settings, ProvisioningSettings newSettings)
             throws APPlatformException {
 
         Configuration config = new Configuration(newSettings);
@@ -381,13 +381,13 @@ public class ShellController implements APPlatformController {
 
     @Override
     public InstanceStatus notifyInstance(String arg0, ProvisioningSettings arg1,
-            Properties arg2) {
+                                         Properties arg2) {
         return null;
     }
 
     @Override
     public InstanceStatus updateUsers(String instanceId,
-            ProvisioningSettings settings, List<ServiceUser> users)
+                                      ProvisioningSettings settings, List<ServiceUser> users)
             throws APPlatformException {
 
         Configuration config = new Configuration(settings);
@@ -413,40 +413,37 @@ public class ShellController implements APPlatformController {
     }
 
     /**
-     * 
+     *
      */
     @Override
     public boolean gatherUsageData(String controllerId, String instanceId,
-            String startTime, String endTime, ProvisioningSettings settings)
-            throws APPlatformException {
+                                   String startTime, String endTime, ProvisioningSettings settings) {
 
-        LOGGER.info("Gathering usage data started...");
+        LOGGER.info("Gathering usage data for instance [" + instanceId + "] started");
+
         Configuration config = new Configuration(settings);
 
-        config.setSetting(REQUESTING_USER_ID,
-                settings.getRequestingUser().getUserId());
+        if (settings.getRequestingUser() != null) {
+            config.setSetting(REQUESTING_USER_ID, settings.getRequestingUser().getUserId());
+        }
 
         try {
 
             final long start = parse(startTime, ISO_LOCAL_DATE_TIME).toInstant(UTC)
                     .toEpochMilli();
-
             final long end = parse(endTime, ISO_LOCAL_DATE_TIME).toInstant(UTC)
                     .toEpochMilli();
 
             new UsageHandler(settings).registerUsageEvents(start, end);
 
-            LOGGER.debug(
-                    String.format("Usage data retrieved for %s from %s to %s",
+            LOGGER.info(
+                    String.format("Usage data for %s from %s to %s retrieved successfully",
                             instanceId, startTime, endTime));
+            return true;
         } catch (Exception e) {
-            LOGGER.error("Failed to retrieve usage data", e);
-            LOGGER.info("Gathering usage data finished...false");
+            LOGGER.error("Failed to retrieve usage data for instance [" + instanceId + "]", e);
             return false;
         }
-
-        LOGGER.info("Gathering usage data finished...true");
-        return true;
     }
 
 }

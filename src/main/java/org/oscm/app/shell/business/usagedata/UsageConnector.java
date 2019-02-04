@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class UsageConnector {
+
     private static final Logger LOG = LoggerFactory
             .getLogger(UsageConnector.class);
 
@@ -39,7 +40,7 @@ public class UsageConnector {
         this.settings = settings;
     }
 
-    public Set<ShellResultUsageData> getData(long start, long end) {
+    public Set<ShellResultUsageData> getData(long start, long end) throws Exception {
 
         try (Shell shell = new Shell()) {
 
@@ -69,14 +70,16 @@ public class UsageConnector {
 
         } catch (Exception e) {
             LOG.error("Error retrieving usage data: " + e.getMessage(), e);
+            throw e;
         }
 
-        return null;
+
     }
 
     private Script getUsageScript(ProvisioningSettings settings) throws Exception {
 
         String scriptName = ConfigurationKey.USAGEDATA_SCRIPT.name();
+
         String script = settings.getParameters().get(scriptName).getValue();
 
         Script usageScript = new Script(script);
