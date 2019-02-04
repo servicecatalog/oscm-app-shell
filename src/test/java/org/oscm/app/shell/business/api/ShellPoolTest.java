@@ -11,6 +11,7 @@ package org.oscm.app.shell.business.api;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.internal.util.reflection.Whitebox;
+import org.oscm.app.shell.business.api.json.ShellResult;
 
 import java.util.ArrayList;
 

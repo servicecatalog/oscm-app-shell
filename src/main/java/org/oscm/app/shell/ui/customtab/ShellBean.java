@@ -10,6 +10,8 @@ package org.oscm.app.shell.ui.customtab;
 import org.apache.commons.codec.binary.Base64;
 import org.oscm.app.shell.business.Script;
 import org.oscm.app.shell.business.api.*;
+import org.oscm.app.shell.business.api.json.ShellResult;
+import org.oscm.app.shell.business.api.json.ShellResultData;
 import org.oscm.app.v2_0.APPlatformServiceFactory;
 import org.oscm.app.v2_0.data.ProvisioningSettings;
 import org.oscm.app.v2_0.intf.APPlatformService;

@@ -11,13 +11,16 @@ package org.oscm.app.shell.business.usagedata;
 import static org.oscm.app.shell.business.api.Shell.STATUS_OK;
 import static org.oscm.app.shell.business.api.ShellStatus.RUNNING;
 
-import java.util.Optional;
+import java.util.Set;
 
 import org.oscm.app.shell.business.ConfigurationKey;
 import org.oscm.app.shell.business.Script;
 import org.oscm.app.shell.business.api.Shell;
 import org.oscm.app.shell.business.api.ShellCommand;
+import org.oscm.app.shell.business.api.ShellResultException;
 import org.oscm.app.shell.business.api.ShellStatus;
+import org.oscm.app.shell.business.api.json.ShellResult;
+import org.oscm.app.shell.business.api.json.ShellResultUsageData;
 import org.oscm.app.v2_0.data.ProvisioningSettings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,18 +35,15 @@ public class UsageConnector {
 
     private ProvisioningSettings settings;
 
-    protected UsageConnector(ProvisioningSettings settings) {
+    public UsageConnector(ProvisioningSettings settings) {
         this.settings = settings;
     }
 
-    protected UsageResultData getData(long start, long end) {
+    public Set<ShellResultUsageData> getData(long start, long end) {
 
         try (Shell shell = new Shell()) {
-            String usageScript;
 
             Script script = getUsageScript(settings);
-
-            // log
 
             ShellCommand command = new ShellCommand();
             command.init(script.getContent());
@@ -59,33 +59,30 @@ public class UsageConnector {
                 Thread.sleep(1000);
             } while (status == RUNNING);
 
-            UsageResult result = shell.getResult(UsageResult.class);
+            ShellResult result = shell.getResult();
 
             if (STATUS_OK.equals(result.getStatus())) {
-
-                Optional<UsageResultData> data = result.getUsageData();
-                if (data.isPresent()) {
-                    return data.get();
-                }
-
-                // logging
+                return result.getUsageData();
+            } else{
+                throw new ShellResultException(result.getMessage());
             }
 
         } catch (Exception e) {
-            LOG.warn("Error retrieving usage data: " + e.getMessage());
+            LOG.error("Error retrieving usage data: " + e.getMessage(), e);
         }
-        return new UsageResultData();
+
+        return null;
     }
 
-    protected Script getUsageScript(ProvisioningSettings settings)
-            throws Exception {
+    private Script getUsageScript(ProvisioningSettings settings) throws Exception {
 
-        String usageScript;
-        usageScript = settings.getParameters()
-                .get(ConfigurationKey.USAGEDATA_SCRIPT.name()).getValue();
-        Script script = new Script(usageScript);
-        script.loadContent();
-        script.insertProvisioningSettings(settings);
-        return script;
+        String scriptName = ConfigurationKey.USAGEDATA_SCRIPT.name();
+        String script = settings.getParameters().get(scriptName).getValue();
+
+        Script usageScript = new Script(script);
+        usageScript.loadContent();
+        usageScript.insertProvisioningSettings(settings);
+
+        return usageScript;
     }
 }

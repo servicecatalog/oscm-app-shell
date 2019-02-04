@@ -420,6 +420,7 @@ public class ShellController implements APPlatformController {
             String startTime, String endTime, ProvisioningSettings settings)
             throws APPlatformException {
 
+        LOGGER.info("Gathering usage data started...");
         Configuration config = new Configuration(settings);
 
         config.setSetting(REQUESTING_USER_ID,
@@ -440,9 +441,11 @@ public class ShellController implements APPlatformController {
                             instanceId, startTime, endTime));
         } catch (Exception e) {
             LOGGER.error("Failed to retrieve usage data", e);
+            LOGGER.info("Gathering usage data finished...false");
             return false;
         }
 
+        LOGGER.info("Gathering usage data finished...true");
         return true;
     }
 

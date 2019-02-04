@@ -9,6 +9,7 @@ package org.oscm.app.shell.business.api;
 
 import com.google.gson.Gson;
 import org.oscm.app.shell.ScriptLogger;
+import org.oscm.app.shell.business.api.json.ShellResult;
 import org.oscm.app.v2_0.exceptions.APPlatformException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -157,25 +158,13 @@ public class Shell implements AutoCloseable {
     }
 
     public ShellResult getResult() throws ShellResultException {
-        return getResult(ShellResult.class);
-    }
-
-    public <T extends ShellResult> T getResult(Class<T> resultType)
-            throws ShellResultException {
 
         if (!command.getError().isEmpty()) {
 
-            T result;
-            try {
-                result = resultType.newInstance();
-                result.setStatus(STATUS_ERROR);
-                result.setMessage(getErrorOutput());
-                return result;
-
-            } catch (InstantiationException | IllegalAccessException e) {
-                throw new ShellResultException(
-                        INVALID_JSON_MESSAGE + ": " + e.getMessage(), e);
-            }
+            ShellResult shellResult = new ShellResult();
+            shellResult.setStatus(STATUS_ERROR);
+            shellResult.setMessage(getErrorOutput());
+            return shellResult;
 
         } else {
 
@@ -184,16 +173,14 @@ public class Shell implements AutoCloseable {
 
             try {
                 Gson json = new Gson();
-                T shellResult = json.fromJson(jsonOutput, resultType);
+                ShellResult shellResult = json.fromJson(jsonOutput, ShellResult.class);
                 validateJsonResult(shellResult);
                 return shellResult;
 
             } catch (ShellResultException exception) {
                 throw exception;
             } catch (Exception exception) {
-                throw new ShellResultException(
-                        INVALID_JSON_MESSAGE + ": " + exception.getMessage(),
-                        exception);
+                throw new ShellResultException(INVALID_JSON_MESSAGE + ": " + exception.getMessage(), exception);
             }
         }
     }

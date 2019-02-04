@@ -16,6 +16,7 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.oscm.app.shell.business.Script;
 import org.oscm.app.shell.business.api.*;
+import org.oscm.app.shell.business.api.json.ShellResult;
 import org.oscm.app.v2_0.data.InstanceStatus;
 import org.oscm.app.v2_0.data.ProvisioningSettings;
 
