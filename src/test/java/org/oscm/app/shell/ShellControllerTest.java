@@ -8,7 +8,6 @@
 package org.oscm.app.shell;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -27,7 +26,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
@@ -58,6 +58,7 @@ public class ShellControllerTest {
 
         // given
         ProvisioningSettings settings = getProvisioningSettings();
+        doNothing().when(controller).runVerificationScript(any(Configuration.class));
 
         // when
         InstanceDescription id = controller.createInstance(settings);
@@ -191,6 +192,20 @@ public class ShellControllerTest {
         verify(controllerAccess, times(1)).storeSettings(any(ControllerSettings.class));
     }
 
+    @Test(expected = APPlatformException.class)
+    public void testRunVerificationScript_throwsException_ifScriptFileIsNotFound() throws Exception {
+
+        //given
+        Configuration configuration = new Configuration(getProvisioningSettings());
+        doNothing().when(validator).validate(configuration, VERIFICATION_SCRIPT);
+
+        // when
+        controller.runVerificationScript(configuration);
+
+        //then
+        verify(validator, times(1)).validate(configuration, VERIFICATION_SCRIPT);
+    }
+
     @Test
     public void testGatherUsageData() throws Exception {
 
@@ -207,11 +222,10 @@ public class ShellControllerTest {
         assertFalse(result);
     }
 
-
-
     private ProvisioningSettings getProvisioningSettings() {
 
         String sampleScriptPath = "/some/path/script.sh";
+        String instanceId = "Instance_323213213213";
 
         HashMap<String, Setting> parameters = new HashMap<>();
         parameters.put(PROVISIONING_SCRIPT.name(), new Setting(PROVISIONING_SCRIPT.name(), sampleScriptPath));
@@ -221,6 +235,10 @@ public class ShellControllerTest {
         parameters.put(DEASSIGN_USER_SCRIPT.name(), new Setting(DEASSIGN_USER_SCRIPT.name(), sampleScriptPath));
         parameters.put(CHECK_STATUS_SCRIPT.name(), new Setting(CHECK_STATUS_SCRIPT.name(), sampleScriptPath));
         parameters.put(USAGEDATA_SCRIPT.name(), new Setting(USAGEDATA_SCRIPT.name(), sampleScriptPath));
+
+        parameters.put(VERIFICATION_SCRIPT.name(), new Setting(VERIFICATION_SCRIPT.name(), sampleScriptPath));
+        parameters.put(VERIFICATION_TIMEOUT.name(), new Setting(VERIFICATION_TIMEOUT.name(), "600"));
+        parameters.put(INSTANCE_ID.name(), new Setting(INSTANCE_ID.name(), instanceId));
 
         HashMap<String, Setting> emptyMap = new HashMap<>();
 

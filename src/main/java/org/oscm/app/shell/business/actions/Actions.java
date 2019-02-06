@@ -31,8 +31,6 @@ public class Actions {
 
     private static final Logger LOG = LoggerFactory.getLogger(Actions.class);
 
-    private ScriptLogger logger;
-
     private ShellPool pool;
 
     private void initializeShellPool() {
@@ -46,10 +44,9 @@ public class Actions {
 
         initializeShellPool();
         Configuration config = new Configuration(settings);
-        logger = new ScriptLogger();
 
         ShellCommand command = new ShellCommand(script.getContent());
-        logger.logScriptCommand(command);
+        ScriptLogger.logScriptCommand(command);
         String consoleFile = config.getSetting(CONSOLE_FILE);
 
         try {

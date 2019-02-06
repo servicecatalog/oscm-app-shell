@@ -67,17 +67,51 @@ public class Script {
         return external;
     }
 
+    public String getScriptType(ProvisioningSettings settings) throws Exception {
+
+        String smStateMachine = settings.getParameters().get("SM_STATE_MACHINE").getValue();
+        String currentType;
+        switch (smStateMachine) {
+            case "assign_user.xml":
+                currentType = "ASSIGN_USER_SCRIPT";
+                break;
+            case "deassign_user.xml":
+                currentType = "DEASSIGN_USER_SCRIPT";
+                break;
+            case "deprovision.xml":
+                currentType = "DEPROVISIONING_SCRIPT";
+                break;
+            case "operation.xml":
+                currentType = "OPERATION_SCRIPT";
+                break;
+            case "provision.xml":
+                currentType = "PROVISIONING_SCRIPT";
+                break;
+            case "update.xml":
+                currentType = "UPDATE_SCRIPT";
+                break;
+            case "update_user.xml":
+                currentType = "UPDATE_USER_SCRIPT";
+                break;
+            default:
+                currentType = "UNRESOLVED";
+                LOG.error("SM_STATE_MACHINE not recognizable!");
+                throw new Exception("SM_STATE_MACHINE was not recognized!");
+        }
+        return currentType;
+    }
+
     public String loadLocalScript(String pathfile) throws FileNotFoundException {
         try (Scanner scanner = new Scanner(new File(pathfile)).useDelimiter("\\A")) {
             return scanner.hasNext() ? scanner.next() : "";
         } catch (FileNotFoundException e) {
-            LOG.error("Failed to load local script from " + pathfile + " - file not found. " + e );
+            LOG.error("Failed to load local script from " + pathfile + " - file not found. " + e);
             throw e;
         }
     }
 
     public String loadExternalScript(String url) throws Exception {
-        try (Scanner scanner = new Scanner(getConnectionStream(url),"UTF-8").useDelimiter("\\A")) {
+        try (Scanner scanner = new Scanner(getConnectionStream(url), "UTF-8").useDelimiter("\\A")) {
             return scanner.hasNext() ? scanner.next() : "";
         } catch (Exception e) {
             if (url.startsWith("https")) {
@@ -111,8 +145,9 @@ public class Script {
         TreeSet<String> parameters = new TreeSet<>();
 
         insertBasicParameters(parameters, settings);
-        insertServiceParameters(parameters,settings);
-        insertUDAs(parameters, settings);
+        addToScriptParameters(parameters, settings.getParameters());
+        addToScriptParameters(parameters, settings.getAttributes());
+        addToScriptParameters(parameters, settings.getCustomAttributes());
 
         String firstLine = content.substring(0, content.indexOf(NEW_LINE));
         String rest = content.substring(content.indexOf(NEW_LINE) + 1, content.length());
@@ -123,7 +158,7 @@ public class Script {
     }
 
     private void insertBasicParameters(TreeSet<String> scriptParameters,
-                                       ProvisioningSettings settings){
+                                       ProvisioningSettings settings) {
 
         scriptParameters.add(buildParameterCommand("SUBSCRIPTION_ID", settings.getSubscriptionId()));
         if (settings.getRequestingUser() != null) {
@@ -132,28 +167,17 @@ public class Script {
         }
         scriptParameters.add(buildParameterCommand("REQUESTING_ORGANIZATION_ID",
                 settings.getOrganizationId()));
+        scriptParameters.add(buildParameterCommand("REQUESTING_ORGANIZATION_NAME",
+                settings.getOrganizationName()));
         scriptParameters.add(buildParameterCommand("REFERENCE_ID", settings.getReferenceId()));
     }
 
-    private void insertServiceParameters(TreeSet<String> scriptParameters,
-                                         ProvisioningSettings settings){
+    private void addToScriptParameters(TreeSet<String> scriptParameters, HashMap<String, Setting> settings) {
 
-        HashMap<String, Setting> params = settings.getParameters();
+        settings.keySet().stream()
+                .map(key -> buildParameterCommand(key, settings.get(key).getValue()))
+                .forEach(scriptParameters::add);
 
-        for (String key : params.keySet()) {
-            String parameterCommand = buildParameterCommand(key, params.get(key).getValue());
-            scriptParameters.add(parameterCommand);
-        }
-    }
-
-    private void insertUDAs(TreeSet<String> scriptParameters, ProvisioningSettings settings){
-
-        HashMap<String, Setting> params = settings.getAttributes();
-
-        for (String key : params.keySet()) {
-            String parameterCommand = buildParameterCommand(key, params.get(key).getValue());
-            scriptParameters.add(parameterCommand);
-        }
     }
 
     public void insertOperationId(Configuration config) {

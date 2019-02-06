@@ -8,59 +8,40 @@
 
 package org.oscm.app.shell;
 
-import static java.lang.Long.valueOf;
-import static java.lang.String.format;
-import static java.lang.String.valueOf;
-import static java.lang.System.currentTimeMillis;
-import static java.lang.Thread.sleep;
-import static java.time.LocalDateTime.parse;
-import static java.time.ZoneOffset.UTC;
-import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME;
-import static java.util.regex.Pattern.MULTILINE;
-import static java.util.regex.Pattern.compile;
-import static org.oscm.app.shell.business.Configuration.CONTROLLER_ID;
-import static org.oscm.app.shell.business.ConfigurationKey.*;
-import static org.oscm.app.shell.business.api.Shell.VERIFICATION_MESSAGE;
-import static org.oscm.app.shell.business.api.ShellStatus.RUNNING;
-
-import java.util.List;
-import java.util.Properties;
-import java.util.UUID;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.ejb.Remote;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-
-import org.oscm.app.shell.business.Configuration;
-import org.oscm.app.shell.business.ConfigurationKey;
-import org.oscm.app.shell.business.Script;
-import org.oscm.app.shell.business.ScriptValidator;
-import org.oscm.app.shell.business.ShellControllerAccess;
+import org.oscm.app.shell.business.*;
 import org.oscm.app.shell.business.actions.StateMachineId;
 import org.oscm.app.shell.business.api.Shell;
 import org.oscm.app.shell.business.api.ShellCommand;
 import org.oscm.app.shell.business.api.ShellPool;
 import org.oscm.app.shell.business.api.ShellStatus;
+import org.oscm.app.shell.business.api.json.ShellResult;
 import org.oscm.app.shell.business.interceptor.ProvisioningSettingsLogger;
 import org.oscm.app.shell.business.usagedata.UsageHandler;
 import org.oscm.app.statemachine.StateMachine;
 import org.oscm.app.statemachine.api.StateMachineException;
-import org.oscm.app.v2_0.data.ControllerSettings;
-import org.oscm.app.v2_0.data.InstanceDescription;
-import org.oscm.app.v2_0.data.InstanceStatus;
-import org.oscm.app.v2_0.data.InstanceStatusUsers;
-import org.oscm.app.v2_0.data.LocalizedText;
-import org.oscm.app.v2_0.data.OperationParameter;
-import org.oscm.app.v2_0.data.ProvisioningSettings;
-import org.oscm.app.v2_0.data.ServiceUser;
-import org.oscm.app.v2_0.data.Setting;
+import org.oscm.app.v2_0.data.*;
 import org.oscm.app.v2_0.exceptions.APPlatformException;
 import org.oscm.app.v2_0.intf.APPlatformController;
 import org.oscm.app.v2_0.intf.ControllerAccess;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.ejb.Remote;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import java.util.List;
+import java.util.Properties;
+import java.util.UUID;
+
+import static java.lang.String.valueOf;
+import static java.lang.System.currentTimeMillis;
+import static java.time.LocalDateTime.parse;
+import static java.time.ZoneOffset.UTC;
+import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+import static org.oscm.app.shell.business.Configuration.CONTROLLER_ID;
+import static org.oscm.app.shell.business.ConfigurationKey.*;
+import static org.oscm.app.shell.business.api.Shell.STATUS_ERROR;
+import static org.oscm.app.shell.business.api.ShellStatus.RUNNING;
 
 @Remote(APPlatformController.class)
 @Stateless(mappedName = "bss/app/controller/" + CONTROLLER_ID)
@@ -144,49 +125,39 @@ public class ShellController implements APPlatformController {
             return;
         }
 
-        Script script;
+        validator.validate(config, VERIFICATION_SCRIPT);
 
-        try {
-            script = new Script(verificationScript);
+        String instanceId = config.getSetting(INSTANCE_ID);
+        long timeout = Long.parseLong(config.getSetting(VERIFICATION_TIMEOUT));
+
+        try (Shell shell = new Shell()) {
+
+            Script script = new Script(verificationScript);
             script.loadContent();
             script.insertProvisioningSettings(config.getProvisioningSettings());
-        } catch (Exception e) {
-            throw new APPlatformException(e.getMessage());
-        }
 
-        try {
             ShellCommand command = new ShellCommand(script.getContent());
+            shell.lockShell(instanceId);
+            shell.runCommand(instanceId, command);
 
-            try (Shell shell = new Shell()) {
-                shell.lockShell(config.getSetting(INSTANCE_ID));
-                shell.runCommand(config.getSetting(INSTANCE_ID), command);
-                long ref = currentTimeMillis();
-                ShellStatus rc;
-                do {
-                    rc = shell.consumeOutput(config.getSetting(INSTANCE_ID));
-                    sleep(100);
-                } while (rc == RUNNING && currentTimeMillis() - ref < valueOf(
-                        config.getSetting(VERIFICATION_TIMEOUT)));
+            ShellStatus status;
+            long startTime = currentTimeMillis();
+            do {
+                status = shell.consumeOutput(instanceId);
+                Thread.sleep(1000);
+            } while (status == RUNNING && currentTimeMillis() - startTime < timeout);
 
-                String shellOutput = shell.getOutput();
+            ShellResult result = shell.getResult();
+            String message = result.getMessage();
 
-                ScriptLogger.logOutputFromScript(config, "VERIFICATION_SCRIPT",
-                        shellOutput);
-
-                Pattern p = compile(format(".*%s=(.*?)$", VERIFICATION_MESSAGE),
-                        MULTILINE);
-                Matcher matcher = p.matcher(shellOutput);
-
-                if (matcher.find()) {
-                    throw new APPlatformException(
-                            "Verification failed: " + matcher.group(1));
-                }
+            if (STATUS_ERROR.equals(result.getStatus())) {
+                throw new APPlatformException(message);
             }
-        } catch (APPlatformException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new APPlatformException(
-                    "Verification failed because of an exception", e);
+            LOGGER.info("Verification has been finished successfully:" + message);
+
+        } catch (Exception exception) {
+            LOGGER.error("Verification failed: ", exception);
+            throw new APPlatformException("Verification failed: " + exception.getMessage());
         }
     }
 
@@ -312,8 +283,8 @@ public class ShellController implements APPlatformController {
 
             if (StateMachineId.ERROR.equals(stateId)) {
                 String errorMsg = config.getSetting(SM_ERROR_MESSAGE);
-                LOGGER.error("Script execution for Instance [" + instanceId
-                        + "] resulted with error: " + errorMsg);
+                LOGGER.error("Script execution for Instance [" + instanceId + "] " +
+                        "resulted with error: " + errorMsg);
                 handleErrorSituation(instanceId, errorMsg);
             }
 

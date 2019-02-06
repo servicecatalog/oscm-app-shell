@@ -31,7 +31,6 @@ import static org.oscm.app.shell.business.api.ShellStatus.*;
  */
 public class Shell implements AutoCloseable {
 
-    public static final String VERIFICATION_MESSAGE = "VERIFICATION_MESSAGE";
     public static final String STATUS_ERROR = "error";
     public static final String STATUS_OK = "ok";
 
@@ -64,8 +63,6 @@ public class Shell implements AutoCloseable {
 
     private ShellCommand command;
 
-    private ScriptLogger scriptLogger;
-
     public String getLockId() {
         return lockId;
     }
@@ -80,9 +77,7 @@ public class Shell implements AutoCloseable {
 
     public Shell(String psconsole) throws IOException, APPlatformException {
 
-        // TODO: psconsole was powershell configuration file, is it still needed
-        // for shell scripts
-        scriptLogger = new ScriptLogger();
+        //TODO: psconsole was powershell configuration file, is it still needed for shell scripts
         if (psconsole == null || psconsole.isEmpty()) {
             psconsole = "sh";
         } else {
@@ -111,7 +106,7 @@ public class Shell implements AutoCloseable {
     }
 
     public ShellStatus runCommand(final String lockId,
-            final ShellCommand command) {
+                                  final ShellCommand command) {
         if (!lockId.equals(this.lockId)) {
             LOG.error("shell called by " + lockId + ", but locked for "
                     + this.lockId);
@@ -119,9 +114,8 @@ public class Shell implements AutoCloseable {
         }
         this.command = command;
         try {
-            LOG.debug(String.format("lockId: %s, command:\n%s", lockId,
-                    command.getCommand()));
-            scriptLogger.logScriptCommand(command);
+            LOG.debug(String.format("lockId: %s, command:\n%s", lockId, command.getCommand()));
+            ScriptLogger.logScriptCommand(command);
             stdIn.write(command.getCommand());
             stdIn.newLine();
             stdIn.flush();
@@ -234,7 +228,7 @@ public class Shell implements AutoCloseable {
      * locks Shell runtime, if unlocked
      *
      * @return lock status: true, if shell has been free and is now locked /
-     *         false, if shell was already locked and could not be locked
+     * false, if shell was already locked and could not be locked
      */
     public boolean lockShell(String lockId) {
         if (this.lockId == null) {
