@@ -22,6 +22,7 @@ import org.oscm.app.shell.business.api.ShellStatus;
 import org.oscm.app.shell.business.api.json.ShellResult;
 import org.oscm.app.shell.business.api.json.ShellResultUsageData;
 import org.oscm.app.v2_0.data.ProvisioningSettings;
+import org.oscm.app.v2_0.data.Setting;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,6 +44,9 @@ public class UsageConnector {
     public Set<ShellResultUsageData> getData(long start, long end) throws Exception {
 
         try (Shell shell = new Shell()) {
+
+            settings.getParameters().put("START_TIME", new Setting("START_TIME", Long.toString(start)));
+            settings.getParameters().put("END_TIME", new Setting("END_TIME", Long.toString(end)));
 
             Script script = getUsageScript(settings);
 
@@ -72,14 +76,11 @@ public class UsageConnector {
             LOG.error("Error retrieving usage data: " + e.getMessage(), e);
             throw e;
         }
-
-
     }
 
     private Script getUsageScript(ProvisioningSettings settings) throws Exception {
 
         String scriptName = ConfigurationKey.USAGEDATA_SCRIPT.name();
-
         String script = settings.getParameters().get(scriptName).getValue();
 
         Script usageScript = new Script(script);

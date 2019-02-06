@@ -191,6 +191,22 @@ public class ShellControllerTest {
         verify(controllerAccess, times(1)).storeSettings(any(ControllerSettings.class));
     }
 
+    @Test
+    public void testGatherUsageData() throws Exception {
+
+        ProvisioningSettings settings = getProvisioningSettings();
+        String startTime = "2019-02-06 07:00:00";
+        String endTime = "2019-02-06 08:00:00";
+        String instanceId = "Instance_1232132133";
+
+        // when
+        boolean result = controller.gatherUsageData("ess.shell", instanceId, startTime, endTime, settings);
+
+        //then
+        verify(validator, times(1)).validate(any(Configuration.class), any(ConfigurationKey.class));
+        assertFalse(result);
+    }
+
 
 
     private ProvisioningSettings getProvisioningSettings() {

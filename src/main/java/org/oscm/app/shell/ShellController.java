@@ -19,24 +19,7 @@ import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 import static java.util.regex.Pattern.MULTILINE;
 import static java.util.regex.Pattern.compile;
 import static org.oscm.app.shell.business.Configuration.CONTROLLER_ID;
-import static org.oscm.app.shell.business.ConfigurationKey.ASSIGN_USER_SCRIPT;
-import static org.oscm.app.shell.business.ConfigurationKey.CHECK_STATUS_SCRIPT;
-import static org.oscm.app.shell.business.ConfigurationKey.DEASSIGN_USER_SCRIPT;
-import static org.oscm.app.shell.business.ConfigurationKey.DEPROVISIONING_SCRIPT;
-import static org.oscm.app.shell.business.ConfigurationKey.INSTANCE_ID;
-import static org.oscm.app.shell.business.ConfigurationKey.OPERATIONS_ID;
-import static org.oscm.app.shell.business.ConfigurationKey.OPERATIONS_SCRIPT;
-import static org.oscm.app.shell.business.ConfigurationKey.PROVISIONING_SCRIPT;
-import static org.oscm.app.shell.business.ConfigurationKey.REQUESTING_USER_ID;
-import static org.oscm.app.shell.business.ConfigurationKey.SCRIPT_FILE;
-import static org.oscm.app.shell.business.ConfigurationKey.SM_ERROR_MESSAGE;
-import static org.oscm.app.shell.business.ConfigurationKey.SM_STATE;
-import static org.oscm.app.shell.business.ConfigurationKey.SM_STATE_HISTORY;
-import static org.oscm.app.shell.business.ConfigurationKey.UPDATE_SCRIPT;
-import static org.oscm.app.shell.business.ConfigurationKey.UPDATE_USER_SCRIPT;
-import static org.oscm.app.shell.business.ConfigurationKey.USER_COUNT;
-import static org.oscm.app.shell.business.ConfigurationKey.VERIFICATION_SCRIPT;
-import static org.oscm.app.shell.business.ConfigurationKey.VERIFICATION_TIMEOUT;
+import static org.oscm.app.shell.business.ConfigurationKey.*;
 import static org.oscm.app.shell.business.api.Shell.VERIFICATION_MESSAGE;
 import static org.oscm.app.shell.business.api.ShellStatus.RUNNING;
 
@@ -420,7 +403,6 @@ public class ShellController implements APPlatformController {
                                    String startTime, String endTime, ProvisioningSettings settings) {
 
         LOGGER.info("Gathering usage data for instance [" + instanceId + "] started");
-
         Configuration config = new Configuration(settings);
 
         if (settings.getRequestingUser() != null) {
@@ -428,6 +410,7 @@ public class ShellController implements APPlatformController {
         }
 
         try {
+            validator.validate(config, USAGEDATA_SCRIPT);
 
             final long start = parse(startTime, ISO_LOCAL_DATE_TIME).toInstant(UTC)
                     .toEpochMilli();
