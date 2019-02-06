@@ -40,7 +40,7 @@ provisioning_success() {
   "status": "ok",
   "message": "VM provisioned successfully.",
   "data": {
-    "access info": "'$ACCESS_INFO'"
+    "accessInfo": "'$ACCESS_INFO'"
   }
 }'
   fi
@@ -65,7 +65,7 @@ status_success() {
   "status": "ok",
   "message": "Status checked successfully.",
   "data": {
-    "access info": "'$ACCESS_INFO'",
+    "accessInfo": "'$ACCESS_INFO'",
     "output": "'$OUTPUT'"
   }
 }'
