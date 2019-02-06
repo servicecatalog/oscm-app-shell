@@ -6,9 +6,10 @@
  *
  *******************************************************************************/
 
-package org.oscm.app.shell.business.api;
+package org.oscm.app.shell.business.api.json;
 
 import java.util.Optional;
+import java.util.Set;
 
 public class ShellResult {
 
@@ -23,34 +24,48 @@ public class ShellResult {
     private String status;
     private String message;
     private ShellResultData data;
+    private Set<ShellResultUsageData> usageData;
+
 
     public String getStatus() {
-
         return status;
     }
 
     public void setStatus(String status) {
-
         this.status = status;
     }
 
     public String getMessage() {
-
         return message;
     }
 
     public void setMessage(String message) {
-
         this.message = message;
     }
 
-    public void setData(ShellResultData data) {
+    public Optional<ShellResultData> getData() {
+        return Optional.ofNullable(this.data);
+    }
 
+    public void setData(ShellResultData data) {
         this.data = data;
     }
 
-    public Optional<ShellResultData> getData() {
+    public Set<ShellResultUsageData> getUsageData() {
+        return usageData;
+    }
 
-        return Optional.ofNullable(this.data);
+    public void setUsageData(Set<ShellResultUsageData> usageData) {
+        this.usageData = usageData;
+    }
+
+    @Override
+    public String toString() {
+        return "ShellResult{" +
+                "status='" + status + '\'' +
+                ", message='" + message + '\'' +
+                ", data=" + data +
+                ", usageData=" + usageData +
+                '}';
     }
 }

@@ -9,6 +9,7 @@ package org.oscm.app.shell.business.api;
 
 import com.google.gson.Gson;
 import org.oscm.app.shell.ScriptLogger;
+import org.oscm.app.shell.business.api.json.ShellResult;
 import org.oscm.app.v2_0.exceptions.APPlatformException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +31,6 @@ import static org.oscm.app.shell.business.api.ShellStatus.*;
  */
 public class Shell implements AutoCloseable {
 
-    public static final String VERIFICATION_MESSAGE = "VERIFICATION_MESSAGE";
     public static final String STATUS_ERROR = "error";
     public static final String STATUS_OK = "ok";
 
@@ -41,8 +41,8 @@ public class Shell implements AutoCloseable {
 
     /**
      * Indicates if a shell is in use. A shell is free if the callerid is null.
-     * Otherwise an APP instance set any callerid to lock the shell and additionally
-     * to aquire the shell again by the callerid.
+     * Otherwise an APP instance set any callerid to lock the shell and
+     * additionally to aquire the shell again by the callerid.
      */
     private volatile String lockId;
 
@@ -81,19 +81,21 @@ public class Shell implements AutoCloseable {
         if (psconsole == null || psconsole.isEmpty()) {
             psconsole = "sh";
         } else {
-            //psconsole = "sh -PSConsoleFile \"" + psconsole + "\" -ExecutionPolicy Bypass -NoExit -";
+            // psconsole = "sh -PSConsoleFile \"" + psconsole + "\"
+            // -ExecutionPolicy Bypass -NoExit -";
         }
 
         shell = Runtime.getRuntime().exec(psconsole);
 
-        stdIn = new BufferedWriter(new OutputStreamWriter(shell.getOutputStream()));
+        stdIn = new BufferedWriter(
+                new OutputStreamWriter(shell.getOutputStream()));
         stdOut = new StreamGobbler(shell.getInputStream());
         stdErr = new StreamGobbler(shell.getErrorStream());
 
-
         if (!stdErr.buffer.isEmpty()) {
             throw new APPlatformException(
-                    "Shell initialization problem, error stream not empty: " + join("", stdErr.buffer));
+                    "Shell initialization problem, error stream not empty: "
+                            + join("", stdErr.buffer));
         }
 
         if (!stdOut.buffer.isEmpty()) {
@@ -103,10 +105,11 @@ public class Shell implements AutoCloseable {
         lockId = null;
     }
 
-
-    public ShellStatus runCommand(final String lockId, final ShellCommand command) {
+    public ShellStatus runCommand(final String lockId,
+                                  final ShellCommand command) {
         if (!lockId.equals(this.lockId)) {
-            LOG.error("shell called by " + lockId + ", but locked for " + this.lockId);
+            LOG.error("shell called by " + lockId + ", but locked for "
+                    + this.lockId);
             return CALLERID_DOES_NOT_MATCH;
         }
         this.command = command;
@@ -117,7 +120,8 @@ public class Shell implements AutoCloseable {
             stdIn.newLine();
             stdIn.flush();
         } catch (IOException e) {
-            LOG.error("lockId: " + lockId + " failed to write command to shell stdin", e);
+            LOG.error("lockId: " + lockId
+                    + " failed to write command to shell stdin", e);
             return STDIN_CLOSED;
         }
 
@@ -142,7 +146,8 @@ public class Shell implements AutoCloseable {
             sb.append("\n\t");
         }
         String output = sb.toString();
-        LOG.trace("lockId: " + lockId + " found shell with error output: " + output);
+        LOG.trace("lockId: " + lockId + " found shell with error output: "
+                + output);
         return output;
     }
 
@@ -174,16 +179,18 @@ public class Shell implements AutoCloseable {
         }
     }
 
-    private void validateJsonResult(ShellResult result) throws ShellResultException {
+    private void validateJsonResult(ShellResult result)
+            throws ShellResultException {
         if (result.getStatus() == null || result.getMessage() == null) {
-            throw new ShellResultException(INVALID_JSON_MESSAGE +
-                    ": [status] and [message] fields are mandatory");
+            throw new ShellResultException(INVALID_JSON_MESSAGE
+                    + ": [status] and [message] fields are mandatory");
         }
     }
 
     public ShellStatus consumeOutput(String lockId) {
         if (!lockId.equals(this.lockId)) {
-            LOG.error("shell called by " + lockId + ", but locked for " + this.lockId);
+            LOG.error("shell called by " + lockId + ", but locked for "
+                    + this.lockId);
             return CALLERID_DOES_NOT_MATCH;
         }
         if (command.getReturnCode() == SUCCESS) {
@@ -208,8 +215,8 @@ public class Shell implements AutoCloseable {
     }
 
     /**
-     * returns lock status of Shell runtime utilizing id of calling command
-     * from API class
+     * returns lock status of Shell runtime utilizing id of calling command from
+     * API class
      *
      * @return caller id, if shell is locked / empty string, if shell is free
      */
@@ -220,8 +227,8 @@ public class Shell implements AutoCloseable {
     /**
      * locks Shell runtime, if unlocked
      *
-     * @return lock status: true, if shell has been free and is now locked / false,
-     * if shell was already locked and could not be locked
+     * @return lock status: true, if shell has been free and is now locked /
+     * false, if shell was already locked and could not be locked
      */
     public boolean lockShell(String lockId) {
         if (this.lockId == null) {

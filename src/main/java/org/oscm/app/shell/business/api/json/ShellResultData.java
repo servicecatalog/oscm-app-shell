@@ -6,7 +6,7 @@
  *
  *******************************************************************************/
 
-package org.oscm.app.shell.business.api;
+package org.oscm.app.shell.business.api.json;
 
 public class ShellResultData {
 

@@ -8,6 +8,7 @@
 
 package org.oscm.app.shell.business.api;
 
+import org.oscm.app.shell.business.api.json.ShellResult;
 import org.oscm.app.v2_0.exceptions.APPlatformException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

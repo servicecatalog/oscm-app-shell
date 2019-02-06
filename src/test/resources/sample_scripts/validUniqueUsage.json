@@ -1,0 +1,22 @@
+{
+  "status": "ok",
+  "message": "Script executed successfully",
+  "data": {
+    "output": "Custom output for the status tab",
+    "accessInfo": "http://accessInfo.url"
+  },
+  "usageData": [
+    {
+      "eventId": "EVENT_DISK_GIGABYTE_HOURS",
+      "multiplier": 100
+    },
+    {
+      "eventId": "EVENT_DISK_GIGABYTE_HOURS",
+      "multiplier": 300
+    },
+    {
+      "eventId": "EVENT_DISK_GIGABYTE_HOURS",
+      "multiplier": 250
+    }
+  ]
+}

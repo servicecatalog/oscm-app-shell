@@ -8,7 +8,6 @@
 package org.oscm.app.shell;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -27,7 +26,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
@@ -206,7 +206,21 @@ public class ShellControllerTest {
         verify(validator, times(1)).validate(configuration, VERIFICATION_SCRIPT);
     }
 
+    @Test
+    public void testGatherUsageData() throws Exception {
 
+        ProvisioningSettings settings = getProvisioningSettings();
+        String startTime = "2019-02-06 07:00:00";
+        String endTime = "2019-02-06 08:00:00";
+        String instanceId = "Instance_1232132133";
+
+        // when
+        boolean result = controller.gatherUsageData("ess.shell", instanceId, startTime, endTime, settings);
+
+        //then
+        verify(validator, times(1)).validate(any(Configuration.class), any(ConfigurationKey.class));
+        assertFalse(result);
+    }
 
     private ProvisioningSettings getProvisioningSettings() {
 
@@ -220,6 +234,7 @@ public class ShellControllerTest {
         parameters.put(ASSIGN_USER_SCRIPT.name(), new Setting(ASSIGN_USER_SCRIPT.name(), sampleScriptPath));
         parameters.put(DEASSIGN_USER_SCRIPT.name(), new Setting(DEASSIGN_USER_SCRIPT.name(), sampleScriptPath));
         parameters.put(CHECK_STATUS_SCRIPT.name(), new Setting(CHECK_STATUS_SCRIPT.name(), sampleScriptPath));
+        parameters.put(USAGEDATA_SCRIPT.name(), new Setting(USAGEDATA_SCRIPT.name(), sampleScriptPath));
 
         parameters.put(VERIFICATION_SCRIPT.name(), new Setting(VERIFICATION_SCRIPT.name(), sampleScriptPath));
         parameters.put(VERIFICATION_TIMEOUT.name(), new Setting(VERIFICATION_TIMEOUT.name(), "600"));

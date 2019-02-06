@@ -8,9 +8,24 @@
 
 package org.oscm.app.shell.business.interceptor;
 
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.oscm.app.shell.business.ConfigurationKey.ASSIGN_USER_SCRIPT;
+import static org.oscm.app.shell.business.ConfigurationKey.CHECK_STATUS_SCRIPT;
+import static org.oscm.app.shell.business.ConfigurationKey.DEASSIGN_USER_SCRIPT;
+import static org.oscm.app.shell.business.ConfigurationKey.DEPROVISIONING_SCRIPT;
+import static org.oscm.app.shell.business.ConfigurationKey.PROVISIONING_SCRIPT;
+import static org.oscm.app.shell.business.ConfigurationKey.UPDATE_SCRIPT;
+import static org.oscm.app.shell.business.ConfigurationKey.USAGEDATA_SCRIPT;
+
+import java.util.HashMap;
+
+import javax.interceptor.InvocationContext;
+
 import org.junit.Before;
 import org.junit.Ignore;
-import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -19,12 +34,6 @@ import org.oscm.app.v2_0.data.ProvisioningSettings;
 import org.oscm.app.v2_0.data.ServiceUser;
 import org.oscm.app.v2_0.data.Setting;
 import org.slf4j.Logger;
-
-import javax.interceptor.InvocationContext;
-import java.util.HashMap;
-
-import static org.mockito.Mockito.*;
-import static org.oscm.app.shell.business.ConfigurationKey.*;
 
 @Ignore
 public class ProvisioningSettingsInterceptorTest {
@@ -70,7 +79,8 @@ public class ProvisioningSettingsInterceptorTest {
         parameters.put(ASSIGN_USER_SCRIPT.name(), new Setting(ASSIGN_USER_SCRIPT.name(), sampleScriptPath));
         parameters.put(DEASSIGN_USER_SCRIPT.name(), new Setting(DEASSIGN_USER_SCRIPT.name(), sampleScriptPath));
         parameters.put(CHECK_STATUS_SCRIPT.name(), new Setting(CHECK_STATUS_SCRIPT.name(), sampleScriptPath));
-
+        parameters.put(USAGEDATA_SCRIPT.name(), new Setting(USAGEDATA_SCRIPT.name(), sampleScriptPath));
+        
         HashMap<String, Setting> emptyMap = new HashMap<>();
 
         ProvisioningSettings settings = new ProvisioningSettings(parameters, emptyMap, emptyMap,
