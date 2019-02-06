@@ -3,7 +3,7 @@
   "message": "Script executed successfully",
   "data": {
     "output": "Custom output for the status tab",
-    "accessInfo": "http://accessInfo.url"
+    "accessInfo": "<a href=\"http://accessInfo.url\">http://accessInfo.url </a>"
   },
   "usageData": [
     {
