@@ -13,6 +13,7 @@ import org.junit.Test;
 import org.mockito.internal.util.reflection.Whitebox;
 import org.oscm.app.shell.business.api.json.ShellResult;
 import org.oscm.app.shell.business.api.json.ShellResultData;
+import org.oscm.app.shell.business.api.json.ShellResultUsageData;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -21,6 +22,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
@@ -227,6 +229,7 @@ public class ShellTest {
         assertEquals(STATUS_OK, result.getStatus());
     }
 
+
     @Test
     public void testGetResult_isOkWithHtmlData_ifReturnedDataIsOk() throws Exception {
 
@@ -244,6 +247,25 @@ public class ShellTest {
 
         assertEquals("Failed as resulting status is " + status, STATUS_OK, status);
         assertTrue("Failed as resulting data is " + data, data.get().getOutput().contains("<table style="));
+    }
+
+    @Test
+    public void testGetResult_isOkWithUsageData_ifReturnedDataIsOk() throws Exception {
+
+        //given
+        String instanceId = "Instance_1236678329433";
+        String scriptContent = getScriptContent("sample_scripts/sample_ok_usage_data.sh");
+        Shell shell = runScript(scriptContent, instanceId);
+
+        //when
+        ShellResult result = shell.getResult();
+
+        //then
+        String status = result.getStatus();
+        Set<ShellResultUsageData> usageData = result.getUsageData();
+
+        assertEquals("Failed as resulting status is " + status, STATUS_OK, status);
+        assertFalse("Failed as resulting usageData is " + usageData, usageData.isEmpty());
     }
 
     @Test
