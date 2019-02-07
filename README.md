@@ -18,6 +18,32 @@ So that shell script used with app-shell related service is executed properly, i
 3. JSON result must consists of following fields:
    * status - **required**, must contain only "**ok**" or "**error**",
    * message - **required**, should contain information related to the script execution which is delivered to the user,
-   * data - **optional**, should contain any data which can be used after the script is executed e.g access info, HTML data for status script.
+   * data - **optional**, should contain data which is used after the script is executed, valid fields inside are accessInfo and output (HTML data for status script),
+   * usageData - **optional**, used in usage data script for gathering billable events, contains array of events made of eventId and multiplier fields.
    
-   Plese refer to scripts examples directory https://github.com/servicecatalog/oscm-app-shell/tree/master/src/test/resources/sample_scripts to get familiar with both valid and invalid script samples.
+   Simple json response example:
+
+   {
+     "status": "ok",
+     "message": "Script executed successfully",
+     "data": {
+       "output": "Custom output for the status tab",
+       "accessInfo": "<a href=\"http://accessInfo.url\">http://accessInfo.url </a>"
+     },
+     "usageData": [
+       {
+         "eventId": "EVENT_DISK_GIGABYTE_HOURS",
+         "multiplier": 100
+       },
+       {
+         "eventId": "EVENT_CPU_HOURS",
+         "multiplier": 300
+       },
+       {
+         "eventId": "EVENT_RAM_MEGABYTE_HOURS",
+         "multiplier": 250
+       }
+     ]
+   }
+
+Please refer to scripts examples directory https://github.com/servicecatalog/oscm-app-shell/tree/master/src/test/resources/sample_scripts to get familiar with both valid and invalid script samples.

@@ -29,7 +29,7 @@ public class ShellResultTest {
     private static final String STATUS_MESSAGE = "Script executed successfully";
 
     private static final String DATA_OUTPUT = "Custom output for the status tab";
-    private static final String DATA_ACCESS_INFO = "http://accessInfo.url";
+    private static final String DATA_ACCESS_INFO = "<a href=\"http://accessInfo.url\">http://accessInfo.url </a>";
 
     private static final String EVENT_DISK = "EVENT_DISK_GIGABYTE_HOURS";
     private static final String EVENT_CPU = "EVENT_CPU_HOURS";
