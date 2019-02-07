@@ -46,4 +46,4 @@ So that shell script used with app-shell related service is executed properly, i
      ]
    }
 
-Please refer to scripts examples directory https://github.com/servicecatalog/oscm-app-shell/tree/master/src/test/resources/sample_scripts to get familiar with both valid and invalid script samples.
+Please refer to scripts examples directory https://github.com/servicecatalog/oscm-app-shell/tree/master/src/main/resources/sample_scripts to get familiar with both valid and invalid script samples.
