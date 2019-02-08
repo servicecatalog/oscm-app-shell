@@ -29,7 +29,7 @@ The required format is simple and semi-structured based on JSON. Following rules
    * data - **optional**, contains result data which is processed after the script is executed. Valid sub fields: ```accessInfo``` and ```output```, both supporting HTML and plain text. ```output``` is expected in response of status script. 
    * usageData - **optional**, expected in response of usage data script for gathering billable events, contains array of events composed of ```eventId``` and ```multiplier``` field according the technical service definition.
    
-Simple JSON response example:
+#### Example: ####
 ```json   
    {
      "status": "ok",
