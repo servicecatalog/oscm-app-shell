@@ -2,7 +2,7 @@
 [![codecov](https://codecov.io/gh/servicecatalog/oscm-app-shell/branch/master/graph/badge.svg)](https://codecov.io/gh/servicecatalog/oscm-app-shell)
 
 # What is it?
-The OSCM shell controller is a shell based framework adapter that can be used to integrate OSCM with any type of cloud. It is flexibly usable, covering any cases of instance and application provisioning. It allows for collecting status information that can be displayed in the subscription details in the marketplace portal. The OSCM shell adapter supports for gathering event data of cloud service consumption. This allows the supplier to charge back the usage costs with respective event price models.
+The OSCM shell controller is a shell based framework adapter for integrating OSCM with any type of cloud. It is flexibly usable, covering any cases of instance and application provisioning. It allows for provisioning, deprovising, execting operations and querying status information that can be displayed in the subscription details view from the marketplace portal. Furthermore, the OSCM shell controller supports for gathering event data of cloud service consumption. This allows the supplier to charge back  the usage costs with respective event price models.
 
 # Quick Start
 This quick start guide is intended to help you getting started with OSCM shell controller.
