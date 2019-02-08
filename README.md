@@ -1,28 +1,31 @@
 [![Build status](https://travis-ci.org/servicecatalog/oscm-app-shell.svg?branch=master)](https://travis-ci.org/servicecatalog/oscm-app-shell)
 [![codecov](https://codecov.io/gh/servicecatalog/oscm-app-shell/branch/master/graph/badge.svg)](https://codecov.io/gh/servicecatalog/oscm-app-shell)
 
-# Quick start using oscm-app-shell controller
-This is a quick start guide intended to help you start using app-shell controller with OSCM
+# What is it?
+The OSCM shell controller is a shell based framework adapter that can be used to integrate OSCM with any type of cloud. It is flexibly usable, covering any cases of instance and application provisioning. It allows for collecting status information that can be displayed in the subscription details in the marketplace portal. The OSCM shell adapter supports for gathering event data of cloud service consumption. This allows the supplier to charge back the usage costs with respective event price models.
 
-## Deploying scripts into container
-The oscm-app-shell controller is working based on shell scripts execution. Those scripts are defined within the [technical service](https://github.com/servicecatalog/oscm-app-shell/blob/master/src/main/resources/TechnicalService.xml) parameters either accessible localy or externaly with url. To get more details about how to mount the script so that they can be used by shell-controller, please refer to the part of oscm-dockerbuild repository [description](https://github.com/servicecatalog/oscm-dockerbuild#import-local-shell-scripts-for-oscm-app-shell-component) related to that topic.
+# Quick Start
+This quick start guide is intended to help you getting started with OSCM shell controller.
+
+## Deploying Scripts 
+The oscm shell controller is based on shell script execution. The script files are expected in a shared folder on the docker host and mounted in the oscm-app container. Each script has to be defined with a [technical service parameter](https://github.com/servicecatalog/oscm-app-shell/blob/master/src/main/resources/TechnicalService.xml) in order to connect it with the controller. Check-out [this description](https://github.com/servicecatalog/oscm-dockerbuild#import-local-shell-scripts-for-oscm-app-shell-component) for more details about how to mount the scripts in the container.
 
 ## Logging
-In case of more details regarding scripts execution are needed, the controller provides it with the logfile. The logfile is located inside oscm-app container, and can be inspected by checking `/opt/apache-tomee/logs/app-shell.log` file.
+The controller provides for logging detailed information of scripts execution. The logfile is located inside oscm-app container, and can be inspected by checking `/opt/apache-tomee/logs/app-shell.log` file.
 
-## Script execution result
-So that shell script used with app-shell related service is executed properly, it must fulfill a few rules which must be respected:
+## Script Format and Execution Result
+The provided shell scripts need to fulfill a few rules:
 
-1. It must result with valid JSON object followed by "**END_OF_SCRIPT**" string value.
-2. It must result with **exactly one** JSON object.
-3. JSON result must consists of following fields:
-   * status - **required**, must contain only "**ok**" or "**error**",
-   * message - **required**, should contain information related to the script execution which is delivered to the user,
-   * data - **optional**, should contain data which is used after the script is executed, valid fields inside are accessInfo and output (HTML data for status script),
-   * usageData - **optional**, used in usage data script for gathering billable events, contains array of events made of eventId and multiplier fields.
+1. The script response has to contain a valid JSON object followed by "**END_OF_SCRIPT**" string value
+2. It must result with **exactly one** JSON object
+3. The JSON object must consist of following fields:
+   * status - **required**, can contain only "**ok**" or "**error**",
+   * message - **required**, is supposed to contain useful information related to the script execution and presented to the user
+   * data - **optional**, contains result data which is processed after the script is executed. Valid sub fields: ```accessInfo``` and ```output```, both supporting HTML and plain text. ```output``` is expected in response of status script. 
+   * usageData - **optional**, expected in response of usage data script for gathering billable events, contains array of events composed of ```eventId``` and ```multiplier``` field according the technical service definition.
    
-   Simple json response example:
-
+Simple JSON response example:
+```json   
    {
      "status": "ok",
      "message": "Script executed successfully",
@@ -45,5 +48,8 @@ So that shell script used with app-shell related service is executed properly, i
        }
      ]
    }
+```
 
-Please refer to scripts examples directory https://github.com/servicecatalog/oscm-app-shell/tree/master/src/main/resources/sample_scripts to get familiar with both valid and invalid script samples.
+More information on possible script usage and expected format can be found in [these examples](https://github.com/servicecatalog/oscm-app-shell/tree/master/src/main/resources/sample_scripts).
+
+Enjoy it!
