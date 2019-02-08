@@ -2,11 +2,14 @@
 [![codecov](https://codecov.io/gh/servicecatalog/oscm-app-shell/branch/master/graph/badge.svg)](https://codecov.io/gh/servicecatalog/oscm-app-shell)
 
 # What is it?
-The OSCM shell controller is a script based framework adapter for integrating OSCM with any type of cloud. It is flexibly usable, covering any cases of instance and application provisioning. This controller allows for modifying, provisioning and deprovisioning of cloud applications and instances, executing service operations, assigning and deassigning users and querying detailed status information. The latter is accessible for privileged users in the subscription details view in the marketplace portal. 
+The OSCM shell controller is a script based framework adapter for integrating OSCM with any type of cloud. 
+
+It is flexibly usable, covering any cases of instance and application provisioning. This controller allows for modifying, provisioning and deprovisioning of cloud applications and instances, executing service operations, assigning and deassigning users and querying detailed status information. The latter is accessible for privileged users in the subscription details view in the marketplace portal. 
+
 Furthermore, the OSCM shell controller supports for gathering event data of cloud service consumption. This enables the supplier to charge back the usage costs by using respective event price models.
 
 # Quick Start
-This quick start guide is intended to help you getting started with OSCM shell controller.
+This quick start guide is intended to help you getting started with OSCM shell controller. The OSCM shell controller is deployed together with OSCM. Instructions for installing OSCM can be found in the [readme of the oscm-deployer](https://hub.docker.com/r/servicecatalog/oscm-deployer).
 
 ## Deploying Scripts 
 The oscm shell controller is based on shell script execution. The script files are expected in a shared folder on the docker host and mounted in the oscm-app container. Each script has to be defined with a [technical service parameter](https://github.com/servicecatalog/oscm-app-shell/blob/master/src/main/resources/TechnicalService.xml) in order to connect it with the controller. 
