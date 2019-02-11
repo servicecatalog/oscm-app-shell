@@ -12,8 +12,8 @@ Furthermore, the OSCM shell controller supports for gathering event data of clou
 This quick start guide is intended to help you getting started with OSCM shell controller. This controller is deployed together with OSCM. Instructions for installing OSCM can be found in the [readme of the oscm-deployer](https://hub.docker.com/r/servicecatalog/oscm-deployer).
 
 ## Deploying Scripts 
-The OSCM shell controller is based on shell script execution. The script files are expected in a shared folder on the docker host and mounted in the oscm-app container. Each script has to be defined with a [technical service parameter](https://github.com/servicecatalog/oscm-app-shell/blob/master/src/main/resources/TechnicalService.xml) in order to connect it with the controller. 
-Check-out [this description](https://github.com/servicecatalog/oscm-dockerbuild#import-local-shell-scripts-for-oscm-app-shell-component) for more details about how to mount the scripts into the oscm-app container.
+The OSCM shell controller is based on shell script execution. The script files are expected in a shared folder on the docker host and mounted in the oscm-app container. Each script has to be defined with a [technical service parameter](https://github.com/servicecatalog/oscm-app-shell/blob/master/src/main/resources/TechnicalService.xml#L35-L65) in order to connect it with the controller. 
+Check-out [this description](https://github.com/servicecatalog/oscm-dockerbuild#import-scripts-for-the-shell-controller-oscm-app-shell) for more details about how to mount the scripts into the oscm-app container.
 
 ## Logging
 The controller provides for logging detailed information of scripts execution. The logfile is located inside oscm-app container, and can be inspected by checking `/opt/apache-tomee/logs/app-shell.log` file.
