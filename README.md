@@ -9,10 +9,10 @@ It is flexibly usable, covering any cases of instance and application provisioni
 Furthermore, the OSCM shell controller supports for gathering event data of cloud service consumption. This enables the supplier to charge back the usage costs by using respective event price models.
 
 # Quick Start
-This quick start guide is intended to help you getting started with OSCM shell controller. The OSCM shell controller is deployed together with OSCM. Instructions for installing OSCM can be found in the [readme of the oscm-deployer](https://hub.docker.com/r/servicecatalog/oscm-deployer).
+This quick start guide is intended to help you getting started with OSCM shell controller. This controller is deployed together with OSCM. Instructions for installing OSCM can be found in the [readme of the oscm-deployer](https://hub.docker.com/r/servicecatalog/oscm-deployer).
 
 ## Deploying Scripts 
-The oscm shell controller is based on shell script execution. The script files are expected in a shared folder on the docker host and mounted in the oscm-app container. Each script has to be defined with a [technical service parameter](https://github.com/servicecatalog/oscm-app-shell/blob/master/src/main/resources/TechnicalService.xml) in order to connect it with the controller. 
+The OSCM shell controller is based on shell script execution. The script files are expected in a shared folder on the docker host and mounted in the oscm-app container. Each script has to be defined with a [technical service parameter](https://github.com/servicecatalog/oscm-app-shell/blob/master/src/main/resources/TechnicalService.xml) in order to connect it with the controller. 
 Check-out [this description](https://github.com/servicecatalog/oscm-dockerbuild#import-local-shell-scripts-for-oscm-app-shell-component) for more details about how to mount the scripts into the oscm-app container.
 
 ## Logging
