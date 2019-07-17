@@ -76,39 +76,40 @@ public class ShellResultTest {
         assertTrue(usageData.stream().allMatch(event -> 100 == event.getMultiplier()));
     }
     
+    
     @Test
-	public void testShellResult_missingUsageData() throws Exception {
+    public void testShellResult_missingUsageData() throws Exception {
 
-		// when
-		String jsonOutput = getJSONFromFile("sample_scripts/no_usagedata.json");
+    	// when
+    	String jsonOutput = getJSONFromFile("sample_scripts/no_usagedata.json");
 
-		// when
-		Gson json = new Gson();
-		ShellResult shellResult = json.fromJson(jsonOutput, ShellResult.class);
-		Set<ShellResultUsageData> usageData = shellResult.getUsageData();
+    	// when
+    	Gson json = new Gson();
+    	ShellResult shellResult = json.fromJson(jsonOutput, ShellResult.class);
+    	Set<ShellResultUsageData> usageData = shellResult.getUsageData();
 
-		// then
-		assertNotNull(usageData);
-		ShellResultData data = shellResult.getData().get();
-		assertEquals(0, usageData.size());
-	}
-	
-	@Test
-	public void testShellResult_emptyUsageData() throws Exception {
+    	// then
+    	assertNotNull(usageData);
+    	ShellResultData data = shellResult.getData().get();
+    	assertEquals(0, usageData.size());
+    }
 
-		// when
-		String jsonOutput = getJSONFromFile("sample_scripts/empty_usagedata.json");
+    @Test
+    public void testShellResult_emptyUsageData() throws Exception {
 
-		// when
-		Gson json = new Gson();
-		ShellResult shellResult = json.fromJson(jsonOutput, ShellResult.class);
-		Set<ShellResultUsageData> usageData = shellResult.getUsageData();
+    	// when
+    	String jsonOutput = getJSONFromFile("sample_scripts/empty_usagedata.json");
 
-		// then
-		assertNotNull(usageData);
-		ShellResultData data = shellResult.getData().get();
-		assertEquals(0, usageData.size());
-	}
+    	// when
+    	Gson json = new Gson();
+    	ShellResult shellResult = json.fromJson(jsonOutput, ShellResult.class);
+    	Set<ShellResultUsageData> usageData = shellResult.getUsageData();
+
+    	// then
+    	assertNotNull(usageData);
+    	ShellResultData data = shellResult.getData().get();
+    	assertEquals(0, usageData.size());
+    }
 	
     private String getJSONFromFile(String fileName) throws IOException, URISyntaxException {
 
