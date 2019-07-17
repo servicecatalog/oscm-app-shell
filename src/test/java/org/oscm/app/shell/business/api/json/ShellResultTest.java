@@ -21,6 +21,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class ShellResultTest {
@@ -74,7 +75,42 @@ public class ShellResultTest {
         assertTrue(usageData.stream().allMatch(event -> EVENT_DISK.equals(event.getEventId())));
         assertTrue(usageData.stream().allMatch(event -> 100 == event.getMultiplier()));
     }
+    
+    
+    @Test
+    public void testShellResult_missingUsageData() throws Exception {
 
+    	// when
+    	String jsonOutput = getJSONFromFile("sample_scripts/no_usagedata.json");
+
+    	// when
+    	Gson json = new Gson();
+    	ShellResult shellResult = json.fromJson(jsonOutput, ShellResult.class);
+    	Set<ShellResultUsageData> usageData = shellResult.getUsageData();
+
+    	// then
+    	assertNotNull(usageData);
+    	ShellResultData data = shellResult.getData().get();
+    	assertEquals(0, usageData.size());
+    }
+
+    @Test
+    public void testShellResult_emptyUsageData() throws Exception {
+
+    	// when
+    	String jsonOutput = getJSONFromFile("sample_scripts/empty_usagedata.json");
+
+    	// when
+    	Gson json = new Gson();
+    	ShellResult shellResult = json.fromJson(jsonOutput, ShellResult.class);
+    	Set<ShellResultUsageData> usageData = shellResult.getUsageData();
+
+    	// then
+    	assertNotNull(usageData);
+    	ShellResultData data = shellResult.getData().get();
+    	assertEquals(0, usageData.size());
+    }
+	
     private String getJSONFromFile(String fileName) throws IOException, URISyntaxException {
 
         String lineSeparator = System.getProperty("line.separator");

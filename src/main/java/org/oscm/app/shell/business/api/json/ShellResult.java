@@ -8,6 +8,7 @@
 
 package org.oscm.app.shell.business.api.json;
 
+import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
 
@@ -52,7 +53,7 @@ public class ShellResult {
     }
 
     public Set<ShellResultUsageData> getUsageData() {
-        return usageData;
+        return usageData != null ? usageData : Collections.emptySet();
     }
 
     public void setUsageData(Set<ShellResultUsageData> usageData) {

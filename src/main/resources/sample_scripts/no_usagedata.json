@@ -1,0 +1,8 @@
+{
+  "status": "ok",
+  "message": "Script executed successfully",
+  "data": {
+    "output": "Custom output for the status tab",
+    "accessInfo": "<a href=\"http://accessInfo.url\">http://accessInfo.url </a>"
+  }
+}
