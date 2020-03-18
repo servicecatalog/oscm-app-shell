@@ -10,8 +10,8 @@ package org.oscm.app.shell;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.PropertyConfigurator;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.LoggerContext;
 import org.oscm.app.v2_0.intf.ControllerAccess;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,9 +30,11 @@ public class Initializer {
 
     private static final Logger LOG = LoggerFactory.getLogger(Initializer.class);
 
-    private String LOG4J_TEMPLATE = "log4j.properties.template";
+    private String LOG4J_TEMPLATE = "log4j2.properties.template";
 
     private long TIMER_DELAY_VALUE = 60000;
+
+    private static final String CATALINA_HOME = "catalina.home";
 
     @Resource
     private TimerService timerService;
@@ -69,7 +71,7 @@ public class Initializer {
     @PostConstruct
     private void postConstruct() {
         try {
-            String instanceRoot = System.getProperty("catalina.home");
+            String instanceRoot = System.getProperty(CATALINA_HOME);
             if (instanceRoot != null) {
                 File root = new File(instanceRoot);
                 if (root.isDirectory()) {
@@ -86,7 +88,7 @@ public class Initializer {
                     logFile = null;
                 }
             } else {
-                LOG.error("Failed to initialize log file: missing system property 'com.sun.aas.instanceRoot'");
+                LOG.error("Failed to initialize log file: missing system property '"+CATALINA_HOME+"'");
             }
         } catch (Exception e) {
             LOG.error("Failed to initialize log file", e);
@@ -123,11 +125,12 @@ public class Initializer {
 
     void handleOnChange(File logFile) {
         try {
-            long lastModif = logFile.lastModified();
-            if (lastModif > logFileLastModified) {
-                logFileLastModified = lastModif;
+            long lastModified = logFile.lastModified();
+            if (lastModified > logFileLastModified) {
+                logFileLastModified = lastModified;
                 LOG.debug("Reload log4j configuration from " + logFile.getAbsolutePath());
-                configurePropertyConfigurator(logFile);
+                final LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
+                ctx.setConfigLocation(logFile.toURI());
                 logFileWarning = false;
             }
         } catch (Exception e) {
@@ -136,9 +139,5 @@ public class Initializer {
                 LOG.error(logFile.getAbsolutePath(), e);
             }
         }
-    }
-
-    void configurePropertyConfigurator(File logFile) {
-        new PropertyConfigurator().doConfigure(logFile.getAbsolutePath(), LogManager.getLoggerRepository());
     }
 }
