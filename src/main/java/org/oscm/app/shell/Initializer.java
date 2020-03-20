@@ -75,7 +75,7 @@ public class Initializer {
             if (instanceRoot != null) {
                 File root = new File(instanceRoot);
                 if (root.isDirectory()) {
-                    String filePath = "/conf/log4j." + controllerAccess.getControllerId() + ".properties";
+                    String filePath = "/conf/log4j2." + controllerAccess.getControllerId() + ".properties";
                     logFile = new File(root, filePath);
                     if (!logFile.exists()) {
                         publishTemplateFile();
