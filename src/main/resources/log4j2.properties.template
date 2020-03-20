@@ -20,10 +20,5 @@ logger.rolling.level = info
 logger.rolling.additivity = false
 logger.rolling.appenderRef.rolling.ref = ShellRollingAppender
 
-logger.rolling.name = org.oscm.app.statemachine
-logger.rolling.level = info
-logger.rolling.additivity = false
-logger.rolling.appenderRef.rolling.ref = ShellRollingAppender
-
 rootLogger.level = info
 rootLogger.appenderRef.stdout.ref = STDOUT
