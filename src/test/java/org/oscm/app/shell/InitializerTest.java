@@ -67,7 +67,7 @@ public class InitializerTest {
 
         //given
         when(logFile.lastModified()).thenReturn((long) 1000);
-        doNothing().when(initializer).configurePropertyConfigurator(any(File.class));
+        //doNothing().when(initializer).configurePropertyConfigurator(any(File.class));
 
         //when
         initializer.handleOnChange(logFile);
@@ -82,7 +82,7 @@ public class InitializerTest {
 
         //given
         when(logFile.lastModified()).thenThrow(Exception.class);
-        doNothing().when(initializer).configurePropertyConfigurator(any(File.class));
+        //doNothing().when(initializer).configurePropertyConfigurator(any(File.class));
 
         //when
         initializer.handleOnChange(logFile);
