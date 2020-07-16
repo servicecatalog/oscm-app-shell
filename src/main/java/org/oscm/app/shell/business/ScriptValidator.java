@@ -8,6 +8,7 @@
 
 package org.oscm.app.shell.business;
 
+import org.oscm.app.shell.business.script.Script;
 import org.oscm.app.v2_0.exceptions.APPlatformException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,7 +63,7 @@ public class ScriptValidator {
         final String interactiveFlag = "^((?![#]).)*[a-zA-Z0-9$,.\\s|]--interactive\\s?";
         final String[] patternList = {readCommand, interactiveFlag};
 
-        String content = script.getContent();
+        String content = script.getScriptContent();
 
         boolean found = false;
 
@@ -76,19 +77,19 @@ public class ScriptValidator {
         }
 
         if (found) {
-            LOGGER.error("Script " + script.getPath() + " contains an interactive command.");
-            throw new APPlatformException("Script " + script.getPath() +
+            LOGGER.error("Script " + script.getScriptPath() + " contains an interactive command.");
+            throw new APPlatformException("Script " + script.getScriptPath() +
                     " contains an interactive command.");
         }
     }
 
     public void validateEndOfScript(Script script) throws APPlatformException {
 
-        String scriptContent = script.getContent();
+        String scriptContent = script.getScriptContent();
 
         if (!scriptContent.contains("END_OF_SCRIPT")) {
             throw new APPlatformException(
-                    "Missing output \"END_OF_SCRIPT\" in " + script.getPath());
+                    "Missing output \"END_OF_SCRIPT\" in " + script.getScriptPath());
         }
     }
 }

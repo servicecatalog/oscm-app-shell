@@ -10,7 +10,7 @@ package org.oscm.app.shell.business.actions;
 
 import org.oscm.app.shell.ScriptLogger;
 import org.oscm.app.shell.business.Configuration;
-import org.oscm.app.shell.business.Script;
+import org.oscm.app.shell.business.script.Script;
 import org.oscm.app.shell.business.api.*;
 import org.oscm.app.shell.business.api.json.ShellResult;
 import org.oscm.app.v2_0.data.InstanceStatus;
@@ -45,7 +45,7 @@ public class Actions {
         initializeShellPool();
         Configuration config = new Configuration(settings);
 
-        ShellCommand command = new ShellCommand(script.getContent());
+        ShellCommand command = new ShellCommand(script.getScriptContent());
         ScriptLogger.logScriptCommand(command);
         String consoleFile = config.getSetting(CONSOLE_FILE);
 

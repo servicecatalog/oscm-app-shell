@@ -9,6 +9,7 @@
 package org.oscm.app.shell.business;
 
 import org.junit.Test;
+import org.oscm.app.shell.business.script.Script;
 import org.oscm.app.v2_0.data.ProvisioningSettings;
 import org.oscm.app.v2_0.data.ServiceUser;
 import org.oscm.app.v2_0.data.Setting;
@@ -144,7 +145,7 @@ public class ScriptValidatorTest {
         String filename = "file.name";
         Script script = spy(new Script(filename));
         doReturn(getValidScriptContent()).when(script).loadLocalScript(anyString());
-        doReturn(getValidScriptContent()).when(script).getContent();
+        doReturn(getValidScriptContent()).when(script).getScriptContent();
         return script;
     }
 
@@ -153,7 +154,7 @@ public class ScriptValidatorTest {
         String filename = "file.name";
         Script script = spy(new Script(filename));
         doReturn(getInvalidScriptContent()).when(script).loadLocalScript(anyString());
-        doReturn(getInvalidScriptContent()).when(script).getContent();
+        doReturn(getInvalidScriptContent()).when(script).getScriptContent();
         return script;
     }
 

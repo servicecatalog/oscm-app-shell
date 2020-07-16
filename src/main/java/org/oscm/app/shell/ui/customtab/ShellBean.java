@@ -8,7 +8,7 @@
 package org.oscm.app.shell.ui.customtab;
 
 import org.apache.commons.codec.binary.Base64;
-import org.oscm.app.shell.business.Script;
+import org.oscm.app.shell.business.script.Script;
 import org.oscm.app.shell.business.api.*;
 import org.oscm.app.shell.business.api.json.ShellResult;
 import org.oscm.app.shell.business.api.json.ShellResultData;
@@ -91,10 +91,10 @@ public class ShellBean implements Serializable {
             script.loadContent();
             script.insertProvisioningSettings(settings);
 
-            LOGGER.debug("Status script details: " + script.getContent());
+            LOGGER.debug("Status script details: " + script.getScriptContent());
 
             ShellCommand command = new ShellCommand();
-            command.init(script.getContent());
+            command.init(script.getScriptContent());
 
             shell.lockShell(instanceId);
             shell.runCommand(instanceId, command);

@@ -14,7 +14,7 @@ import static org.oscm.app.shell.business.api.ShellStatus.RUNNING;
 import java.util.Set;
 
 import org.oscm.app.shell.business.ConfigurationKey;
-import org.oscm.app.shell.business.Script;
+import org.oscm.app.shell.business.script.Script;
 import org.oscm.app.shell.business.api.Shell;
 import org.oscm.app.shell.business.api.ShellCommand;
 import org.oscm.app.shell.business.api.ShellResultException;
@@ -51,7 +51,7 @@ public class UsageConnector {
             Script script = getUsageScript(settings);
 
             ShellCommand command = new ShellCommand();
-            command.init(script.getContent());
+            command.init(script.getScriptContent());
 
             String instanceId = settings.getParameters().get("INSTANCE_ID")
                     .getValue();

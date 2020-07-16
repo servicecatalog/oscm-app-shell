@@ -81,6 +81,7 @@ public class Shell implements AutoCloseable {
         if (psconsole == null || psconsole.isEmpty()) {
             psconsole = "sh";
         } else {
+            psconsole = "pwsh -Command -";
             // psconsole = "sh -PSConsoleFile \"" + psconsole + "\"
             // -ExecutionPolicy Bypass -NoExit -";
         }

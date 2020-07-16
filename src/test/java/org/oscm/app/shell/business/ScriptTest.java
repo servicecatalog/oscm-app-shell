@@ -10,7 +10,7 @@ package org.oscm.app.shell.business;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.mockito.internal.util.reflection.Whitebox;
+import org.oscm.app.shell.business.script.Script;
 import org.oscm.app.v2_0.data.ProvisioningSettings;
 import org.oscm.app.v2_0.data.ServiceUser;
 import org.oscm.app.v2_0.data.Setting;
@@ -64,7 +64,7 @@ public class ScriptTest {
         String result;
         for (int i = 0; i < settingList.size() - 1; i++) {
             parameters.put("SM_STATE_MACHINE", new Setting("SM_STATE_MACHINE", settingList.get(i).getValue()));
-            result = script.getScriptType(provisioningSettings);
+            result = script.getScriptActionType(provisioningSettings);
 
             // then
             Assert.assertEquals(expectedList.get(i), result);
@@ -83,7 +83,7 @@ public class ScriptTest {
         when(provisioningSettings.getParameters()).thenReturn(parameters);
 
         //when
-        script.getScriptType(provisioningSettings);
+        script.getScriptActionType(provisioningSettings);
 
         //then
         //exception is thrown
@@ -150,12 +150,12 @@ public class ScriptTest {
         script.insertProvisioningSettings(settings);
 
         // then
-        assertTrue(script.getContent().contains("key=\"value\""));
-        assertTrue(script.getContent().contains("INSTANCE_ID=\"" + instanceId + "\""));
-        assertTrue(script.getContent().contains("SUBSCRIPTION_ID=\"" + subscriptionId + "\""));
-        assertTrue(script.getContent().contains("REQUESTING_ORGANIZATION_ID=\"" + organizationId + "\""));
-        assertTrue(script.getContent().contains("REQUESTING_USER=\"" + userId + "\""));
-        assertTrue(script.getContent().contains("REFERENCE_ID=\"" + referenceId + "\""));
+        assertTrue(script.getScriptContent().contains("key=\"value\""));
+        assertTrue(script.getScriptContent().contains("INSTANCE_ID=\"" + instanceId + "\""));
+        assertTrue(script.getScriptContent().contains("SUBSCRIPTION_ID=\"" + subscriptionId + "\""));
+        assertTrue(script.getScriptContent().contains("REQUESTING_ORGANIZATION_ID=\"" + organizationId + "\""));
+        assertTrue(script.getScriptContent().contains("REQUESTING_USER=\"" + userId + "\""));
+        assertTrue(script.getScriptContent().contains("REFERENCE_ID=\"" + referenceId + "\""));
     }
 
     @Test
@@ -180,7 +180,7 @@ public class ScriptTest {
         script.insertOperationId(configuration);
 
         // then
-        assertTrue(script.getContent().contains("OPERATION=\"" + operationId + "\""));
+        assertTrue(script.getScriptContent().contains("OPERATION=\"" + operationId + "\""));
     }
 
     private String getValidScript() {

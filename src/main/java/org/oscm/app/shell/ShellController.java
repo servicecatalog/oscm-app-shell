@@ -16,6 +16,7 @@ import org.oscm.app.shell.business.api.ShellPool;
 import org.oscm.app.shell.business.api.ShellStatus;
 import org.oscm.app.shell.business.api.json.ShellResult;
 import org.oscm.app.shell.business.interceptor.ProvisioningSettingsLogger;
+import org.oscm.app.shell.business.script.Script;
 import org.oscm.app.shell.business.usagedata.UsageHandler;
 import org.oscm.app.statemachine.StateMachine;
 import org.oscm.app.statemachine.api.StateMachineException;
@@ -136,7 +137,7 @@ public class ShellController implements APPlatformController {
             script.loadContent();
             script.insertProvisioningSettings(config.getProvisioningSettings());
 
-            ShellCommand command = new ShellCommand(script.getContent());
+            ShellCommand command = new ShellCommand(script.getScriptContent());
             shell.lockShell(instanceId);
             shell.runCommand(instanceId, command);
 

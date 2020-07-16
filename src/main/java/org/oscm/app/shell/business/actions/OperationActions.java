@@ -11,7 +11,7 @@ package org.oscm.app.shell.business.actions;
 import org.oscm.app.shell.ScriptLogger;
 import org.oscm.app.shell.business.Configuration;
 import org.oscm.app.shell.business.ConfigurationKey;
-import org.oscm.app.shell.business.Script;
+import org.oscm.app.shell.business.script.Script;
 import org.oscm.app.statemachine.api.StateMachineAction;
 import org.oscm.app.v2_0.data.InstanceStatus;
 import org.oscm.app.v2_0.data.ProvisioningSettings;
@@ -42,7 +42,7 @@ public class OperationActions {
             script.insertOperationId(config);
             script.insertProvisioningSettings(settings);
             ScriptLogger.logScriptConfiguration(config, ConfigurationKey.OPERATIONS_SCRIPT.name(),
-                    script.getContent());
+                    script.getScriptContent());
             return getActions().executeScript(instanceId, settings, result, script);
         } catch (Exception e) {
             LOG.error("Couldn't execute shell script", e);

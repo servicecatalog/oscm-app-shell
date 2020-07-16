@@ -1,8 +1,8 @@
 /*******************************************************************************
  *
- *  Copyright FUJITSU LIMITED 2018                                           
+ *  Copyright FUJITSU LIMITED 2018
  *
- *  Creation Date: Aug 2, 2017                                                      
+ *  Creation Date: Aug 2, 2017
  *
  *******************************************************************************/
 
@@ -10,16 +10,12 @@ package org.oscm.app.shell.business.actions;
 
 import org.oscm.app.shell.ScriptLogger;
 import org.oscm.app.shell.business.Configuration;
-import org.oscm.app.shell.business.ConfigurationKey;
-import org.oscm.app.shell.business.Script;
+import org.oscm.app.shell.business.script.Script;
 import org.oscm.app.statemachine.api.StateMachineAction;
 import org.oscm.app.v2_0.data.InstanceStatus;
 import org.oscm.app.v2_0.data.ProvisioningSettings;
-import org.oscm.app.v2_0.data.Setting;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.HashMap;
 
 import static org.oscm.app.shell.business.ConfigurationKey.SCRIPT_FILE;
 import static org.oscm.app.shell.business.ConfigurationKey.SM_ERROR_MESSAGE;
@@ -40,11 +36,12 @@ public class ProvisioningActions {
         Configuration config = new Configuration(settings);
 
         try {
-            Script script = new Script(config.getSetting(SCRIPT_FILE));
-            script.loadContent();
+            String scriptFile = config.getSetting(SCRIPT_FILE);
+            Script script = Script.getInstance(scriptFile);
+            script.initialize();
             script.insertProvisioningSettings(settings);
-            ScriptLogger.logScriptConfiguration(config, script.getScriptType(settings),
-                    script.getContent());
+            ScriptLogger.logScriptConfiguration(config, script.getScriptActionType(settings),
+                    script.getScriptContent());
 
             return getActions().executeScript(instanceId, settings, result, script);
 
