@@ -46,6 +46,7 @@ public class Actions {
         Configuration config = new Configuration(settings);
 
         ShellCommand command = new ShellCommand(script.getScriptContent());
+        command.setScriptType(script.getScriptType());
         ScriptLogger.logScriptCommand(command);
         String consoleFile = config.getSetting(CONSOLE_FILE);
 

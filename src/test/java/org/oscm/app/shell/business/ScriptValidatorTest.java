@@ -142,18 +142,16 @@ public class ScriptValidatorTest {
 
     private Script getValidScript() throws Exception {
 
-        String filename = "file.name";
-        Script script = spy(new Script(filename));
-        doReturn(getValidScriptContent()).when(script).loadLocalScript(anyString());
+        String filename = "file.sh";
+        Script script = spy(Script.getInstance(filename));
         doReturn(getValidScriptContent()).when(script).getScriptContent();
         return script;
     }
 
     private Script getInvalidScript() throws Exception {
 
-        String filename = "file.name";
-        Script script = spy(new Script(filename));
-        doReturn(getInvalidScriptContent()).when(script).loadLocalScript(anyString());
+        String filename = "file.sh";
+        Script script = spy(Script.getInstance(filename));
         doReturn(getInvalidScriptContent()).when(script).getScriptContent();
         return script;
     }

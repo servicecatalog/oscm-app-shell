@@ -12,6 +12,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.internal.util.reflection.Whitebox;
 import org.oscm.app.shell.business.api.json.ShellResult;
+import org.oscm.app.shell.business.script.ScriptType;
 
 import java.util.ArrayList;
 
@@ -26,7 +27,7 @@ public class ShellPoolTest {
         //given
         ShellCommand shellCommand = new ShellCommand();
         shellCommand.addOutputLine("output string");
-        Shell shell = new Shell();
+        Shell shell = new Shell(ScriptType.SHELL);
         Whitebox.setInternalState(shell, "command", shellCommand);
         shell.setLockId("100");
         ArrayList<Shell> shellPoolList = new ArrayList<>();
@@ -47,7 +48,7 @@ public class ShellPoolTest {
         //given
         ShellCommand shellCommand = new ShellCommand();
         shellCommand.addOutputLine("output string");
-        Shell shell = new Shell();
+        Shell shell = new Shell(ScriptType.SHELL);
         Whitebox.setInternalState(shell, "command", shellCommand);
         shell.setLockId("100");
         ArrayList<Shell> shellPoolList = new ArrayList<>();
@@ -71,7 +72,7 @@ public class ShellPoolTest {
         ArrayList<String> errorOutput = new ArrayList<>();
         errorOutput.add("Error output");
         Whitebox.setInternalState(shellCommand, "errorOutput", errorOutput);
-        Shell shell = new Shell();
+        Shell shell = new Shell(ScriptType.SHELL);
         Whitebox.setInternalState(shell, "command", shellCommand);
         shell.setLockId("100");
         ArrayList<Shell> shellPoolList = new ArrayList<>();
@@ -92,7 +93,7 @@ public class ShellPoolTest {
         //given
         ShellCommand shellCommand = new ShellCommand();
         shellCommand.addOutputLine("output string");
-        Shell shell = new Shell();
+        Shell shell = new Shell(ScriptType.SHELL);
         Whitebox.setInternalState(shell, "command", shellCommand);
         shell.setLockId("100");
         ArrayList<Shell> shellPoolList = new ArrayList<>();
@@ -114,7 +115,7 @@ public class ShellPoolTest {
         ShellCommand shellCommand = new ShellCommand();
         shellCommand.setReturnCode(SUCCESS);
         shellCommand.addOutputLine("output string");
-        Shell shell = new Shell();
+        Shell shell = new Shell(ScriptType.SHELL);
         Whitebox.setInternalState(shell, "command", shellCommand);
         shell.setLockId("100");
         ArrayList<Shell> shellPoolList = new ArrayList<>();
@@ -135,7 +136,7 @@ public class ShellPoolTest {
         //given
         ShellCommand shellCommand = new ShellCommand();
         shellCommand.addOutputLine("output string");
-        Shell shell = new Shell();
+        Shell shell = new Shell(ScriptType.SHELL);
         Whitebox.setInternalState(shell, "command", shellCommand);
         shell.setLockId("100");
         ArrayList<Shell> shellPoolList = new ArrayList<>();
@@ -159,7 +160,7 @@ public class ShellPoolTest {
         ArrayList<String> errorOutput = new ArrayList<>();
         errorOutput.add("Error output");
         Whitebox.setInternalState(shellCommand, "errorOutput", errorOutput);
-        Shell shell = new Shell();
+        Shell shell = new Shell(ScriptType.SHELL);
         Whitebox.setInternalState(shell, "command", shellCommand);
         shell.setLockId("100");
         ArrayList<Shell> shellPoolList = new ArrayList<>();
@@ -183,7 +184,7 @@ public class ShellPoolTest {
         ArrayList<String> errorOutput = new ArrayList<>();
         errorOutput.add("Error output");
         Whitebox.setInternalState(shellCommand, "errorOutput", errorOutput);
-        Shell shell = new Shell();
+        Shell shell = new Shell(ScriptType.SHELL);
         Whitebox.setInternalState(shell, "command", shellCommand);
         shell.setLockId("100");
         ArrayList<Shell> shellPoolList = new ArrayList<>();

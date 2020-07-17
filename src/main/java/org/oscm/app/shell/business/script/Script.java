@@ -40,6 +40,7 @@ public abstract class Script {
   private boolean external;
 
   String scriptFile;
+  ScriptType scriptType;
 
   public static Script getInstance(String scriptFile) throws Exception {
 
@@ -69,6 +70,10 @@ public abstract class Script {
 
   public String getScriptPath() {
     return scriptPath;
+  }
+
+  public ScriptType getScriptType() {
+    return scriptType;
   }
 
   public boolean isExternal() {
