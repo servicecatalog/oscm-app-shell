@@ -52,11 +52,12 @@ public abstract class Script {
   }
 
   public void initialize() throws Exception {
-    if (isExternalPath(scriptPath)) {
+    if (isExternalPath(scriptFile)) {
+      this.scriptPath = scriptFile;
       this.external = true;
       this.scriptContent = loadExternalScript(scriptPath);
     } else {
-      this.scriptPath = LOCAL_SCRIPT_LOCATION + scriptPath;
+      this.scriptPath = LOCAL_SCRIPT_LOCATION + scriptFile;
       this.external = false;
       this.scriptContent = loadLocalScript(scriptPath);
     }
