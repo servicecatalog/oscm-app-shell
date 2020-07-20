@@ -1,8 +1,8 @@
 /*******************************************************************************
  *
- * Copyright FUJITSU LIMITED 2019
+ *  Copyright FUJITSU LIMITED 2019
  *
- * Creation Date: 29.01.2019
+ *  Creation Date: 29.01.2019
  *
  *******************************************************************************/
 package org.oscm.app.shell.business.usagedata;

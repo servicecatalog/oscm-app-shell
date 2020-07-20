@@ -1,8 +1,8 @@
 /*******************************************************************************
  *
- * Copyright FUJITSU LIMITED 2018
+ *  Copyright FUJITSU LIMITED 2018
  *
- * Creation Date: Aug 2, 2017
+ *  Creation Date: Aug 2, 2017
  *
  *******************************************************************************/
 package org.oscm.app.shell.business.actions;

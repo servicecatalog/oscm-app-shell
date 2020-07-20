@@ -1,8 +1,8 @@
 /*******************************************************************************
  *
- * Copyright FUJITSU LIMITED 2018
+ *  Copyright FUJITSU LIMITED 2018
  *
- * Creation Date: 2017-10-17
+ *  Creation Date: 2017-10-17
  *
  *******************************************************************************/
 package org.oscm.app.shell.ui.customtab;
