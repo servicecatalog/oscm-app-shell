@@ -86,14 +86,14 @@ public class CopyrightTest {
             case "java":
             case "css":
             case "js":
-                checkFile(fileName, "*  Copyright FUJITSU LIMITED 201");
+                checkFile(fileName, "*  Copyright FUJITSU LIMITED 20");
                 break;
             case "xml":
             case "xhtml":
-                checkFile(fileName, "<!-- Copyright FUJITSU LIMITED 201");
+                checkFile(fileName, "<!-- Copyright FUJITSU LIMITED 20");
                 break;
             case "properties":
-                checkFile(fileName, "# Copyright FUJITSU LIMITED 201");
+                checkFile(fileName, "# Copyright FUJITSU LIMITED 20");
                 break;
             default:
         }

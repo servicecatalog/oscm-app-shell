@@ -14,6 +14,7 @@ import org.mockito.internal.util.reflection.Whitebox;
 import org.oscm.app.shell.business.api.json.ShellResult;
 import org.oscm.app.shell.business.api.json.ShellResultData;
 import org.oscm.app.shell.business.api.json.ShellResultUsageData;
+import org.oscm.app.shell.business.script.ScriptType;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -38,7 +39,7 @@ public class ShellTest {
     public void testUnlock() throws Exception {
 
         //given
-        Shell shell = new Shell();
+        Shell shell = new Shell(ScriptType.SHELL);
         shell.setLockId("100");
 
         //when
@@ -52,7 +53,7 @@ public class ShellTest {
     public void testIsLocked_returnFalse_ifNotLocked() throws Exception {
 
         //given
-        Shell shell = new Shell();
+        Shell shell = new Shell(ScriptType.SHELL);
         shell.setLockId(null);
 
         //when
@@ -66,7 +67,7 @@ public class ShellTest {
     public void testIsLocked_returnTrue_ifLocked() throws Exception {
 
         //given
-        Shell shell = new Shell();
+        Shell shell = new Shell(ScriptType.SHELL);
         shell.setLockId("100");
 
         //when
@@ -80,7 +81,7 @@ public class ShellTest {
     public void testIsLockedFor_returnEmptyString_ifNotLocked() throws Exception {
 
         //given
-        Shell shell = new Shell();
+        Shell shell = new Shell(ScriptType.SHELL);
         shell.setLockId(null);
 
         //when
@@ -94,7 +95,7 @@ public class ShellTest {
     public void testIsLockedFor_returnLockId_ifLocked() throws Exception {
 
         //given
-        Shell shell = new Shell();
+        Shell shell = new Shell(ScriptType.SHELL);
         shell.setLockId("100");
 
         //when
@@ -108,7 +109,7 @@ public class ShellTest {
     public void testLockShell_returnsFalse_ifLockIdIsNotNull() throws Exception {
 
         //given
-        Shell shell = new Shell();
+        Shell shell = new Shell(ScriptType.SHELL);
         shell.setLockId("100");
 
         //when
@@ -122,7 +123,7 @@ public class ShellTest {
     public void testLockShell_returnsTrue_ifLockIdIsNull() throws Exception {
 
         //given
-        Shell shell = new Shell();
+        Shell shell = new Shell(ScriptType.SHELL);
         shell.setLockId(null);
         String lockId = "100";
 
@@ -140,7 +141,7 @@ public class ShellTest {
         //given
         ShellCommand shellCommand = mock(ShellCommand.class);
         BufferedWriter bufferedWriter = mock(BufferedWriter.class);
-        Shell shell = new Shell();
+        Shell shell = new Shell(ScriptType.SHELL);
         Whitebox.setInternalState(shell, "stdIn", bufferedWriter);
         shell.setLockId("100");
 
@@ -176,7 +177,7 @@ public class ShellTest {
         BufferedWriter stdInMock = mock(BufferedWriter.class);
         StreamGobbler stdOutMock = mock(StreamGobbler.class);
         StreamGobbler stdErrMock = mock(StreamGobbler.class);
-        Shell shell = new Shell();
+        Shell shell = new Shell(ScriptType.SHELL);
         Whitebox.setInternalState(shell, "stdIn", stdInMock);
         Whitebox.setInternalState(shell, "stdOut", stdOutMock);
         Whitebox.setInternalState(shell, "stdErr", stdErrMock);
@@ -199,7 +200,7 @@ public class ShellTest {
         BufferedWriter stdInMock = mock(BufferedWriter.class);
         StreamGobbler stdOutMock = mock(StreamGobbler.class);
         StreamGobbler stdErrMock = mock(StreamGobbler.class);
-        Shell shell = new Shell();
+        Shell shell = new Shell(ScriptType.SHELL);
         Whitebox.setInternalState(shell, "stdIn", stdInMock);
         Whitebox.setInternalState(shell, "stdOut", stdOutMock);
         Whitebox.setInternalState(shell, "stdErr", stdErrMock);
@@ -377,7 +378,7 @@ public class ShellTest {
 
     private Shell runScript(String scriptContent, String instanceId) throws Exception {
 
-        Shell shell = new Shell();
+        Shell shell = new Shell(ScriptType.SHELL);
         ShellCommand command = new ShellCommand(scriptContent);
 
         shell.lockShell(instanceId);

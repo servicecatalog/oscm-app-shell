@@ -8,6 +8,8 @@
 
 package org.oscm.app.shell.business.api;
 
+import org.oscm.app.shell.business.script.ScriptType;
+
 import java.util.ArrayList;
 
 /**
@@ -23,6 +25,7 @@ public class ShellCommand {
     private ShellStatus status;
 
     private String command;
+    private ScriptType scriptType;
 
     public ShellCommand() {
         output = new ArrayList<>();
@@ -40,6 +43,14 @@ public class ShellCommand {
         command = cmnd;
         output.clear();
         errorOutput.clear();
+    }
+
+    public ScriptType getScriptType() {
+        return scriptType;
+    }
+
+    public void setScriptType(ScriptType scriptType) {
+        this.scriptType = scriptType;
     }
 
     public String getCommand() {
