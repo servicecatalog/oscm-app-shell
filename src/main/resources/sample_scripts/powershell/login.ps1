@@ -1,4 +1,5 @@
-Function Check-Token{
+Function Check-Token
+{
     Param($AzureContext)
     $cacheItems = $azureContext.TokenCache.ReadItems()
     $tokenExpirationDate = $cacheItems.ExpiresOn.DateTime
@@ -6,9 +7,11 @@ Function Check-Token{
     return $tokenExpired
 }
 
-Function Check-AzureParam{
+Function Check-AzureParam
+{
     Param($AzureParameter, $AzureParameterName)
-    if($AzureParameter -eq $null){
+    if ($AzureParameter -eq $null)
+    {
         throw "Custom attribute $AzureParameterName is not defined"
     }
 }
@@ -16,7 +19,8 @@ Function Check-AzureParam{
 $ErrorActionPreference = 'Stop'
 $loginError = $false
 
-Try {
+Try
+{
     Check-AzureParam -AzureParameter $AzureApplicationId -AzureParameterName "AzureApplicationId"
     Check-AzureParam -AzureParameter $AzureTenantId -AzureParameterName "AzureTenantId"
     Check-AzureParam -AzureParameter $AzureSubscriptionId -AzureParameterName "AzureSubscriptionId"
@@ -24,26 +28,31 @@ Try {
 
     $azureContext = Get-AzContext
 
-    if($azureContext -eq $null -Or (Check-Token -AzureContext $azureContext)) {
+    if ($azureContext -eq $null -Or (Check-Token -AzureContext $azureContext))
+    {
         $password = ConvertTo-SecureString -String $AzureSecret -AsPlainText
         $credential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $AzureApplicationId, $password
         $connection = Connect-AzAccount -Credential $credential -Tenant $AzureTenantId -ServicePrincipal -WarningAction Ignore
+        $azureContext = Get-AzContext
     }
 
-    if($azureContext.Subscription.Id -ne $AzureSubscriptionId){
+    if ($azureContext.Subscription.Id -ne $AzureSubscriptionId)
+    {
         $logout = Logout-AzAccount
         throw "AzureSubscriptionId is invalid. Please check custom attribute value"
     }
 
-    if($azureContext.Tenant.Id -ne $AzureTenantId){
+    if ($azureContext.Tenant.Id -ne $AzureTenantId)
+    {
         $logout = Logout-AzAccount
         throw "AzureTenantId is invalid. Please check custom attribute value"
     }
 }
-Catch {
+Catch
+{
     $loginError = $true
     $errorCommand = $PSItem.InvocationInfo.MyCommand
-    $errorMsg = $_.Exception.Message -replace "'",""
-    Write-Output "{'status':'error','message':'$($errorCommand): $($errorMsg)'}"
+    $errorMsg = $_.Exception.Message -replace "'", ""
+    Write-Output "{'status':'error','message':'$( $errorCommand ): $( $errorMsg )'}"
     Write-Output "END_OF_SCRIPT"
 }
