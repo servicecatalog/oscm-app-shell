@@ -1,3 +1,5 @@
+<#This is authentication script which must be included at the begining of every other powershell script interacting with Microsoft Azure#>
+
 Function Check-Token
 {
     Param($AzureContext)

@@ -1,3 +1,5 @@
+<#Simple script for listing all jobs executed for given runbook#>
+
 . /opt/scripts/login.ps1
 if ($loginError -eq $true)
 {

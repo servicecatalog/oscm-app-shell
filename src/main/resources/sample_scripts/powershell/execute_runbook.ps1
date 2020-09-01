@@ -1,3 +1,5 @@
+<#Simple script for executing existing runbook within given context#>
+
 . /opt/scripts/login.ps1
 if ($loginError -eq $true)
 {
