@@ -8,11 +8,11 @@ if ($loginError -eq $true)
 
 Try
 {
-    $rg = "oscm-rg"
-    $aa = "oscm-aaa"
-    $runbook = "AzureAutomationTutorialScript"
+    Check-ServiceAzureParam -AzureParameter $AzureAutomationAccountName -AzureParameterName "AzureAutomationAccountName"
+    Check-ServiceAzureParam -AzureParameter $AzureResourceGroupName -AzureParameterName "AzureResourceGroupName"
+    Check-ServiceAzureParam -AzureParameter $AzureRunbookName -AzureParameterName "AzureRunbookName"
 
-    $runbook_exec = Start-AzAutomationRunbook -Name $runbook -ResourceGroupName $rg -AutomationAccountName $aa
+    $runbook_exec = Start-AzAutomationRunbook -Name $AzureRunbookName -ResourceGroupName $AzureResourceGroupName -AutomationAccountName $AzureAutomationAccountName
 
     Write-Output "{'status':'ok','message':'Script execution is successful'}"
     Write-Output "END_OF_SCRIPT"

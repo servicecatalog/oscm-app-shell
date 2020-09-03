@@ -8,11 +8,11 @@ if ($loginError -eq $true)
 
 Try
 {
-    $rg = "oscm-rg"
-    $aa = "oscm-aaa"
-    $runbook = "AzureAutomationTutorialScript"
+    Check-ServiceAzureParam -AzureParameter $AzureAutomationAccountName -AzureParameterName "AzureAutomationAccountName"
+    Check-ServiceAzureParam -AzureParameter $AzureResourceGroupName -AzureParameterName "AzureResourceGroupName"
+    Check-ServiceAzureParam -AzureParameter $AzureRunbookName -AzureParameterName "AzureRunbookName"
 
-    $jobs = Get-AzAutomationJob -ResourceGroupName $rg -AutomationAccountName $aa
+    $jobs = Get-AzAutomationJob -Name $AzureRunbookName -ResourceGroupName $AzureResourceGroupName -AutomationAccountName $AzureAutomationAccountName
     $jobsDetails = $jobs | ForEach-Object { Write-Output  "<p><span style=\'margin-left:30px;color:blue;width:400px\'>$( $_.Status )</span> started at: $( $_.StartTime )<br></p>" }
 
     Write-Output "{'status':'ok','message':'Script execution is successful', 'data': {'output':'Recent jobs of <b>$( $runbook )</b>  <br>$( $jobsDetails )'}}"

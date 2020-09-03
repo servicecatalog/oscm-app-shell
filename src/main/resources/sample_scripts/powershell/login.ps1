@@ -18,6 +18,15 @@ Function Check-AzureParam
     }
 }
 
+Function Check-ServiceAzureParam
+{
+    Param($AzureParameter, $AzureParameterName)
+    if ($AzureParameter -eq $null)
+    {
+        throw "Service parameter $AzureParameterName is not defined"
+    }
+}
+
 $ErrorActionPreference = 'Stop'
 $loginError = $false
 
