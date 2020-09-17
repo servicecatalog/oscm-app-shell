@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Copyright FUJITSU LIMITED 2018-->
+<tns:TechnicalServices 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="oscm.serviceprovisioning/1.9/TechnicalService.xsd ../../oscm-serviceprovisioning/javares/TechnicalServices.xsd"
+  xmlns:tns="oscm.serviceprovisioning/1.9/TechnicalService.xsd">
+  
+  <tns:TechnicalService 
+    id="ShellAzure"
+    build="2016-07-19" 
+    accessType="USER" 
+    allowingOnBehalfActing="false" 
+    billingIdentifier="NATIVE_BILLING" 
+    onlyOneSubscriptionPerUser="false"
+    baseUrl=""
+    loginPath="" 
+    provisioningType="ASYNCHRONOUS"
+    provisioningUsername=""
+    provisioningPassword="" 
+    provisioningUrl="http://oscm-app:8880/oscm-app/webservices/oscm-app/oscm-app/org.oscm.app.v2_0.service.AsynchronousProvisioningProxy?wsdl"
+    provisioningVersion="1">
+    
+    <AccessInfo locale="en">Shell AccessInfo From TS</AccessInfo>
+    <LocalizedDescription locale="en">Service to exeute a Shell script</LocalizedDescription>
+    <LocalizedLicense locale="en">License Agreement</LocalizedLicense>
+    
+    <ParameterDefinition id="APP_CONTROLLER_ID" valueType="STRING" configurable="false" mandatory="true" default="ess.shell">
+      <LocalizedDescription locale="en">The ID of config controller</LocalizedDescription>
+    </ParameterDefinition>
+    
+    <ParameterDefinition id="CONSOLE_FILE" valueType="STRING" default="" configurable="true" mandatory="false" >
+      <LocalizedDescription locale="en">Absolute filesystem path to Shell configuration file</LocalizedDescription>
+    </ParameterDefinition>
+
+    <ParameterDefinition id="PROVISIONING_SCRIPT" valueType="STRING" default="" configurable="true" mandatory="true" >
+      <LocalizedDescription locale="en">Provisioning Script. Absolute filesystem path or URL to script file</LocalizedDescription>
+    </ParameterDefinition>
+
+    <ParameterDefinition id="DEPROVISIONING_SCRIPT" valueType="STRING" default="" configurable="true" mandatory="true" >
+      <LocalizedDescription locale="en">Deprovisioning Script. Absolute filesystem path or URL to script file</LocalizedDescription>
+    </ParameterDefinition>
+
+    <ParameterDefinition id="UPDATE_SCRIPT" valueType="STRING" default="" configurable="true" mandatory="true" >
+      <LocalizedDescription locale="en">Update Script. Absolute filesystem path or URL to script file</LocalizedDescription>
+    </ParameterDefinition>
+
+    <ParameterDefinition id="ASSIGN_USER_SCRIPT" valueType="STRING" default="" configurable="true" mandatory="true" >
+      <LocalizedDescription locale="en">Assign User Script. Absolute filesystem path or URL to script file</LocalizedDescription>
+    </ParameterDefinition>
+
+    <ParameterDefinition id="DEASSIGN_USER_SCRIPT" valueType="STRING" default="" configurable="true" mandatory="true" >
+      <LocalizedDescription locale="en">Deassign User Script. Absolute filesystem path or URL to script file</LocalizedDescription>
+    </ParameterDefinition>
+
+    <ParameterDefinition id="CHECK_STATUS_SCRIPT" valueType="STRING" default="" configurable="true" mandatory="true" >
+      <LocalizedDescription locale="en">Retrieve status of provisioned instance. Absolute filesystem path or URL to script file</LocalizedDescription>
+    </ParameterDefinition>
+
+    <ParameterDefinition id="SCRIPT_TIMEOUT_SECONDS" valueType="INTEGER" default="600" configurable="true" mandatory="true" >
+      <LocalizedDescription locale="en">Number of seconds until a running script is canceled</LocalizedDescription>
+    </ParameterDefinition>
+	
+    <ParameterDefinition id="USAGEDATA_SCRIPT" valueType="STRING" default="" configurable="true" mandatory="true" >
+      <LocalizedDescription locale="en">A script for retrieving usage data, like memory hours and VCPU hours, for given instance. Absolute filesystem path or URL to script file</LocalizedDescription>
+    </ParameterDefinition>  
+
+    <ParameterDefinition id="MY_SCRIPT_PARAM_1" valueType="STRING" default="" configurable="true" mandatory="false" >
+      <LocalizedDescription locale="en">My parameter that is patched into the script</LocalizedDescription>
+    </ParameterDefinition>
+
+    <ParameterDefinition id="MY_SCRIPT_PARAM_X" valueType="STRING" default="" configurable="true" mandatory="false" >
+      <LocalizedDescription locale="en">The parameter X that is patched into the script</LocalizedDescription>
+    </ParameterDefinition>
+    
+    <ParameterDefinition id="OPERATIONS_SCRIPT" valueType="STRING" default="" configurable="true" mandatory="false" >
+      <LocalizedDescription locale="en">Operations Script. Absolute filesystem path or URL to script file</LocalizedDescription>
+    </ParameterDefinition>
+    
+    <ParameterDefinition id="UPDATE_USER_SCRIPT" valueType="STRING" default="" configurable="true" mandatory="false" >
+      <LocalizedDescription locale="en">Update User Script. Absolute filesystem path or URL to script file</LocalizedDescription>
+    </ParameterDefinition>    
+    
+    <ParameterDefinition id="VERIFICATION_SCRIPT" valueType="STRING" default="" configurable="true" mandatory="false" >
+      <LocalizedDescription locale="en">Verification Script. Absolute filesystem path or URL to script file</LocalizedDescription>
+    </ParameterDefinition>
+
+    <ParameterDefinition id="AzureAutomationAccountName" valueType="STRING" default="" configurable="true" mandatory="true" >
+      <LocalizedDescription locale="en">Name of the azure automation account</LocalizedDescription>
+    </ParameterDefinition>
+
+    <ParameterDefinition id="AzureResourceGroupName" valueType="STRING" default="" configurable="true" mandatory="true" >
+      <LocalizedDescription locale="en">Name of the azure resource group</LocalizedDescription>
+    </ParameterDefinition>
+
+    <ParameterDefinition id="AzureRunbookName" valueType="STRING" default="" configurable="true" mandatory="true" >
+      <LocalizedDescription locale="en">Name of the azure runbook</LocalizedDescription>
+    </ParameterDefinition>
+
+    <ParameterDefinition configurable="false" default="Shell" id="TECHNICAL_SERVICE_ID" mandatory="true" valueType="STRING">
+      <LocalizedDescription locale="en">Technical Service Identifier, used to generate events. Must be the same as the id of this tns:TechnicalService element.</LocalizedDescription>
+      <LocalizedDescription locale="de" />
+      <LocalizedDescription locale="ja" />
+    </ParameterDefinition>
+
+    <Event id="EVENT_DISK_GIGABYTE_HOURS">
+      <LocalizedDescription locale="en">Storage-Hours (GB)</LocalizedDescription>
+      <LocalizedDescription locale="de" />
+      <LocalizedDescription locale="ja" />
+    </Event>
+
+    <Event id="EVENT_CPU_HOURS">
+      <LocalizedDescription locale="en">VCPU-Hours</LocalizedDescription>
+      <LocalizedDescription locale="de" />
+      <LocalizedDescription locale="ja" />
+    </Event>
+
+    <Event id="EVENT_RAM_MEGABYTE_HOURS">
+      <LocalizedDescription locale="en">RAM-Hours (MB)</LocalizedDescription>
+      <LocalizedDescription locale="de" />
+      <LocalizedDescription locale="ja" />
+    </Event>
+
+    <Event id="EVENT_TOTAL_HOURS">
+      <LocalizedDescription locale="en">Total hours</LocalizedDescription>
+      <LocalizedDescription locale="de" />
+      <LocalizedDescription locale="ja" />
+    </Event>
+
+    <Operation id="OPERATION" actionURL="http://oscm-app:8880/oscm-app/webservices/oscm-app/oscm-app/org.oscm.app.v2_0.service.AsynchronousOperationProxy?wsdl">
+      <LocalizedName locale="en">Executes the OPERATION</LocalizedName>
+      <LocalizedDescription locale="en">Executes the OPERATION</LocalizedDescription>
+    </Operation>
+
+  </tns:TechnicalService>
+  
+</tns:TechnicalServices>
