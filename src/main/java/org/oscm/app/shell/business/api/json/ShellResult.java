@@ -61,7 +61,7 @@ public class ShellResult {
   }
 
   public Set<ShellResultParameter> getParameters() {
-    return parameters;
+    return parameters != null ? parameters : Collections.emptySet();
   }
 
   public void setParameters(Set<ShellResultParameter> parameters) {

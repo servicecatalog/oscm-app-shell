@@ -14,6 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
+import org.oscm.app.shell.business.api.json.ShellResultParameter;
 import org.oscm.app.shell.business.script.Script;
 import org.oscm.app.shell.business.api.*;
 import org.oscm.app.shell.business.api.json.ShellResult;
@@ -21,6 +22,7 @@ import org.oscm.app.v2_0.data.InstanceStatus;
 import org.oscm.app.v2_0.data.ProvisioningSettings;
 
 import java.util.HashMap;
+import java.util.HashSet;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -164,11 +166,14 @@ public class ActionsTest {
 
         //given
         String instanceId = "Instance_4343434";
-        ProvisioningSettings settings = null;
+        ProvisioningSettings settings = new ProvisioningSettings(new HashMap<>(), new HashMap<>(), "en");
         InstanceStatus instanceStatus = new InstanceStatus();
         String status = "ok";
         String message = "Script was executed successfully";
         ShellResult shellResult = new ShellResult(status, message);
+        HashSet<ShellResultParameter> parameters = new HashSet<>();
+        parameters.add(new ShellResultParameter("KEY", "VALUE"));
+        shellResult.setParameters(parameters);
 
         when(pool.consumeShellOutput(instanceId)).thenReturn(ShellStatus.PSSHELL_ERROR);
         when(pool.getShellResult(instanceId)).thenReturn(shellResult);
