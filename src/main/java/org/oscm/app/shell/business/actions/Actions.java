@@ -1,10 +1,12 @@
-/*******************************************************************************
+/**
+ * *****************************************************************************
  *
- *  Copyright FUJITSU LIMITED 2018
+ * <p>Copyright FUJITSU LIMITED 2018
  *
- *  Creation Date: Aug 2, 2017
+ * <p>Creation Date: Aug 2, 2017
  *
- *******************************************************************************/
+ * <p>*****************************************************************************
+ */
 package org.oscm.app.shell.business.actions;
 
 import org.oscm.app.shell.ScriptLogger;
@@ -115,10 +117,10 @@ public class Actions {
     Set<ShellResultParameter> parameters = shellResult.getParameters();
     parameters.forEach(
         parameter -> {
+          String key = "SCRIPT_" + parameter.getKey();
           Setting setting =
-              new Setting(
-                  parameter.getKey(), parameter.getValue(), false, Configuration.CONTROLLER_ID);
-          changedParameters.put(parameter.getKey(), setting);
+              new Setting(key, parameter.getValue(), false, Configuration.CONTROLLER_ID);
+          changedParameters.put(key, setting);
         });
 
     result.setIsReady(true);
