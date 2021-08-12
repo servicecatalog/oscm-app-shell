@@ -1,5 +1,4 @@
-[![Build status](https://travis-ci.com/servicecatalog/oscm-app-shell.svg?branch=master)](https://travis-ci.com/servicecatalog/oscm-app-shell)
-[![codecov](https://codecov.io/gh/servicecatalog/oscm-app-shell/branch/master/graph/badge.svg)](https://codecov.io/gh/servicecatalog/oscm-app-shell)
+[![Maven](https://github.com/servicecatalog/oscm-app-shell/actions/workflows/maven.yml/badge.svg)](https://github.com/servicecatalog/oscm-app-shell/actions) [![codecov](https://codecov.io/gh/servicecatalog/oscm-app-shell/branch/master/graph/badge.svg)](https://codecov.io/gh/servicecatalog/oscm-app-shell)
 
 # What is it?
 The OSCM shell controller is a script based framework adapter for integrating OSCM with any type of cloud. 
