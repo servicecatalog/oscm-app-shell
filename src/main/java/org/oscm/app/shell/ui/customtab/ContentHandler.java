@@ -1,3 +1,10 @@
+/*******************************************************************************
+ *
+ *  Copyright FUJITSU LIMITED 2018
+ *
+ *  Creation Date: 2017-10-17
+ *
+ *******************************************************************************/
 package org.oscm.app.shell.ui.customtab;
 
 import org.apache.commons.codec.binary.Base64;
