@@ -13,8 +13,7 @@ import org.oscm.app.shell.business.api.json.ShellResultData;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * Author @goebel
@@ -22,7 +21,7 @@ import static org.junit.Assert.assertTrue;
 public class ContentHandlerTest {
 
     @Test
-    public void getDecoded() {
+    public void getDecoded_Base64() {
 
         // given
         final String html = "<html><head><title>Sample</tile></head><body><h1>This is some HTML content!</h1></body></html>";
@@ -37,10 +36,25 @@ public class ContentHandlerTest {
         assertEquals(html, decoded);
     }
 
-    private ShellResultData givenPlainOutput() {
-        String txt = "This is plain text!";
+    @Test
+    public void getDecoded_Plain() {
+
+        // given
+        final String plain = "This is plain text!";
+        final ShellResultData content = givenPlainOutput(plain);
+
+        // when
+        String txt = content.getOutput();
+        String decoded = new ContentHandler(content).decodeOutput();
+
+        // then
+        assertFalse(txt.startsWith(ContentHandler.BASE64_TOKEN));
+        assertEquals(plain, decoded);
+    }
+
+    private ShellResultData givenPlainOutput(String txt) {
         ShellResultData data = new ShellResultData();
-        data.setOutput("txt");
+        data.setOutput(txt);
         return data;
     }
 
