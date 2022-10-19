@@ -26,7 +26,7 @@ import static org.junit.Assert.assertEquals;
 public class CopyrightTest {
 
     static ArrayList<String> failed = new ArrayList<String>();
-    static final List<String> EXCLUDES = Arrays.asList("target", ".settings", "pom.xml",
+    static final List<String> EXCLUDES = Arrays.asList("target", ".idea", ".settings", "pom.xml",
             "settings.xml", "apache-maven", "apache-maven.tar.gz");
     static boolean success = true;
 
