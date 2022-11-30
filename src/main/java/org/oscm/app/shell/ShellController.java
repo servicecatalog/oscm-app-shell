@@ -240,7 +240,9 @@ public class ShellController implements APPlatformController {
 
     config.addUsersToParameter(users);
 
-    InstanceStatus result = new InstanceStatus();
+
+    InstanceStatusUsers result = new InstanceStatusUsers();
+    result.setChangedUsers(users);
     result.setChangedParameters(settings.getParameters());
     result.setIsReady(false);
     return result;
