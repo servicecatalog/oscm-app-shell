@@ -198,7 +198,7 @@ public class ShellController implements APPlatformController {
     validator.validate(config, ASSIGN_USER_SCRIPT);
     initStateMachine(settings, ASSIGN_USER_SCRIPT, STATEMACHINE_ASSIGN_USER);
 
-    config.addUsersToParameter(users);
+    config.addUsersToParameter(users, false);
 
     InstanceStatusUsers result = new InstanceStatusUsers();
     result.setChangedUsers(users);
@@ -235,15 +235,16 @@ public class ShellController implements APPlatformController {
 
     Configuration config = new Configuration(settings);
     config.setRequestingUser();
+    config.addUsersToParameter(users, true);
+
     validator.validate(config, DEASSIGN_USER_SCRIPT);
-    initStateMachine(settings, DEASSIGN_USER_SCRIPT, STATEMACHINE_DEASSIGN_USER);
 
-    config.addUsersToParameter(users);
-
+    ProvisioningSettings updatedSettings = config.getProvisioningSettings();
+    initStateMachine(updatedSettings, DEASSIGN_USER_SCRIPT, STATEMACHINE_DEASSIGN_USER);
 
     InstanceStatusUsers result = new InstanceStatusUsers();
     result.setChangedUsers(users);
-    result.setChangedParameters(settings.getParameters());
+    result.setChangedParameters(updatedSettings.getParameters());
     result.setIsReady(false);
     return result;
   }
@@ -357,7 +358,7 @@ public class ShellController implements APPlatformController {
     validator.validate(config, UPDATE_USER_SCRIPT);
     initStateMachine(settings, UPDATE_USER_SCRIPT, STATEMACHINE_UPDATE_USER);
 
-    config.addUsersToParameter(users);
+    config.addUsersToParameter(users, false);
     config.setSetting(USER_COUNT, valueOf(users.size()));
 
     InstanceStatus result = new InstanceStatus();

@@ -134,7 +134,7 @@ public class Configuration {
      * Removes all existing users and then adds the provided users and their roles
      * as parameters.
      */
-    public void addUsersToParameter(List<ServiceUser> users) {
+    public void addUsersToParameter(List<ServiceUser> users, boolean deassign) {
         List<String> tobeRemoved = new ArrayList<String>();
         for (String key : settings.getParameters().keySet()) {
             if (key.startsWith("USER_")) {
@@ -145,6 +145,9 @@ public class Configuration {
 
         for (int i = 0; i < users.size(); i++) {
             String idKey = String.format("USER_%d_ID", i);
+            if (deassign) {
+                idKey = String.format("USER_%d_ID_DEASSIGN", i);
+            }
             settings.getParameters().put(idKey, new Setting(idKey, users.get(i).getUserId()));
 
             if (users.get(i).getRoleIdentifier() != null) {
@@ -153,6 +156,7 @@ public class Configuration {
                         users.get(i).getRoleIdentifier()));
             }
         }
+
     }
 
     public List<ServiceUser> getUsers() {
